@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+<<<<<<< HEAD
+jinja2
+python-multipart
+=======
+python-multipart
+sqlalchemy
+psycopg2-binary
+reportlab
+pypdf
+python-dotenv
+>>>>>>> 955bf742d374f06a527941af19a7b3ebda768e9c
