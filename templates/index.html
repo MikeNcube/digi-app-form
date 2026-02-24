@@ -24,8 +24,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
 .hero{background:linear-gradient(135deg,var(--navy),var(--navy2) 60%,var(--navy3));padding:22px 32px;border-bottom:2px solid rgba(201,168,76,.2)}
 .hero h1{font-size:20px;font-weight:700;color:#fff;margin-bottom:3px}
 .hero p{font-size:12px;color:rgba(255,255,255,.42)}
-.wrap{max-width:700px;margin:24px auto;padding:0 16px 60px}
-/* PROGRESS */
+.wrap{max-width:720px;margin:24px auto;padding:0 16px 60px}
 .prog{display:flex;align-items:flex-start;position:relative;margin-bottom:22px}
 .prog-line{position:absolute;top:13px;left:16px;right:16px;height:2px;background:var(--border);z-index:0}
 .prog-fill{position:absolute;top:13px;left:16px;height:2px;background:linear-gradient(90deg,var(--navy3),var(--blue));z-index:1;transition:width .4s ease;width:0%}
@@ -34,9 +33,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
 .si.active .sd{border-color:var(--blue);color:var(--blue);background:var(--pale);box-shadow:0 0 0 3px rgba(26,86,219,.1)}
 .si.done .sd{border-color:var(--navy3);background:var(--navy3);color:#fff}
 .sl{font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-top:4px;text-align:center}
-.si.active .sl{color:var(--blue)}
-.si.done .sl{color:var(--navy3)}
-/* CARD */
+.si.active .sl{color:var(--blue)}.si.done .sl{color:var(--navy3)}
 .card{background:#fff;border-radius:16px;border:1px solid var(--border);box-shadow:0 4px 20px rgba(8,23,46,.07);overflow:hidden}
 .ch{background:linear-gradient(135deg,var(--navy),var(--navy2) 60%,var(--navy3));padding:20px 28px;display:flex;align-items:center;justify-content:space-between;position:relative}
 .ch::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold2) 40%,transparent)}
@@ -45,40 +42,35 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
 .ch-num{font-size:32px;font-weight:900;color:rgba(255,255,255,.06);font-family:Georgia,serif}
 .cb{padding:26px 28px}
 .cf{padding:14px 28px 20px;border-top:1px solid var(--border);background:var(--off);display:flex;align-items:center;justify-content:space-between;gap:10px}
-/* SLIDES */
-.slide{display:none}
-.slide.active{display:block;animation:up .22s cubic-bezier(.16,1,.3,1)}
+.slide{display:none}.slide.active{display:block;animation:up .22s cubic-bezier(.16,1,.3,1)}
 @keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-/* FIELDS */
 .r2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:16px}
 .fg:last-child{margin-bottom:0}
 .fg label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--slate)}
-.fg input,.fg select,.fg textarea{padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13.5px;color:var(--ink);background:#fff;outline:none;width:100%;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none}
-.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.08)}
-.fg input::placeholder,.fg textarea::placeholder{color:#aab;font-size:13px}
+.fg input,.fg select{padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13.5px;color:var(--ink);background:#fff;outline:none;width:100%;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none;appearance:none}
+.fg input:focus,.fg select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.08)}
+.fg input::placeholder{color:#aab;font-size:13px}
 .fg select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%2364748b' d='M5 6L0 0h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:30px;cursor:pointer}
 .sec{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:20px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
-/* AGE */
 .age-tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;margin-top:3px}
-.age-ok{color:var(--green);background:#d1fae5}
-.age-err{color:var(--red);background:#fee2e2}
+.age-ok{color:var(--green);background:#d1fae5}.age-err{color:var(--red);background:#fee2e2}
 /* UPLOAD */
-.upload-zone{border:2px dashed var(--bmd);border-radius:9px;padding:14px;background:var(--off);cursor:pointer;display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--muted);transition:all .2s;position:relative}
+.upload-zone{border:2px dashed var(--bmd);border-radius:9px;padding:14px;background:var(--off);cursor:pointer;display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--muted);transition:all .2s;position:relative;overflow:hidden}
 .upload-zone:hover{border-color:var(--blue);background:var(--pale)}
 .upload-zone.filled{border-color:var(--green);background:#f0fdf6;border-style:solid}
-.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .uz-icon{width:36px;height:36px;border-radius:8px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
 .uz-text strong{display:block;font-size:12.5px;font-weight:600;color:var(--slate);margin-bottom:1px}
+.uz-sub{font-size:11px;color:var(--muted)}
 .upload-zone.filled .uz-text strong{color:var(--green)}
-/* PLAN */
+/* PLANS */
 .plan-type-row{display:flex;gap:10px;margin-bottom:14px}
 .pt-btn{flex:1;padding:9px;border:2px solid var(--border);border-radius:9px;background:#fff;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--muted);transition:all .18s;text-align:center}
 .pt-btn:hover{border-color:var(--blue);color:var(--blue)}
 .pt-btn.sel{border-color:var(--blue);background:var(--pale);color:var(--blue)}
 .plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-.pc{border:2px solid var(--border);border-radius:11px;padding:12px 10px;cursor:pointer;transition:all .2s;text-align:center;position:relative;background:#fff}
+.pc{border:2px solid var(--border);border-radius:11px;padding:12px 10px;cursor:pointer;transition:all .2s;text-align:center;position:relative;background:#fff;user-select:none}
 .pc:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 6px 18px rgba(26,86,219,.1)}
 .pc.sel{border-color:var(--blue);background:var(--navy);transform:translateY(-2px);box-shadow:0 8px 22px rgba(26,86,219,.18)}
 .pc-tier{font-size:7px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
@@ -93,6 +85,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
 .pc.sel .pc-pm{background:rgba(255,255,255,.12);color:rgba(255,255,255,.7)}
 .pc-chk{display:none;position:absolute;top:6px;right:6px;background:var(--blue);color:#fff;font-size:7.5px;font-weight:700;padding:2px 6px;border-radius:20px}
 .pc.sel .pc-chk{display:block}
+/* BENEFITS */
+.benefits-box{background:var(--off);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:9px;padding:12px 14px;margin-top:10px;font-size:11.5px;color:var(--slate);line-height:1.8}
+.benefits-box strong{color:var(--navy);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;display:block;margin-bottom:6px}
+/* PRICE BOX */
 .price-box{background:var(--navy);border-radius:10px;padding:14px 18px;display:flex;gap:0;border:1px solid rgba(201,168,76,.15);margin-top:12px}
 .pb{flex:1;text-align:center;padding:6px 10px;border-right:1px solid rgba(255,255,255,.07)}
 .pb:last-child{border-right:none}
@@ -102,29 +98,32 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
 /* DEPS */
 .info-box{background:var(--pale);border:1px solid #bfdbfe;border-left:3px solid var(--blue);border-radius:8px;padding:9px 12px;font-size:11.5px;color:var(--slate);line-height:1.6;margin-bottom:14px}
 .dep-row{background:var(--off);border:1px solid var(--border);border-radius:9px;padding:11px 13px;margin-bottom:8px;animation:up .2s ease}
-.dep-top{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
-.dep-top input,.dep-top select{padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;color:var(--ink);background:#fff;outline:none;transition:border-color .15s;-webkit-appearance:none}
-.dep-top input:focus,.dep-top select:focus{border-color:var(--blue)}
-.dep-opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:7px;align-items:center}
+.dep-fields{display:flex;flex-direction:column;gap:8px}
+.dep-row-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.dep-inp{flex:1;min-width:120px;padding:9px 11px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;color:var(--ink);background:#fff;outline:none;transition:border-color .15s;-webkit-appearance:none;appearance:none}
+.dep-inp:focus{border-color:var(--blue)}
+.dep-date{width:160px;flex-shrink:0}
+.dep-opts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .ck{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--slate);cursor:pointer}
-.ck input{accent-color:var(--blue);width:14px;height:14px}
-.dep-age-msg{font-size:10.5px;font-weight:600;margin-top:5px;padding:3px 8px;border-radius:6px;display:inline-block}
+.ck input[type=checkbox]{accent-color:var(--blue);width:14px;height:14px;cursor:pointer}
+.dep-age-msg{font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:6px;display:inline-block;margin-top:2px}
 .btn-rm{width:30px;height:30px;border-radius:7px;background:#fef2f2;color:var(--red);border:1px solid #fecaca;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0;transition:all .15s;display:flex;align-items:center;justify-content:center}
 .btn-rm:hover{background:var(--red);color:#fff}
 .btn-add{display:inline-flex;align-items:center;gap:5px;background:var(--navy);color:#fff;border:none;padding:7px 14px;border-radius:7px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;margin-top:4px;transition:all .18s}
-.btn-add:hover{background:var(--blue)}
-.btn-add:disabled{opacity:.35;cursor:not-allowed}
+.btn-add:hover{background:var(--blue)}.btn-add:disabled{opacity:.35;cursor:not-allowed}
+.dep-type-tag{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:4px 9px;background:var(--navy);color:#fff;border-radius:5px;white-space:nowrap;flex-shrink:0}
 /* REVIEW */
 .rv-lbl{font-size:8.5px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:var(--muted);margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
 .rv-lbl:first-child{margin-top:0}
 .rv-r{display:flex;justify-content:space-between;padding:5px 0;font-size:12.5px;color:var(--slate);border-bottom:1px solid var(--off)}
 .rv-r:last-child{border-bottom:none}
-.rv-r strong{color:var(--navy);font-weight:600;text-align:right;max-width:55%}
+.rv-r strong{color:var(--navy);font-weight:600;text-align:right;max-width:60%}
 .rv-total{background:var(--navy);border-radius:10px;padding:13px 18px;display:flex;justify-content:space-between;align-items:center;margin-top:14px}
 .rv-total span{font-size:11px;color:rgba(255,255,255,.42);text-transform:uppercase;letter-spacing:.8px}
 .rv-total strong{font-size:20px;font-weight:800;color:var(--gold2)}
-.waiting{background:#fffbeb;border:1px solid #fde68a;border-left:3px solid var(--warn);border-radius:8px;padding:9px 12px;font-size:11px;color:#92400e;line-height:1.6;margin-top:12px}
-/* BTNS */
+.waiting{background:#fffbeb;border:1px solid #fde68a;border-left:3px solid var(--warn);border-radius:8px;padding:9px 12px;font-size:11px;color:#92400e;line-height:1.8;margin-top:12px}
+.waiting b{color:#78350f}
+/* BUTTONS */
 .btn{padding:10px 20px;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .18s;display:inline-flex;align-items:center;gap:5px}
 .btn-p{background:var(--blue);color:#fff}
 .btn-p:hover{background:#1e429f;transform:translateY(-1px);box-shadow:0 4px 14px rgba(26,86,219,.26)}
@@ -147,10 +146,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
 .s-pills{display:flex;justify-content:center;gap:8px;margin-top:16px;flex-wrap:wrap}
 .s-pill{font-size:11px;color:var(--muted);background:var(--off);border:1px solid var(--border);padding:5px 12px;border-radius:20px}
 @media(max-width:580px){
-  .r2,.r3{grid-template-columns:1fr}.plan-grid{grid-template-columns:1fr}
+  .r2{grid-template-columns:1fr}.plan-grid{grid-template-columns:1fr}
   .price-box{flex-direction:column}.sg{grid-template-columns:1fr}
   .cb{padding:18px 16px}.cf{padding:12px 16px 18px}.ch{padding:16px 18px}
-  .plan-type-row{flex-direction:column}
+  .plan-type-row{flex-direction:column}.dep-row-top{flex-direction:column}
+  .dep-date{width:100%}
 }
 </style>
 </head>
@@ -163,20 +163,19 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
   </div>
   <div class="fsp">Authorised FSP</div>
 </header>
-
 <div class="hero">
   <h1>Funeral Policy Application</h1>
   <p>Secure digital application · Encrypted · POPIA compliant</p>
 </div>
 
 <div class="wrap">
-  <!-- PROGRESS -->
   <div class="prog" id="prog">
     <div class="prog-line"></div>
     <div class="prog-fill" id="progFill"></div>
     <div class="si active"><div class="sd">1</div><div class="sl">Principal</div></div>
     <div class="si"><div class="sd">2</div><div class="sl">Dependants</div></div>
-    <div class="si"><div class="sd">3</div><div class="sl">Review</div></div>
+    <div class="si"><div class="sd">3</div><div class="sl">Beneficiary</div></div>
+    <div class="si"><div class="sd">4</div><div class="sl">Review</div></div>
     <div class="si"><div class="sd">✓</div><div class="sl">Done</div></div>
   </div>
 
@@ -184,17 +183,17 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
     <div class="ch">
       <div>
         <h2 id="cardTitle">Step 1: Principal Member Details</h2>
-        <p  id="cardSub">Personal information, plan selection and address</p>
+        <p id="cardSub">Personal information and plan selection</p>
       </div>
       <div class="ch-num" id="cardNum">01</div>
     </div>
-
     <div class="cb">
+
       <!-- SUCCESS -->
       <div class="succ" id="succScreen" style="display:none">
         <div class="succ-icon">✓</div>
         <h2>Policy Submitted Successfully!</h2>
-        <p>Your Worldwide Funeral Plan application has been received. Documents will be delivered within 24 hours via Email or WhatsApp.</p>
+        <p>Your Worldwide Funeral Plan application has been received. Documents delivered within 24 hours via Email or WhatsApp.</p>
         <div class="pol-ref">🏷 <span id="polRef">WWFP-…</span></div>
         <div class="sg">
           <div class="sc"><div class="l">Monthly Premium</div><div class="v" id="spm">—</div></div>
@@ -211,17 +210,16 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
 
       <form id="appForm" onsubmit="return false">
 
-        <!-- ═══ SLIDE 1 ═══ -->
+        <!-- ═══ SLIDE 1: PRINCIPAL ═══ -->
         <div class="slide active" id="s1">
-
           <div class="r2">
             <div class="fg">
               <label>Full Name *</label>
               <input type="text" id="fullName" placeholder="First and last name">
             </div>
             <div class="fg">
-              <label>Date of Birth * (must be 18–65)</label>
-              <input type="date" id="dob" oninput="showAge(this)">
+              <label>Date of Birth * (age 18–65)</label>
+              <input type="date" id="dob" max="" oninput="showAge(this)">
               <span id="ageBadge" class="age-tag" style="display:none"></span>
             </div>
             <div class="fg">
@@ -234,65 +232,13 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
             </div>
           </div>
 
-          <div class="fg">
-            <label>Country of Residence *</label>
-            <select id="country" onchange="onCountry()">
-              <option value="">— Select country —</option>
-              <optgroup label="South Africa (ZAR)">
-                <option value="ZAR|South Africa">South Africa</option>
-              </optgroup>
-              <optgroup label="SADC Region (USD)">
-                <option value="USD|Zimbabwe">Zimbabwe</option>
-                <option value="USD|Zambia">Zambia</option>
-                <option value="USD|Botswana">Botswana</option>
-                <option value="USD|Namibia">Namibia</option>
-                <option value="USD|Mozambique">Mozambique</option>
-                <option value="USD|Malawi">Malawi</option>
-                <option value="USD|Tanzania">Tanzania</option>
-                <option value="USD|Angola">Angola</option>
-                <option value="USD|DRC">DRC</option>
-                <option value="USD|Eswatini">Eswatini</option>
-              </optgroup>
-              <optgroup label="Europe (EUR)">
-                <option value="EUR|United Kingdom">United Kingdom</option>
-                <option value="EUR|Germany">Germany</option>
-                <option value="EUR|Netherlands">Netherlands</option>
-                <option value="EUR|Belgium">Belgium</option>
-                <option value="EUR|France">France</option>
-                <option value="EUR|Portugal">Portugal</option>
-                <option value="EUR|Spain">Spain</option>
-                <option value="EUR|Other EU">Other EU</option>
-              </optgroup>
-            </select>
-          </div>
-
-          <div class="sec">Residential Address</div>
-          <div class="fg">
-            <label>Street Address *</label>
-            <input type="text" id="street" placeholder="e.g. 14 Mahlakane Street">
-          </div>
-          <div class="r3">
-            <div class="fg">
-              <label>City *</label>
-              <input type="text" id="city" placeholder="City / Town">
-            </div>
-            <div class="fg">
-              <label id="provLbl">Province *</label>
-              <select id="province"></select>
-            </div>
-            <div class="fg">
-              <label>Postal Code *</label>
-              <input type="text" id="postal" placeholder="0000" maxlength="10">
-            </div>
-          </div>
-
           <div class="sec">ID / Passport Upload</div>
           <div class="fg">
             <label class="upload-zone" id="idZone">
               <div class="uz-icon">📎</div>
               <div class="uz-text">
                 <strong id="idLbl">Click to upload ID or Passport</strong>
-                <span>PDF, JPG, PNG — max 10 MB</span>
+                <div class="uz-sub">PDF, JPG, PNG — max 10 MB</div>
               </div>
               <input type="file" id="idFile" accept=".pdf,.jpg,.jpeg,.png" onchange="onUpload(this,'idLbl','idZone')">
             </label>
@@ -300,10 +246,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
 
           <div class="sec">Select Your Plan *</div>
           <div style="margin-bottom:10px">
-            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:8px">Cover Type</div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:8px">Cover Type</div>
             <div class="plan-type-row">
               <button type="button" class="pt-btn sel" id="ptSingle" onclick="setPlanType('single')">Single Cover</button>
-              <button type="button" class="pt-btn" id="ptFamily" onclick="setPlanType('family')">Family Cover</button>
+              <button type="button" class="pt-btn"     id="ptFamily" onclick="setPlanType('family')">Family Cover</button>
             </div>
           </div>
           <div class="plan-grid">
@@ -332,18 +278,22 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
               <div class="pc-pm" id="ppm_Executive">R990/month</div>
             </div>
           </div>
+          <div class="benefits-box" id="benefitsBox" style="display:none">
+            <strong id="benTitle">Plan Benefits</strong>
+            <div id="benList"></div>
+          </div>
           <div class="price-box" id="priceBox" style="display:none">
-            <div class="pb"><div class="pl">Cover</div><div class="pv" id="pbCover">—</div></div>
-            <div class="pb"><div class="pl">Type</div><div class="pv" id="pbType">—</div></div>
+            <div class="pb"><div class="pl">Cover Amount</div><div class="pv" id="pbCover">—</div></div>
+            <div class="pb"><div class="pl">Cover Type</div><div class="pv" id="pbType">—</div></div>
             <div class="pb hl"><div class="pl">Monthly Premium</div><div class="pv" id="pbPm">—</div></div>
           </div>
         </div>
 
-        <!-- ═══ SLIDE 2 ═══ -->
+        <!-- ═══ SLIDE 2: DEPENDANTS ═══ -->
         <div class="slide" id="s2">
           <div class="info-box">
-            👫 <strong>Spouse:</strong> 1 max, age 18–65 &nbsp;|&nbsp;
-            👶 <strong>Children:</strong> 6 max, age ≤21 (≤25 student/disabled)
+            👫 <strong>Spouse:</strong> max 1, age 18–65 &nbsp;|&nbsp;
+            👶 <strong>Children:</strong> max 6, age ≤21 (≤25 if student or disabled)
           </div>
           <div id="depList"></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
@@ -352,16 +302,59 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
           </div>
         </div>
 
-        <!-- ═══ SLIDE 3 ═══ -->
+        <!-- ═══ SLIDE 3: BENEFICIARY ═══ -->
         <div class="slide" id="s3">
+          <div class="info-box">
+            🏷 Please nominate a beneficiary who will receive the policy payout. Claims must be submitted within <strong>6 months</strong> of the date of death.
+          </div>
+          <div class="r2">
+            <div class="fg">
+              <label>Beneficiary First Name *</label>
+              <input type="text" id="benFirst" placeholder="First name">
+            </div>
+            <div class="fg">
+              <label>Beneficiary Last Name *</label>
+              <input type="text" id="benLast" placeholder="Last name">
+            </div>
+          </div>
+          <div class="r2">
+            <div class="fg">
+              <label>Phone Number *</label>
+              <input type="tel" id="benPhone" placeholder="+27 or +263…">
+            </div>
+            <div class="fg">
+              <label>Relationship to Policyholder *</label>
+              <select id="benRel">
+                <option value="">— Select relationship —</option>
+                <option>Spouse</option>
+                <option>Father</option>
+                <option>Mother</option>
+                <option>Son</option>
+                <option>Daughter</option>
+                <option>Brother</option>
+                <option>Sister</option>
+                <option>Grandfather</option>
+                <option>Grandmother</option>
+                <option>Uncle</option>
+                <option>Aunt</option>
+                <option>Cousin</option>
+                <option>Nephew</option>
+                <option>Niece</option>
+                <option>Friend</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ SLIDE 4: REVIEW ═══ -->
+        <div class="slide" id="s4">
           <div class="rv-lbl">Principal Member</div>
           <div class="rv-r"><span>Full Name</span><strong id="rvName">—</strong></div>
           <div class="rv-r"><span>Date of Birth</span><strong id="rvDob">—</strong></div>
           <div class="rv-r"><span>Age</span><strong id="rvAge">—</strong></div>
           <div class="rv-r"><span>Phone</span><strong id="rvPhone">—</strong></div>
           <div class="rv-r"><span>Email</span><strong id="rvEmail">—</strong></div>
-          <div class="rv-r"><span>Country</span><strong id="rvCountry">—</strong></div>
-          <div class="rv-r"><span>Address</span><strong id="rvAddr">—</strong></div>
           <div class="rv-r"><span>ID Document</span><strong id="rvId">—</strong></div>
 
           <div id="rvDepSec" style="display:none">
@@ -369,27 +362,35 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
             <div id="rvDeps"></div>
           </div>
 
+          <div class="rv-lbl">Beneficiary</div>
+          <div class="rv-r"><span>Name</span><strong id="rvBenName">—</strong></div>
+          <div class="rv-r"><span>Phone</span><strong id="rvBenPhone">—</strong></div>
+          <div class="rv-r"><span>Relationship</span><strong id="rvBenRel">—</strong></div>
+
           <div class="rv-lbl">Premium Breakdown</div>
           <div class="rv-r"><span>Plan</span><strong id="rvPlan">—</strong></div>
           <div class="rv-r"><span>Cover Type</span><strong id="rvType">—</strong></div>
           <div class="rv-r"><span>Cover Amount</span><strong id="rvCover">—</strong></div>
-          <div class="rv-r"><span>Currency</span><strong id="rvCurr">—</strong></div>
           <div class="rv-total">
             <span>Total Monthly Premium</span>
             <strong id="rvTotal">—</strong>
           </div>
           <div class="waiting">
-            ⏳ <strong>Waiting periods:</strong> Accidental death — immediate &nbsp;|&nbsp;
-            Natural causes — 3 months &nbsp;|&nbsp; Extended family — 6 months &nbsp;|&nbsp; Suicide — 12 months
+            ⏳ <b>Waiting Periods:</b><br>
+            • Accidental Death: <b>Immediate</b> after first premium<br>
+            • Natural Causes: <b>3 months</b> (member &amp; immediate family)<br>
+            • Extended Family: <b>6 months</b><br>
+            • Suicide: <b>12 months</b><br>
+            • Claims must be submitted within <b>6 months</b> of date of death<br>
+            • Grace period: <b>60 days</b> before policy lapses
           </div>
         </div>
 
       </form>
-    </div><!-- /cb -->
-
+    </div>
     <div class="cf">
       <button class="btn btn-g" id="prevBtn" onclick="goPrev()" style="display:none">← Back</button>
-      <div class="ni" id="navInfo">Step 1 of 3</div>
+      <div class="ni" id="navInfo">Step 1 of 4</div>
       <button class="btn btn-p" id="nextBtn" onclick="goNext()">Continue →</button>
       <button class="btn btn-s" id="submitBtn" onclick="submitApp()">Submit Application ✓</button>
     </div>
@@ -397,41 +398,26 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
 </div>
 
 <script>
-// ═══════════════════════════════════════════════
-//  PLANS & RATES
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
+//  BROCHURE-EXACT PLANS (WWFP 2026)
+// ═══════════════════════════════════════
 var PLANS = {
-  Premium:   {cover:45000, single:450,  family:540},
-  Prestige:  {cover:75000, single:630,  family:720},
-  Executive: {cover:90000, single:990,  family:1080}
-};
-var FX   = {ZAR:1, USD:0.054, EUR:0.050};
-var SYM  = {ZAR:'R', USD:'$', EUR:'€'};
-var PROVINCES = {
-  ZAR:['Gauteng','Western Cape','Eastern Cape','KwaZulu-Natal','Limpopo','Mpumalanga','North West','Northern Cape','Free State'],
-  USD:['Select province/state…'],
-  EUR:['Select province/state…']
+  Premium:   { cover:45000, single:450,  family:540,
+    benefits:['Hearse & Mini Dome Casket','1 Return Air Ticket (Zimbabwe)','Grocery Allowance R4 500','Bus Benefit R5 400','Refreshments (bottled water — cash)'] },
+  Prestige:  { cover:75000, single:630,  family:720,
+    benefits:['Hearse & Standard Dome Casket','1 Return Air Ticket (Zimbabwe)','Grocery Allowance R7 200','Flowers','Bus Benefit R5 400'] },
+  Executive: { cover:90000, single:990,  family:1080,
+    benefits:['Hearse & Royal Dome Casket','2 Return Air Tickets (Zimbabwe)','Grocery Allowance R10 800','Flowers','Bus Benefit R5 400'] }
 };
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
 //  STATE
-// ═══════════════════════════════════════════════
-var ST = {
-  step:      1,
-  planName:  null,
-  planType:  'single',   // 'single' | 'family'
-  currency:  'ZAR',
-  country:   'South Africa',
-  deps:      []
-};
+// ═══════════════════════════════════════
+var ST = { step:1, planName:null, planType:'single', deps:[] };
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
 //  HELPERS
-// ═══════════════════════════════════════════════
-function fmtAmt(zar) {
-  var n = Math.round(zar * FX[ST.currency]);
-  return SYM[ST.currency] + n.toLocaleString('en-ZA');
-}
+// ═══════════════════════════════════════
 function calcAge(dob) {
   if(!dob) return null;
   return Math.floor((Date.now() - new Date(dob)) / (365.25 * 864e5));
@@ -440,87 +426,34 @@ function gv(id) {
   var el = document.getElementById(id);
   return el ? el.value.trim() : '';
 }
+function fmt(n) { return 'R' + Math.round(n).toLocaleString('en-ZA'); }
 
-// ═══════════════════════════════════════════════
-//  AGE BADGE
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
+//  DOB: set max to today so calendar works
+// ═══════════════════════════════════════
+(function() {
+  var today = new Date().toISOString().split('T')[0];
+  var dobEl = document.getElementById('dob');
+  if(dobEl) dobEl.setAttribute('max', today);
+})();
+
 function showAge(inp) {
   var b = document.getElementById('ageBadge');
   var a = calcAge(inp.value);
-  if(a === null) { b.style.display = 'none'; return; }
+  if(a === null) { b.style.display='none'; return; }
   b.style.display = 'inline-block';
   if(a < 18 || a > 65) {
     b.className = 'age-tag age-err';
     b.textContent = 'Age ' + a + ' — must be 18–65';
   } else {
     b.className = 'age-tag age-ok';
-    b.textContent = 'Age: ' + a + ' years ✓';
+    b.textContent = 'Age ' + a + ' years ✓';
   }
 }
 
-// ═══════════════════════════════════════════════
-//  COUNTRY / PROVINCE
-// ═══════════════════════════════════════════════
-function onCountry() {
-  var val = gv('country');
-  if(!val) return;
-  var parts = val.split('|');
-  ST.currency = parts[0];
-  ST.country  = parts[1];
-  // update province list
-  var sel  = document.getElementById('province');
-  var lbl  = document.getElementById('provLbl');
-  var list = PROVINCES[ST.currency] || PROVINCES.ZAR;
-  lbl.textContent = ST.currency === 'ZAR' ? 'Province *' : 'Region *';
-  sel.innerHTML = '<option value="">— Select —</option>' +
-    list.map(function(p){ return '<option value="'+p+'">'+p+'</option>'; }).join('');
-  // refresh plan prices
-  refreshPlanPrices();
-}
-
-// ═══════════════════════════════════════════════
-//  PLAN SELECTION
-// ═══════════════════════════════════════════════
-function setPlanType(type) {
-  ST.planType = type;
-  document.getElementById('ptSingle').className = 'pt-btn' + (type === 'single' ? ' sel' : '');
-  document.getElementById('ptFamily').className = 'pt-btn' + (type === 'family' ? ' sel' : '');
-  refreshPlanPrices();
-  if(ST.planName) showPriceBox();
-}
-
-function refreshPlanPrices() {
-  ['Premium','Prestige','Executive'].forEach(function(name) {
-    var plan = PLANS[name];
-    var pm   = ST.planType === 'family' ? plan.family : plan.single;
-    document.getElementById('pca_' + name).textContent = fmtAmt(plan.cover);
-    document.getElementById('ppm_' + name).textContent = fmtAmt(pm) + '/month';
-  });
-  if(ST.planName) showPriceBox();
-}
-
-function selectPlan(name) {
-  ST.planName = name;
-  // highlight card
-  ['Premium','Prestige','Executive'].forEach(function(n) {
-    document.getElementById('pc_' + n).className = 'pc' + (n === name ? ' sel' : '');
-  });
-  showPriceBox();
-}
-
-function showPriceBox() {
-  if(!ST.planName) return;
-  var plan = PLANS[ST.planName];
-  var pm   = ST.planType === 'family' ? plan.family : plan.single;
-  document.getElementById('priceBox').style.display = 'flex';
-  document.getElementById('pbCover').textContent = fmtAmt(plan.cover);
-  document.getElementById('pbType').textContent  = ST.planType === 'family' ? 'Family' : 'Single';
-  document.getElementById('pbPm').textContent    = fmtAmt(pm) + '/month';
-}
-
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
 //  FILE UPLOAD
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
 function onUpload(inp, lblId, zoneId) {
   var f = inp.files[0];
   if(!f) return;
@@ -528,262 +461,287 @@ function onUpload(inp, lblId, zoneId) {
   document.getElementById(zoneId).className = 'upload-zone filled';
 }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
+//  PLAN SELECTION
+// ═══════════════════════════════════════
+function setPlanType(type) {
+  ST.planType = type;
+  document.getElementById('ptSingle').className = 'pt-btn' + (type==='single'?' sel':'');
+  document.getElementById('ptFamily').className = 'pt-btn' + (type==='family'?' sel':'');
+  refreshPlanPrices();
+  if(ST.planName) showPriceBox();
+}
+
+function refreshPlanPrices() {
+  ['Premium','Prestige','Executive'].forEach(function(name) {
+    var plan = PLANS[name];
+    var pm = ST.planType==='family' ? plan.family : plan.single;
+    document.getElementById('pca_'+name).textContent = fmt(plan.cover);
+    document.getElementById('ppm_'+name).textContent = fmt(pm)+'/month';
+  });
+}
+
+function selectPlan(name) {
+  ST.planName = name;
+  ['Premium','Prestige','Executive'].forEach(function(n) {
+    document.getElementById('pc_'+n).className = 'pc'+(n===name?' sel':'');
+  });
+  showPriceBox();
+  // show benefits
+  var plan = PLANS[name];
+  var box  = document.getElementById('benefitsBox');
+  document.getElementById('benTitle').textContent = name + ' Plan — Included Benefits';
+  document.getElementById('benList').innerHTML = plan.benefits.map(function(b){
+    return '<div>✓ '+b+'</div>';
+  }).join('');
+  box.style.display = 'block';
+}
+
+function showPriceBox() {
+  if(!ST.planName) return;
+  var plan = PLANS[ST.planName];
+  var pm   = ST.planType==='family' ? plan.family : plan.single;
+  document.getElementById('priceBox').style.display = 'flex';
+  document.getElementById('pbCover').textContent = fmt(plan.cover);
+  document.getElementById('pbType').textContent  = ST.planType==='family' ? 'Family' : 'Single';
+  document.getElementById('pbPm').textContent    = fmt(pm)+'/month';
+}
+
+// ═══════════════════════════════════════
 //  DEPENDANTS
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
 function addDep(type) {
   var sc = ST.deps.filter(function(d){ return d.type==='Spouse'; }).length;
   var cc = ST.deps.filter(function(d){ return d.type==='Child';  }).length;
-  if(type==='Spouse' && sc >= 1) { alert('Maximum 1 spouse allowed.'); return; }
-  if(type==='Child'  && cc >= 6) { alert('Maximum 6 children allowed.'); return; }
+  if(type==='Spouse'&&sc>=1){ alert('Maximum 1 spouse allowed.'); return; }
+  if(type==='Child' &&cc>=6){ alert('Maximum 6 children allowed.'); return; }
   ST.deps.push({id:'d'+Date.now(), type:type, name:'', dob:'', isStudent:false, isDisabled:false});
   renderDeps();
 }
 
 function removeDep(id) {
-  ST.deps = ST.deps.filter(function(d){ return d.id !== id; });
+  ST.deps = ST.deps.filter(function(d){ return d.id!==id; });
   renderDeps();
 }
 
-function updateDep(id, field, val) {
-  var d = ST.deps.find(function(x){ return x.id === id; });
-  if(d) {
-    d[field] = (field === 'isStudent' || field === 'isDisabled') ? val : val;
-    if(field === 'isStudent' || field === 'isDisabled') renderDeps();
-    else if(field === 'dob') renderDeps();
-  }
-}
+function depName(id, val)      { var d=ST.deps.find(function(x){return x.id===id;}); if(d) d.name=val; }
+function depDob(id, val)       { var d=ST.deps.find(function(x){return x.id===id;}); if(d){ d.dob=val; renderDeps(); } }
+function depCheck(id,field,val){ var d=ST.deps.find(function(x){return x.id===id;}); if(d){ d[field]=val; renderDeps(); } }
 
 function renderDeps() {
   var list = document.getElementById('depList');
+  if(!list) return;
   list.innerHTML = ST.deps.map(function(d) {
     var age    = d.dob ? calcAge(d.dob) : null;
-    var maxAge = (d.isStudent || d.isDisabled) ? 25 : 21;
+    var maxAge = (d.isStudent||d.isDisabled) ? 25 : 21;
     var ageHtml = '';
     if(age !== null) {
-      if(d.type === 'Spouse') {
-        ageHtml = age >= 18 && age <= 65
+      if(d.type==='Spouse') {
+        ageHtml = (age>=18&&age<=65)
           ? '<div class="dep-age-msg" style="background:#d1fae5;color:#047857">✓ Age '+age+' — eligible</div>'
           : '<div class="dep-age-msg" style="background:#fee2e2;color:#dc2626">✗ Age '+age+' — must be 18–65</div>';
       } else {
-        ageHtml = age <= maxAge
+        ageHtml = (age<=maxAge)
           ? '<div class="dep-age-msg" style="background:#d1fae5;color:#047857">✓ Age '+age+' — eligible</div>'
           : '<div class="dep-age-msg" style="background:#fee2e2;color:#dc2626">✗ Age '+age+' exceeds max '+maxAge+'</div>';
       }
     }
-    var childOpts = d.type === 'Child' ? (
-      '<div class="dep-opts">' +
-      '<label class="ck"><input type="checkbox"'+(d.isStudent?' checked':'')+' onchange="updateDep(\''+d.id+'\',\'isStudent\',this.checked)"> Student (up to 25)</label>' +
-      '<label class="ck"><input type="checkbox"'+(d.isDisabled?' checked':'')+' onchange="updateDep(\''+d.id+'\',\'isDisabled\',this.checked)"> Disabled (up to 25)</label>' +
+    var childOpts = d.type==='Child' ? (
+      '<div class="dep-opts">'+
+      '<label class="ck"><input type="checkbox"'+(d.isStudent?' checked':'')+
+        ' onchange="depCheck(\''+d.id+'\',\'isStudent\',this.checked)"> Student (max age 25)</label>'+
+      '<label class="ck"><input type="checkbox"'+(d.isDisabled?' checked':'')+
+        ' onchange="depCheck(\''+d.id+'\',\'isDisabled\',this.checked)"> Disabled (max age 25)</label>'+
       '</div>'
     ) : '';
     return '<div class="dep-row">'+
-      '<div class="dep-top">'+
-      '<span style="font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;padding:4px 8px;background:var(--border);border-radius:5px;white-space:nowrap">'+d.type+'</span>'+
-      '<input type="text" placeholder="Full name" value="'+d.name+'" style="flex:2" onchange="updateDep(\''+d.id+'\',\'name\',this.value)">'+
-      '<input type="date" value="'+d.dob+'" onchange="updateDep(\''+d.id+'\',\'dob\',this.value)">'+
-      '<button type="button" class="btn-rm" onclick="removeDep(\''+d.id+'\')">✕</button>'+
+      '<div class="dep-fields">'+
+      '<div class="dep-row-top">'+
+        '<span class="dep-type-tag">'+d.type+'</span>'+
+        '<input class="dep-inp" type="text" placeholder="Full name" value="'+d.name+'" oninput="depName(\''+d.id+'\',this.value)">'+
+        '<input class="dep-inp dep-date" type="date" value="'+d.dob+'" onchange="depDob(\''+d.id+'\',this.value)" max="'+new Date().toISOString().split('T')[0]+'">'+
+        '<button type="button" class="btn-rm" onclick="removeDep(\''+d.id+'\')">✕</button>'+
       '</div>'+
       childOpts+
       ageHtml+
+      '</div>'+
       '</div>';
   }).join('');
 
-  var sc = ST.deps.filter(function(d){ return d.type==='Spouse'; }).length;
-  var cc = ST.deps.filter(function(d){ return d.type==='Child';  }).length;
-  document.getElementById('btnSpouse').disabled = sc >= 1;
-  document.getElementById('btnChild').disabled  = cc >= 6;
+  var sc = ST.deps.filter(function(d){return d.type==='Spouse';}).length;
+  var cc = ST.deps.filter(function(d){return d.type==='Child'; }).length;
+  document.getElementById('btnSpouse').disabled = sc>=1;
+  document.getElementById('btnChild').disabled  = cc>=6;
 }
 
-// ═══════════════════════════════════════════════
-//  REVIEW BUILDER
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
+//  REVIEW
+// ═══════════════════════════════════════
 function buildReview() {
   var plan = PLANS[ST.planName];
-  var pm   = plan ? (ST.planType === 'family' ? plan.family : plan.single) : 0;
+  var pm   = plan ? (ST.planType==='family' ? plan.family : plan.single) : 0;
   var dob  = gv('dob');
   var age  = calcAge(dob);
   var idF  = document.getElementById('idFile');
-  var idName = idF && idF.files[0] ? idF.files[0].name : 'Not uploaded';
-  var addr = [gv('street'), gv('city'), gv('province'), gv('postal')].filter(Boolean).join(', ');
+  var idName = (idF&&idF.files[0]) ? '✓ '+idF.files[0].name : 'Not uploaded';
 
-  document.getElementById('rvName').textContent    = gv('fullName') || '—';
-  document.getElementById('rvDob').textContent     = dob || '—';
-  document.getElementById('rvAge').textContent     = age !== null ? age + ' years' : '—';
-  document.getElementById('rvPhone').textContent   = gv('phone') || '—';
-  document.getElementById('rvEmail').textContent   = gv('email') || '—';
-  document.getElementById('rvCountry').textContent = ST.country || '—';
-  document.getElementById('rvAddr').textContent    = addr || '—';
+  document.getElementById('rvName').textContent    = gv('fullName')||'—';
+  document.getElementById('rvDob').textContent     = dob||'—';
+  document.getElementById('rvAge').textContent     = age!==null ? age+' years' : '—';
+  document.getElementById('rvPhone').textContent   = gv('phone')||'—';
+  document.getElementById('rvEmail').textContent   = gv('email')||'—';
   document.getElementById('rvId').textContent      = idName;
-  document.getElementById('rvPlan').textContent    = ST.planName ? ST.planName + ' Plan' : '—';
-  document.getElementById('rvType').textContent    = ST.planType === 'family' ? 'Family' : 'Single';
-  document.getElementById('rvCover').textContent   = plan ? fmtAmt(plan.cover) : '—';
-  document.getElementById('rvCurr').textContent    = ST.currency;
-  document.getElementById('rvTotal').textContent   = plan ? fmtAmt(pm) + '/month' : '—';
+  document.getElementById('rvBenName').textContent = (gv('benFirst')+' '+gv('benLast')).trim()||'—';
+  document.getElementById('rvBenPhone').textContent= gv('benPhone')||'—';
+  document.getElementById('rvBenRel').textContent  = gv('benRel')||'—';
+  document.getElementById('rvPlan').textContent    = ST.planName ? ST.planName+' Plan' : '—';
+  document.getElementById('rvType').textContent    = ST.planType==='family' ? 'Family' : 'Single';
+  document.getElementById('rvCover').textContent   = plan ? fmt(plan.cover) : '—';
+  document.getElementById('rvTotal').textContent   = plan ? fmt(pm)+'/month' : '—';
 
   var depSec = document.getElementById('rvDepSec');
-  if(ST.deps.length > 0) {
-    depSec.style.display = 'block';
+  if(ST.deps.length>0) {
+    depSec.style.display='block';
     document.getElementById('rvDeps').innerHTML = ST.deps.map(function(d) {
-      var age = d.dob ? calcAge(d.dob) : null;
+      var a = d.dob ? calcAge(d.dob) : null;
       return '<div class="rv-r"><span>'+d.type+'</span><strong>'+
-        (d.name||'(unnamed)')+(age!==null?' — Age '+age:'')+
+        (d.name||'(unnamed)')+(a!==null?' · Age '+a:'')+
         (d.isStudent?' · Student':'')+(d.isDisabled?' · Disabled':'')+
         '</strong></div>';
     }).join('');
   } else {
-    depSec.style.display = 'none';
+    depSec.style.display='none';
   }
 }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
 //  VALIDATION
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
 function validate() {
-  if(ST.step === 1) {
+  if(ST.step===1) {
     if(!gv('fullName'))  { alert('Please enter your full name.');        return false; }
     if(!gv('dob'))       { alert('Please enter your date of birth.');    return false; }
     var a = calcAge(gv('dob'));
-    if(a < 18 || a > 65){ alert('Age ' + a + ' is outside 18–65 range.'); return false; }
+    if(a<18||a>65)       { alert('Age '+a+' is outside the 18–65 range.'); return false; }
     if(!gv('phone'))     { alert('Please enter your phone number.');     return false; }
     if(!gv('email'))     { alert('Please enter your email address.');    return false; }
-    if(!gv('country'))   { alert('Please select your country.');         return false; }
-    if(!gv('street'))    { alert('Please enter your street address.');   return false; }
-    if(!gv('city'))      { alert('Please enter your city.');             return false; }
-    if(!gv('province'))  { alert('Please select your province/region.'); return false; }
     if(!ST.planName)     { alert('Please select a plan.');               return false; }
   }
-  if(ST.step === 2) {
-    for(var i=0; i<ST.deps.length; i++) {
-      var d = ST.deps[i];
+  if(ST.step===2) {
+    for(var i=0;i<ST.deps.length;i++) {
+      var d=ST.deps[i];
       if(!d.name.trim()) { alert('Please enter a name for each dependant.'); return false; }
-      if(!d.dob)         { alert('Please enter date of birth for: ' + (d.name||'dependant')); return false; }
-      var da = calcAge(d.dob);
-      if(d.type === 'Spouse' && (da < 18 || da > 65)) {
-        alert('Spouse "' + d.name + '" age ' + da + ' must be 18–65.'); return false;
-      }
-      if(d.type === 'Child') {
-        var mx = (d.isStudent || d.isDisabled) ? 25 : 21;
-        if(da > mx) { alert('Child "' + d.name + '" age ' + da + ' exceeds max ' + mx + '.'); return false; }
+      if(!d.dob)         { alert('Please enter date of birth for: '+(d.name||'dependant')); return false; }
+      var da=calcAge(d.dob);
+      if(d.type==='Spouse'&&(da<18||da>65)){ alert('Spouse "'+d.name+'" age '+da+' must be 18–65.'); return false; }
+      if(d.type==='Child') {
+        var mx=(d.isStudent||d.isDisabled)?25:21;
+        if(da>mx){ alert('Child "'+d.name+'" age '+da+' exceeds max '+mx+'.'); return false; }
       }
     }
+  }
+  if(ST.step===3) {
+    if(!gv('benFirst'))  { alert('Please enter beneficiary first name.');  return false; }
+    if(!gv('benLast'))   { alert('Please enter beneficiary last name.');   return false; }
+    if(!gv('benPhone'))  { alert('Please enter beneficiary phone number.'); return false; }
+    if(!gv('benRel'))    { alert('Please select beneficiary relationship.'); return false; }
   }
   return true;
 }
 
-// ═══════════════════════════════════════════════
-//  NAVIGATION
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
+//  NAVIGATION — 4 steps
+// ═══════════════════════════════════════
 var META = {
-  1: {title:'Step 1: Principal Member Details',  sub:'Personal info, plan and address',        num:'01'},
-  2: {title:'Step 2: Add Dependants',            sub:'Spouse and children (optional)',          num:'02'},
-  3: {title:'Step 3: Review & Confirm',          sub:'Verify everything before submitting',     num:'03'}
+  1:{title:'Step 1: Principal Member Details', sub:'Personal information and plan selection',     num:'01'},
+  2:{title:'Step 2: Add Dependants',           sub:'Spouse and children (optional)',              num:'02'},
+  3:{title:'Step 3: Beneficiary Details',      sub:'Who receives the payout',                    num:'03'},
+  4:{title:'Step 4: Review & Confirm',         sub:'Verify all details before submitting',        num:'04'}
 };
 
-function goNext() {
-  if(!validate()) return;
-  if(ST.step === 2) buildReview();
-  setStep(ST.step + 1);
-}
-function goPrev() { setStep(ST.step - 1); }
+function goNext() { if(!validate()) return; if(ST.step===3) buildReview(); setStep(ST.step+1); }
+function goPrev() { setStep(ST.step-1); }
 
 function setStep(n) {
-  ST.step = Math.max(1, Math.min(3, n));
-  // slides
-  document.getElementById('s1').style.display = ST.step===1 ? 'block' : 'none';
-  document.getElementById('s2').style.display = ST.step===2 ? 'block' : 'none';
-  document.getElementById('s3').style.display = ST.step===3 ? 'block' : 'none';
-  // remove active class from all, add to current
-  var slides = document.querySelectorAll('.slide');
-  for(var i=0;i<slides.length;i++) slides[i].classList.remove('active');
-  document.getElementById('s'+ST.step).classList.add('active');
-  // header
-  var m = META[ST.step];
+  ST.step = Math.max(1,Math.min(4,n));
+  for(var i=1;i<=4;i++) {
+    var el=document.getElementById('s'+i);
+    if(el) el.style.display=(i===ST.step)?'block':'none';
+    if(el&&i===ST.step) el.classList.add('active'); else if(el) el.classList.remove('active');
+  }
+  var m=META[ST.step];
   document.getElementById('cardTitle').textContent = m.title;
   document.getElementById('cardSub').textContent   = m.sub;
   document.getElementById('cardNum').textContent   = m.num;
-  document.getElementById('navInfo').textContent   = 'Step ' + ST.step + ' of 3';
-  // buttons
-  document.getElementById('prevBtn').style.display   = ST.step > 1   ? 'inline-flex' : 'none';
-  document.getElementById('nextBtn').style.display   = ST.step < 3   ? 'inline-flex' : 'none';
-  document.getElementById('submitBtn').style.display = ST.step === 3 ? 'inline-flex' : 'none';
-  // progress dots
-  var items = document.querySelectorAll('.si');
+  document.getElementById('navInfo').textContent   = 'Step '+ST.step+' of 4';
+  document.getElementById('prevBtn').style.display   = ST.step>1   ?'inline-flex':'none';
+  document.getElementById('nextBtn').style.display   = ST.step<4   ?'inline-flex':'none';
+  document.getElementById('submitBtn').style.display = ST.step===4 ?'inline-flex':'none';
+  // progress
+  var items=document.querySelectorAll('.si');
   for(var j=0;j<items.length;j++) {
     items[j].classList.remove('active','done');
-    if(j+1 === ST.step) items[j].classList.add('active');
-    if(j+1 <  ST.step)  items[j].classList.add('done');
+    if(j+1===ST.step) items[j].classList.add('active');
+    if(j+1< ST.step)  items[j].classList.add('done');
   }
-  // progress bar
-  var pct = [0,50,100];
-  document.getElementById('progFill').style.width = pct[ST.step-1] + '%';
-  window.scrollTo({top:0, behavior:'smooth'});
+  var pct=[0,33,66,100];
+  document.getElementById('progFill').style.width=pct[ST.step-1]+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
 //  SUBMIT
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════
 function submitApp() {
   var btn  = document.getElementById('submitBtn');
   var plan = PLANS[ST.planName];
-  var pm   = plan ? (ST.planType==='family' ? plan.family : plan.single) : 0;
-  var polNum = 'WWFP-' + Date.now();
-
+  var pm   = plan?(ST.planType==='family'?plan.family:plan.single):0;
+  var polNum = 'WWFP-'+Date.now();
   var payload = {
     policy_number:     polNum,
     policy_type:       ST.planName,
-    currency:          ST.currency,
+    currency:          'ZAR',
     policyholder_name: gv('fullName'),
     policyholder_dob:  gv('dob'),
     phone:             gv('phone'),
     email:             gv('email'),
-    street:            gv('street'),
-    city:              gv('city'),
-    province:          gv('province'),
-    postal_code:       gv('postal'),
-    has_spouse:        ST.deps.some(function(d){ return d.type==='Spouse'; }),
-    spouse_name:       (ST.deps.find(function(d){ return d.type==='Spouse'; })||{}).name || null,
-    spouse_dob:        (ST.deps.find(function(d){ return d.type==='Spouse'; })||{}).dob  || null,
-    children: ST.deps.filter(function(d){ return d.type==='Child'; }).map(function(c){
-      return {name:c.name, dob:c.dob, is_student:c.isStudent, is_disabled:c.isDisabled};
+    has_spouse:        ST.deps.some(function(d){return d.type==='Spouse';}),
+    spouse_name:       (ST.deps.find(function(d){return d.type==='Spouse';})||{}).name||null,
+    spouse_dob:        (ST.deps.find(function(d){return d.type==='Spouse';})||{}).dob||null,
+    children: ST.deps.filter(function(d){return d.type==='Child';}).map(function(c){
+      return {name:c.name,dob:c.dob,is_student:c.isStudent,is_disabled:c.isDisabled};
     }),
     extended_family: [],
     source: 'digital_form'
   };
-
-  btn.textContent = '⌛ Submitting…';
-  btn.disabled = true;
-
-  fetch('/api/v1/policies', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(payload)
+  btn.textContent='⌛ Submitting…'; btn.disabled=true;
+  fetch('/api/v1/policies',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
   })
-  .then(function(res){ return res.json().then(function(d){ return {ok:res.ok, data:d}; }); })
+  .then(function(res){ return res.json().then(function(d){return{ok:res.ok,data:d};}); })
   .then(function(r) {
-    if(!r.ok) throw new Error(Array.isArray(r.data.detail) ? r.data.detail.join('\n') : r.data.detail || 'Error');
-    // show success
-    document.getElementById('appForm').style.display   = 'none';
-    document.getElementById('succScreen').style.display = 'block';
-    document.querySelector('.cf').style.display         = 'none';
-    document.getElementById('prog').style.display       = 'none';
-    document.getElementById('cardTitle').textContent    = 'Application Complete';
-    document.getElementById('cardSub').textContent      = 'Thank you — your policy is being processed';
-    document.getElementById('cardNum').textContent      = '✓';
-    document.getElementById('polRef').textContent       = r.data.policy_number || polNum;
-    document.getElementById('spm').textContent          = fmtAmt(pm) + '/month';
-    document.getElementById('scov').textContent         = plan ? fmtAmt(plan.cover) : '—';
-    window.scrollTo({top:0, behavior:'smooth'});
+    if(!r.ok) throw new Error(Array.isArray(r.data.detail)?r.data.detail.join('\n'):r.data.detail||'Server error');
+    document.getElementById('appForm').style.display='none';
+    document.getElementById('succScreen').style.display='block';
+    document.querySelector('.cf').style.display='none';
+    document.getElementById('prog').style.display='none';
+    document.getElementById('cardTitle').textContent='Application Complete ✓';
+    document.getElementById('cardSub').textContent='Thank you — your policy is being processed';
+    document.getElementById('cardNum').textContent='✓';
+    document.getElementById('polRef').textContent=r.data.policy_number||polNum;
+    document.getElementById('spm').textContent=fmt(pm)+'/month';
+    document.getElementById('scov').textContent=plan?fmt(plan.cover):'—';
+    window.scrollTo({top:0,behavior:'smooth'});
   })
-  .catch(function(err) {
-    alert('Submission failed:\n' + err.message);
-    btn.textContent = 'Submit Application ✓';
-    btn.disabled = false;
+  .catch(function(err){
+    alert('Submission failed:\n'+err.message);
+    btn.textContent='Submit Application ✓'; btn.disabled=false;
   });
 }
 
-// ── INIT ──────────────────────────────────────
-onCountry();  // populate provinces on load with default (empty)
+// INIT
 refreshPlanPrices();
 </script>
 </body>
