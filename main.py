@@ -50,8 +50,7 @@ def get_db():
 
 def init_db():
     c = get_db()
-    c.executescript("""
-    CREATE TABLE IF NOT EXISTS policies (
+    c.execute("""CREATE TABLE IF NOT EXISTS policies (
         id                TEXT PRIMARY KEY,
         policy_number     TEXT UNIQUE NOT NULL,
         policy_type       TEXT NOT NULL,
@@ -79,8 +78,8 @@ def init_db():
         source            TEXT DEFAULT ''digital_form'',
         created_at        TEXT DEFAULT (datetime(''now'')),
         raw_payload       TEXT
-    );
-    CREATE TABLE IF NOT EXISTS documents (
+    )""")
+    c.execute("""CREATE TABLE IF NOT EXISTS documents (
         id            TEXT PRIMARY KEY,
         policy_id     TEXT,
         document_type TEXT,
@@ -89,8 +88,7 @@ def init_db():
         file_size     INTEGER,
         mime_type     TEXT,
         uploaded_at   TEXT DEFAULT (datetime(''now''))
-    );
-    """)
+    )""")
     c.commit(); c.close()
     print(f"âœ…  DB ready: {DB}")
 
