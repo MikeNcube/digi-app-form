@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Zororo Phumulani Funeral Policy</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.form-container {
+    width: 420px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+.gold-bar {
+    height: 8px;
+    background: linear-gradient(90deg,#c9a227,#f2d16b,#c9a227);
+}
+
+.form-header {
+    text-align: center;
+    padding: 25px 20px 10px 20px;
+}
+
+.logo {
+    width: 70px;
+    margin-bottom: 10px;
+}
+
+.company-name {
+    font-size: 20px;
+    font-weight: bold;
+    color: #203a43;
+}
+
+.form-title {
+    font-size: 16px;
+    margin-top: 5px;
+    color: #555;
+}
+
+.slide {
+    padding: 20px;
+}
+
+.slide h3 {
+    margin-bottom: 15px;
+    color: #203a43;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.file-label {
+    font-size: 13px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: #203a43;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    margin-top: 5px;
+}
+
+button:hover {
+    background: #2c5364;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-buttons button {
+    width: 100%;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="form-container">
+
+    <div class="gold-bar"></div>
+
+    <div class="form-header">
+        <div class="company-name">Zororo Phumulani</div>
+        <div class="form-title">Funeral Policy Application</div>
+    </div>
+
+    <form enctype="multipart/form-data">
+
+        <!-- SLIDE 1 -->
+        <div class="slide" id="slide-1">
+            <h3>Personal Information</h3>
+
+            <input type="text" placeholder="Full Name" required>
+            <input type="date" required>
+            <input type="text" placeholder="Passport / ID Number" required>
+            <input type="tel" placeholder="Mobile Number" required>
+            <input type="email" placeholder="Email Address" required>
+
+            <select required>
+                <option value="">-- Select Country of Residence --</option>
+
+                <optgroup label="SADC Region">
+                    <option>South Africa</option>
+                    <option>Zimbabwe</option>
+                    <option>Botswana</option>
+                    <option>Mozambique</option>
+                    <option>Zambia</option>
+                    <option>Namibia</option>
+                    <option>Lesotho</option>
+                    <option>Eswatini</option>
+                    <option>Malawi</option>
+                    <option>Angola</option>
+                </optgroup>
+
+                <optgroup label="Overseas">
+                    <option>European Union</option>
+                    <option>Australia</option>
+                    <option>Canada</option>
+                    <option>USA</option>
+                    <option>New Zealand</option>
+                    <option>France</option>
+                </optgroup>
+            </select>
+
+            <label class="file-label">Upload Passport / ID</label>
+            <input type="file" accept=".pdf,.jpg,.jpeg,.png">
+
+            <button type="button" onclick="nextSlide()">Next</button>
+        </div>
+
+        <!-- SLIDE 2 -->
+        <div class="slide" id="slide-2" style="display:none;">
+            <h3>Address Information</h3>
+
+            <input type="text" placeholder="Street Address">
+            <input type="text" placeholder="City">
+            <input type="text" placeholder="Postal Code">
+
+            <div class="nav-buttons">
+                <button type="button" onclick="prevSlide()">Back</button>
+                <button type="button" onclick="nextSlide()">Next</button>
+            </div>
+        </div>
+
+        <!-- SLIDE 3 -->
+        <div class="slide" id="slide-3" style="display:none;">
+            <h3>Dependents</h3>
+
+            <p>Dependents section coming next...</p>
+
+            <div class="nav-buttons">
+                <button type="button" onclick="prevSlide()">Back</button>
+                <button type="submit">Submit</button>
+            </div>
+        </div>
+
+    </form>
+
+</div>
+
+<script>
+
+let currentSlide = 1;
+const totalSlides = 3;
+
+function showSlide(n) {
+    for (let i = 1; i <= totalSlides; i++) {
+        document.getElementById("slide-" + i).style.display = "none";
+    }
+    document.getElementById("slide-" + n).style.display = "block";
+}
+
+function nextSlide() {
+    if (currentSlide < totalSlides) {
+        currentSlide++;
+        showSlide(currentSlide);
+    }
+}
+
+function prevSlide() {
+    if (currentSlide > 1) {
+        currentSlide--;
+        showSlide(currentSlide);
+    }
+}
+
+</script>
+
+</body>
+</html>

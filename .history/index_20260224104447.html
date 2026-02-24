@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Zororo Phumulani Worldwide Funeral Plan</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+
+<h2>Zororo Phumulani Worldwide Funeral Plan</h2>
+
+<div id="wizard">
+
+    <!-- Step 1 -->
+    <div class="step active">
+        <h3>Main Applicant</h3>
+        <input id="fullName" placeholder="Full Name" />
+        <input id="dob" type="date" />
+        <select id="region">
+            <option value="SA">South Africa</option>
+            <option value="SADC">SADC</option>
+            <option value="EU">EU</option>
+        </select>
+        <button onclick="nextStep()">Next</button>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step">
+        <h3>Plan Selection</h3>
+        <select id="plan">
+            <option value="Premium">Premium</option>
+            <option value="Prestige">Prestige</option>
+            <option value="Executive">Executive</option>
+        </select>
+
+        <select id="type">
+            <option value="Family">Family</option>
+            <option value="Single">Single</option>
+        </select>
+
+        <button onclick="nextStep()">Next</button>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step">
+        <h3>Extended Members</h3>
+        <button onclick="addExtended()">Add Extended Member</button>
+        <div id="extendedList"></div>
+        <button onclick="nextStep()">Next</button>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step">
+        <h3>Review</h3>
+        <div id="review"></div>
+        <button onclick="submitApp()">Submit</button>
+    </div>
+
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

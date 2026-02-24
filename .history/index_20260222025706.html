@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Funeral Insurance Application</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="progress-bar">
+        <div id="progress"></div>
+    </div>
+
+    <form id="applicationForm">
+
+        <!-- Slide 1 -->
+        <div class="slide active">
+            <h2>Main Applicant</h2>
+            <input type="text" name="full_name" placeholder="Full Name" required>
+            <input type="text" name="id_number" placeholder="ID Number" required>
+            <input type="date" name="dob" required>
+            <input type="tel" name="phone" placeholder="Phone Number" required>
+            <input type="email" name="email" placeholder="Email" required>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="slide">
+            <h2>Address</h2>
+            <input type="text" name="street" placeholder="Street Address" required>
+            <input type="text" name="city" placeholder="City" required>
+            <input type="text" name="province" placeholder="Province" required>
+            <input type="text" name="postal_code" placeholder="Postal Code" required>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide">
+            <h2>Employment</h2>
+            <input type="text" name="employer" placeholder="Employer" required>
+            <input type="number" name="monthly_income" placeholder="Monthly Income" required>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="slide">
+            <h2>Spouse (Optional)</h2>
+            <select name="married" id="marriedSelect">
+                <option value="no">Not Married</option>
+                <option value="yes">Married</option>
+            </select>
+
+            <div id="spouseFields" style="display:none;">
+                <input type="text" name="spouse_name" placeholder="Spouse Name">
+                <input type="date" name="spouse_dob">
+            </div>
+        </div>
+
+        <!-- Slide 5 -->
+        <div class="slide">
+            <h2>Dependents</h2>
+            <input type="number" name="dependents_count" min="0" max="10" placeholder="Number of Dependents">
+        </div>
+
+        <!-- Slide 6 -->
+        <div class="slide">
+            <h2>Coverage Selection</h2>
+            <select name="plan_type" required>
+                <option value="">Select Plan</option>
+                <option value="basic">Basic Plan</option>
+                <option value="standard">Standard Plan</option>
+                <option value="premium">Premium Plan</option>
+            </select>
+
+            <input type="number" name="coverage_amount" placeholder="Coverage Amount" required>
+        </div>
+
+        <!-- Slide 7 -->
+        <div class="slide">
+            <h2>Review & Submit</h2>
+            <p>Please review your details before submission.</p>
+            <button type="submit">Submit Application</button>
+        </div>
+
+        <div class="navigation">
+            <button type="button" id="prevBtn">Previous</button>
+            <button type="button" id="nextBtn">Next</button>
+        </div>
+
+    </form>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

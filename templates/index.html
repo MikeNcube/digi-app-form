@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Zororo Digi Funeral Insurance</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial; margin: 0; padding: 0; background: #f4f6f9; }
+        .container { max-width: 700px; margin: auto; padding: 20px; background: white; margin-top: 30px; border-radius: 8px; }
+        .step { display: none; }
+        .step.active { display: block; }
+        input, select { width: 100%; padding: 8px; margin: 6px 0 12px 0; }
+        button { padding: 10px 15px; border: none; background: #006400; color: white; cursor: pointer; }
+        .nav-buttons { display: flex; justify-content: space-between; }
+        h2 { color: #006400; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Zororo Digi Funeral Insurance</h1>
+
+    <form id="insuranceForm">
+
+        <!-- STEP 1 -->
+        <div class="step active">
+            <h2>Step 1: Principal Member</h2>
+            <input type="text" name="fullName" placeholder="Full Name" required>
+            <input type="text" name="idNumber" placeholder="ID / Passport Number" required>
+            <input type="text" name="dob" placeholder="Date of Birth (DD/MM/YYYY)" required>
+            <input type="text" name="country" placeholder="Country of Residence" required>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="step">
+            <h2>Step 2: Contact Details</h2>
+            <input type="text" name="phone" placeholder="Phone Number" required>
+            <input type="email" name="email" placeholder="Email Address" required>
+            <input type="text" name="zimAddress" placeholder="Zimbabwe Address" required>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="step">
+            <h2>Step 3: Plan Selection</h2>
+            <select name="plan" required>
+                <option value="">Select Plan</option>
+                <option value="Bronze">Bronze</option>
+                <option value="Silver">Silver</option>
+                <option value="Gold">Gold</option>
+                <option value="Platinum">Platinum</option>
+            </select>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="step">
+            <h2>Step 4: Add-Ons</h2>
+            <label><input type="checkbox" name="addons" value="Tombstone"> Tombstone Benefit</label><br>
+            <label><input type="checkbox" name="addons" value="Repatriation"> Repatriation Upgrade</label>
+        </div>
+
+        <!-- STEP 5 -->
+        <div class="step">
+            <h2>Step 5: Upload Documents</h2>
+            <input type="file" name="files" multiple>
+        </div>
+
+        <!-- STEP 6 -->
+        <div class="step">
+            <h2>Step 6: Consent</h2>
+            <label>
+                <input type="checkbox" id="consentCheck" required>
+                I declare the information provided is true.
+            </label>
+        </div>
+
+        <!-- STEP 7 -->
+        <div class="step">
+            <h2>Step 7: Submit</h2>
+            <p>Click submit to complete application.</p>
+        </div>
+
+        <div class="nav-buttons">
+            <button type="button" onclick="prevStep()">Previous</button>
+            <button type="button" onclick="nextStep()">Next</button>
+            <button type="button" onclick="submitForm()">Submit</button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+let currentStep = 0;
+const steps = document.querySelectorAll(".step");
+
+function showStep(index) {
+    steps.forEach((step, i) => {
+        step.classList.remove("active");
+        if (i === index) step.classList.add("active");
+    });
+}
+
+function nextStep() {
+    if (currentStep < steps.length - 1) {
+        currentStep++;
+        showStep(currentStep);
+    }
+}
+
+function prevStep() {
+    if (currentStep > 0) {
+        currentStep--;
+        showStep(currentStep);
+    }
+}
+
+async function submitForm() {
+    const consent = document.getElementById("consentCheck");
+    if (!consent.checked) {
+        alert("Please accept the declaration.");
+        return;
+    }
+
+    const form = document.getElementById("insuranceForm");
+    const formData = new FormData(form);
+
+    const response = await fetch("/submit", {
+        method: "POST",
+        body: formData
+    });
+
+    const result = await response.json();
+    alert(result.message);
+}
+</script>
+
+</body>
+</html>
