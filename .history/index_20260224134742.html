@@ -1,0 +1,44 @@
+<form id="applicationForm" action="/submit" method="post">
+
+  <select id="planType" name="plan_type" onchange="updatePlans()" required>
+    <option value="">Select Plan Type</option>
+    <option value="Family">Family</option>
+    <option value="Single">Single</option>
+  </select>
+
+  <select id="planPrice" name="plan_price" required>
+    <option value="">Select Plan Price</option>
+  </select>
+
+  <!-- Add required fields your backend expects -->
+  <input type="text" name="full_name" placeholder="Full Name" required>
+  <input type="date" name="dob" required>
+
+  <button type="submit">Submit Application</button>
+
+</form>
+
+<script>
+function updatePlans(){
+  const type = document.getElementById("planType").value;
+  const price = document.getElementById("planPrice");
+
+  price.innerHTML = '<option value="">Select Plan Price</option>';
+
+  if(type === "Family"){
+    price.innerHTML += `
+      <option value="R540">R540</option>
+      <option value="R720">R720</option>
+      <option value="R1080">R1080</option>
+    `;
+  }
+
+  if(type === "Single"){
+    price.innerHTML += `
+      <option value="R450">R450</option>
+      <option value="R630">R630</option>
+      <option value="R990">R990</option>
+    `;
+  }
+}
+</script>
