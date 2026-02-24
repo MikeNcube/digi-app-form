@@ -6,64 +6,77 @@
     <option value="Single">Single</option>
   </select>
 
-  <select id="planPrice" name="plan_price" required></select>
+  <select id="planPrice" name="plan_price" required>
+    <option value="">Select Plan Price</option>
+  </select>
 
-  <button type="submit">Submit Application</button>
+  <button type="submit" id="submitBtn">Submit Application</button>
 
 </form>
 
 <script>
-function updatePlans(){
+function updatePlans() {
   const type = document.getElementById("planType").value;
   const price = document.getElementById("planPrice");
+  const dependentsSlide = document.getElementById("dependentsSlide");
 
-  price.innerHTML = "";
+  price.innerHTML = '<option value="">Select Plan Price</option>';
 
-  if(type === "Family"){
-    price.innerHTML = `
+  if (type === "Family") {
+    price.innerHTML += `
       <option value="R540">R540</option>
       <option value="R720">R720</option>
       <option value="R1080">R1080</option>
     `;
-    document.getElementById("dependentsSlide").style.display = "block";
+    if (dependentsSlide) dependentsSlide.style.display = "block";
   }
 
-  if(type === "Single"){
-    price.innerHTML = `
+  if (type === "Single") {
+    price.innerHTML += `
       <option value="R450">R450</option>
       <option value="R630">R630</option>
       <option value="R990">R990</option>
     `;
-    document.getElementById("dependentsSlide").style.display = "none";
+    if (dependentsSlide) dependentsSlide.style.display = "none";
   }
 }
 
-document.getElementById("applicationForm").addEventListener("submit", async function(e){
+document.getElementById("applicationForm").addEventListener("submit", async function(e) {
   e.preventDefault();
 
-  const formData = new FormData(this);
-  const data = {};
+  const submitBtn = document.getElementById("submitBtn");
+  submitBtn.disabled = true;
+  submitBtn.innerText = "Submitting...";
 
-  formData.forEach((value, key) => {
-    data[key] = value;
-  });
+  const formData = new FormData(this);  // ✅ Send form directly
 
   try {
-    const response = await fetch("https://digi-app-form-production.up.railway.app/apply", {
+    const response = await fetch("https://digi-app-form-production.up.railway.app/submit", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
+      body: formData   // ✅ NO JSON, NO headers
     });
 
     const result = await response.json();
+
+    if (!response.ok) {
+      alert(result.error || "Submission failed.");
+      submitBtn.disabled = false;
+      submitBtn.innerText = "Submit Application";
+      return;
+    }
+
     alert("Application submitted successfully!");
     console.log(result);
 
+    this.reset();
+    document.getElementById("planPrice").innerHTML = '<option value="">Select Plan Price</option>';
+
   } catch (error) {
-    alert("Submission failed.");
+    alert("Submission failed. Please try again.");
     console.error(error);
   }
+
+  submitBtn.disabled = false;
+  submitBtn.innerText = "Submit Application";
 });
 </script>
