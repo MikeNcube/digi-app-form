@@ -1,353 +1,603 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zororo Phumulani | Apply for Cover</title>
-  <link rel="stylesheet" href="/static/styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zororo Phumulani | Funeral Policy Application</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#08172e;--navy2:#0e2244;--navy3:#163466;
+  --blue:#1a56db;--pale:#eff6ff;
+  --gold:#c9a84c;--gold2:#e8c97a;--gold3:#fdf8ee;
+  --off:#f8fafc;--ink:#07111f;--slate:#334155;
+  --muted:#64748b;--border:#e2e8f0;--bmd:#cbd5e1;
+  --green:#059669;--red:#dc2626;--warn:#d97706;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* HEADER */
+.hdr{background:var(--navy);padding:0 40px;height:66px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 20px rgba(8,23,46,.5);position:sticky;top:0;z-index:100}
+.logo{font-size:28px;font-weight:900;color:var(--gold);letter-spacing:-1px;font-family:Georgia,serif}
+.brand{flex:1}
+.brand-name{font-size:15px;font-weight:700;color:#fff}
+.brand-name span{color:var(--gold)}
+.brand-sub{font-size:9px;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;margin-top:1px}
+.fsp{font-size:9px;font-weight:700;color:var(--gold);background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.25);padding:3px 10px;border-radius:20px;letter-spacing:.8px}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--navy),var(--navy2) 60%,var(--navy3));padding:28px 40px;border-bottom:2px solid rgba(201,168,76,.2)}
+.hero h1{font-size:22px;font-weight:700;color:#fff;margin-bottom:4px}
+.hero p{font-size:12.5px;color:rgba(255,255,255,.45)}
+.hero-bar{height:2px;background:linear-gradient(90deg,var(--gold),var(--gold2) 50%,transparent);margin-top:16px;border-radius:1px}
+
+/* PROGRESS */
+.prog-wrap{max-width:720px;margin:28px auto 0;padding:0 20px}
+.prog-steps{display:flex;align-items:flex-start;position:relative;margin-bottom:28px}
+.prog-line{position:absolute;top:13px;left:20px;right:20px;height:2px;background:var(--border);z-index:0}
+.prog-fill{position:absolute;top:13px;left:20px;height:2px;background:linear-gradient(90deg,var(--navy3),var(--blue));z-index:1;transition:width .4s ease;width:0}
+.step-item{flex:1;display:flex;flex-direction:column;align-items:center;position:relative;z-index:2}
+.step-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--muted);transition:all .3s}
+.step-item.active .step-dot{border-color:var(--blue);color:var(--blue);background:var(--pale);box-shadow:0 0 0 4px rgba(26,86,219,.1)}
+.step-item.done .step-dot{border-color:var(--navy3);background:var(--navy3);color:#fff}
+.step-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-top:5px;text-align:center}
+.step-item.active .step-lbl{color:var(--blue)}
+.step-item.done .step-lbl{color:var(--navy3)}
+
+/* CARD */
+.card{background:#fff;border-radius:18px;border:1px solid var(--border);box-shadow:0 4px 24px rgba(8,23,46,.08);overflow:hidden;max-width:720px;margin:0 auto}
+.card-head{background:linear-gradient(135deg,var(--navy),var(--navy2) 60%,var(--navy3));padding:24px 36px;display:flex;align-items:center;justify-content:space-between;position:relative}
+.card-head::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold2) 40%,transparent)}
+.ch-left h2{font-size:18px;font-weight:700;color:#fff;margin-bottom:3px}
+.ch-left p{font-size:11.5px;color:rgba(255,255,255,.42)}
+.ch-num{font-size:36px;font-weight:900;color:rgba(255,255,255,.07);font-family:Georgia,serif;line-height:1}
+.card-body{padding:32px 36px}
+.card-foot{padding:16px 36px 24px;border-top:1px solid var(--border);background:var(--off);display:flex;align-items:center;justify-content:space-between;gap:12px}
+
+/* SLIDES */
+.slide{display:none}
+.slide.active{display:block;animation:up .25s cubic-bezier(.16,1,.3,1)}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* FORM FIELDS */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.fg{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+.fg:last-child{margin-bottom:0}
+.fg label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--slate)}
+.fg input,.fg select{padding:10px 13px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;color:var(--ink);background:#fff;outline:none;width:100%;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none}
+.fg input:focus,.fg select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.08)}
+.fg input::placeholder{color:#aab}
+.fg select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%2364748b' d='M5 6L0 0h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;cursor:pointer}
+.age-badge{display:inline-block;font-size:11px;font-weight:700;color:var(--blue);background:var(--pale);padding:2px 10px;border-radius:20px;margin-top:4px}
+.age-badge.warn{color:var(--warn);background:#fffbeb}
+.age-badge.err{color:var(--red);background:#fef2f2}
+
+/* PLAN CARDS */
+.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.pc{border:2px solid var(--border);border-radius:12px;padding:14px 12px;cursor:pointer;transition:all .2s;text-align:center;position:relative}
+.pc:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 8px 24px rgba(26,86,219,.1)}
+.pc.sel{border-color:var(--blue);background:var(--navy);transform:translateY(-2px);box-shadow:0 8px 24px rgba(26,86,219,.18)}
+.pc-tier{font-size:7.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.pc.sel .pc-tier{color:rgba(255,255,255,.35)}
+.pc-name{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.pc.sel .pc-name{color:#fff}
+.pc-cover{font-size:20px;font-weight:900;color:var(--blue);line-height:1;margin-bottom:2px}
+.pc.sel .pc-cover{color:var(--gold2)}
+.pc-sub{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+.pc.sel .pc-sub{color:rgba(255,255,255,.3)}
+.pc-pm{display:flex;flex-direction:column;gap:2px}
+.pc-tag{font-size:9.5px;font-weight:600;padding:2px 7px;border-radius:20px;background:var(--border);color:var(--slate);display:inline-block}
+.pc.sel .pc-tag{background:rgba(255,255,255,.12);color:rgba(255,255,255,.6)}
+.pc-chk{display:none;position:absolute;top:7px;right:7px;background:var(--blue);color:#fff;font-size:8px;font-weight:700;padding:2px 7px;border-radius:20px}
+.pc.sel .pc-chk{display:block}
+
+/* PRICE DISPLAY */
+.price-box{background:var(--navy);border-radius:12px;padding:16px 20px;display:flex;gap:0;margin-top:16px;border:1px solid rgba(201,168,76,.18)}
+.pb-col{flex:1;text-align:center;padding:8px 12px;border-right:1px solid rgba(255,255,255,.07)}
+.pb-col:last-child{border-right:none}
+.pb-lbl{font-size:8px;color:rgba(255,255,255,.35);letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px}
+.pb-val{font-size:18px;font-weight:700;color:#fff}
+.pb-col.highlight .pb-val{color:var(--gold2)}
+
+/* DEPENDENTS */
+.dep-row{background:var(--off);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;animation:up .2s ease}
+.dep-top{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+.dep-top input,.dep-top select{flex:1;min-width:100px;padding:8px 11px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;color:var(--ink);background:#fff;outline:none;transition:border-color .15s}
+.dep-top input:focus,.dep-top select:focus{border-color:var(--blue)}
+.dep-opts{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;align-items:center}
+.chk-lbl{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--slate);cursor:pointer}
+.chk-lbl input{accent-color:var(--blue);width:14px;height:14px}
+.dep-age{font-size:10.5px;font-weight:600;margin-top:5px}
+.dep-age.ok{color:var(--green)}
+.dep-age.warn{color:var(--warn)}
+.dep-age.err{color:var(--red)}
+.btn-rm{width:32px;height:32px;border-radius:7px;background:#fef2f2;color:var(--red);border:1px solid #fecaca;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.btn-rm:hover{background:var(--red);color:#fff}
+.btn-add{display:inline-flex;align-items:center;gap:6px;background:var(--navy);color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:600;margin-top:4px;transition:all .18s}
+.btn-add:hover{background:var(--blue);transform:translateY(-1px)}
+.btn-add:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.info-box{background:var(--pale);border:1px solid #bfdbfe;border-left:3px solid var(--blue);border-radius:8px;padding:10px 13px;font-size:12px;color:var(--slate);line-height:1.6;margin-bottom:16px}
+
+/* REVIEW */
+.rv-section{margin-bottom:20px}
+.rv-title{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.rv-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:var(--slate);border-bottom:1px solid var(--off)}
+.rv-row:last-child{border-bottom:none}
+.rv-row strong{color:var(--navy);font-weight:600}
+.rv-total{background:var(--navy);border-radius:10px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;margin-top:16px}
+.rv-total span{font-size:12px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.8px}
+.rv-total strong{font-size:22px;font-weight:800;color:var(--gold2)}
+.waiting{background:#fffbeb;border:1px solid #fde68a;border-left:3px solid var(--warn);border-radius:8px;padding:10px 13px;font-size:11.5px;color:#92400e;line-height:1.6;margin-top:14px}
+.dep-summary{background:var(--off);border-radius:8px;padding:10px 14px;margin-top:4px}
+.dep-summary-row{font-size:12.5px;color:var(--slate);padding:3px 0;display:flex;align-items:center;gap:8px}
+.dep-summary-row::before{content:'·';color:var(--gold);font-size:16px}
+
+/* SUCCESS */
+.success{text-align:center;padding:40px 20px;animation:up .4s ease}
+.s-icon{width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,#047857,#10b981);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:34px;color:#fff;box-shadow:0 0 0 12px rgba(5,150,105,.07),0 6px 24px rgba(5,150,105,.28)}
+.success h2{font-size:24px;font-weight:700;color:var(--navy);margin-bottom:8px}
+.success p{font-size:13.5px;color:var(--muted);max-width:400px;margin:0 auto;line-height:1.7}
+.pol-ref{display:inline-flex;align-items:center;gap:10px;margin-top:22px;background:var(--gold3);border:1.5px solid rgba(201,168,76,.35);color:var(--navy);font-size:15px;font-weight:700;padding:12px 28px;border-radius:11px;letter-spacing:.3px}
+.s-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px;text-align:left}
+.s-card{background:var(--off);border:1px solid var(--border);border-top:2px solid var(--blue);border-radius:10px;padding:12px 16px}
+.s-card .lbl{font-size:8.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.s-card .val{font-size:15px;font-weight:700;color:var(--navy)}
+.s-contacts{display:flex;justify-content:center;gap:10px;margin-top:20px;flex-wrap:wrap}
+.s-pill{font-size:11.5px;color:var(--muted);background:var(--off);border:1px solid var(--border);padding:5px 13px;border-radius:20px}
+
+/* BUTTONS */
+.btn{padding:10px 22px;border-radius:8px;font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;border:none;transition:all .18s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:#1e429f;transform:translateY(-1px);box-shadow:0 5px 16px rgba(26,86,219,.28)}
+.btn-ghost{background:#fff;color:var(--slate);border:1.5px solid var(--bmd)}
+.btn-ghost:hover{border-color:var(--blue);color:var(--blue)}
+.btn-submit{background:linear-gradient(135deg,var(--navy),var(--navy3));color:#fff;border:1px solid rgba(201,168,76,.2);box-shadow:0 3px 14px rgba(8,23,46,.22);display:none}
+.btn-submit:hover{box-shadow:0 6px 22px rgba(8,23,46,.32);transform:translateY(-1px)}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+.nav-info{font-size:11px;color:var(--muted);flex:1;text-align:center}
+
+@media(max-width:600px){
+  .hdr{padding:0 16px}.hero{padding:20px 16px}
+  .prog-wrap{padding:0 12px}.card-body{padding:22px 18px}.card-foot{padding:14px 18px 20px}
+  .card-head{padding:18px 20px}.row2,.row3{grid-template-columns:1fr}
+  .plan-grid{grid-template-columns:1fr}.price-box{flex-direction:column}
+  .s-grid{grid-template-columns:1fr}.dep-top{flex-direction:column}
+}
+</style>
 </head>
 <body>
 
-<!-- â”€â”€â”€ HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
 <header class="hdr">
-  <img class="logo-img" src="/static/logo.png" alt="Zororo Phumulani"
-       onerror="this.style.display=''none''">
+  <div class="logo">Z</div>
   <div class="brand">
-    <div class="brand-name">Zororo<em>phumulani</em></div>
-    <div class="brand-sub">Worldwide Funeral Plan Â· FSP15980 Â· Powered by Doves Zimbabwe</div>
+    <div class="brand-name">Zororo<span>phumulani</span></div>
+    <div class="brand-sub">Worldwide Funeral Plan · FSP15980</div>
   </div>
-  <div class="hdr-badge">Authorised FSP</div>
+  <div class="fsp">Authorised FSP</div>
 </header>
 
-<!-- â”€â”€â”€ HERO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
 <div class="hero">
-  <div class="hero-inner">
-    <h1>Funeral Policy Application</h1>
-    <p>Complete the secure digital form in 7 steps. All information is encrypted and protected under POPIA.</p>
-    <div class="hero-line"></div>
-  </div>
+  <h1>Funeral Policy Application</h1>
+  <p>Complete your application in 3 simple steps. Secure &amp; encrypted.</p>
+  <div class="hero-bar"></div>
 </div>
 
-<!-- â”€â”€â”€ APP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
-<div class="app">
-
-  <!-- Step track -->
-  <div class="step-track" id="stepTrack">
-    <div class="step-line"></div>
-    <div class="step-fill" id="stepFill"></div>
-    <div class="s-step active"><div class="s-dot">1</div><div class="s-label">Member</div></div>
-    <div class="s-step"><div class="s-dot">2</div><div class="s-label">Spouse</div></div>
-    <div class="s-step"><div class="s-dot">3</div><div class="s-label">Children</div></div>
-    <div class="s-step"><div class="s-dot">4</div><div class="s-label">Extended</div></div>
-    <div class="s-step"><div class="s-dot">5</div><div class="s-label">Plan</div></div>
-    <div class="s-step"><div class="s-dot">6</div><div class="s-label">Review</div></div>
-    <div class="s-step"><div class="s-dot">7</div><div class="s-label">Confirm</div></div>
+<div class="prog-wrap">
+  <div class="prog-steps" id="progSteps">
+    <div class="prog-line"></div>
+    <div class="prog-fill" id="progFill"></div>
+    <div class="step-item active"><div class="step-dot">1</div><div class="step-lbl">Principal</div></div>
+    <div class="step-item"><div class="step-dot">2</div><div class="step-lbl">Dependants</div></div>
+    <div class="step-item"><div class="step-dot">3</div><div class="step-lbl">Review</div></div>
+    <div class="step-item"><div class="step-dot">✓</div><div class="step-lbl">Done</div></div>
   </div>
 
-  <div class="form-card">
-
-    <!-- Card header -->
-    <div class="card-hdr">
-      <div class="hdr-txt">
-        <h2 id="cardTitle">Main Member Details</h2>
-        <p  id="cardSub">Personal information of the primary policyholder</p>
+  <div class="card">
+    <div class="card-head">
+      <div class="ch-left">
+        <h2 id="cardTitle">Step 1: Principal Member Details</h2>
+        <p  id="cardSub">Your personal information and plan selection</p>
       </div>
-      <div class="hdr-ctr">
-        <span class="big" id="ctrNum">01</span>
-        <span class="sm">of 07</span>
-      </div>
+      <div class="ch-num" id="cardNum">01</div>
     </div>
 
-    <!-- Card body -->
     <div class="card-body">
 
-      <!-- â”€â”€ SUCCESS SCREEN â”€â”€ -->
-      <div class="success-screen" id="successScreen">
-        <div class="s-ring">âœ“</div>
-        <h2>Application Submitted!</h2>
-        <p class="s-msg">Your Worldwide Funeral Plan application has been received. Policy documents will be delivered within 24 hours via Email or WhatsApp.</p>
-        <div class="p-ref">ðŸ· <span id="policyRef">WWFP-â€¦</span></div>
-        <p class="s-premium" id="successPremium"></p>
+      <!-- SUCCESS -->
+      <div class="success" id="successScreen" style="display:none">
+        <div class="s-icon">✓</div>
+        <h2>Policy Submitted Successfully!</h2>
+        <p>Your Worldwide Funeral Plan application has been received. Documents will be delivered within 24 hours.</p>
+        <div class="pol-ref">🏷 <span id="polRef">WWFP-…</span></div>
+        <div class="s-grid">
+          <div class="s-card"><div class="lbl">Total Monthly Premium</div><div class="val" id="sTotalPm">—</div></div>
+          <div class="s-card"><div class="lbl">Cover Amount</div><div class="val" id="sCover">—</div></div>
+          <div class="s-card"><div class="lbl">Accidental Death</div><div class="val" style="font-size:12px;color:var(--green)">Immediate cover</div></div>
+          <div class="s-card"><div class="lbl">Natural Causes</div><div class="val" style="font-size:12px;color:var(--warn)">3-month waiting period</div></div>
+        </div>
         <div class="s-contacts">
-          <div class="s-pill">ðŸ“ž 0800 100 205</div>
-          <div class="s-pill">ðŸ“± +27 81 419 4980</div>
-          <div class="s-pill">âœ‰ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8de4e3ebe2cdf7e2ffe2ffe2a0fde5f8e0f8e1ece3e4a3eee2a3f7ec">[email&#160;protected]</a></div>
+          <div class="s-pill">📞 0800 100 205</div>
+          <div class="s-pill">📱 +27 81 419 4980</div>
+          <div class="s-pill">✉ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0d64636b624d77627f627f62207d65786078616c6364236e6223776c">[email&#160;protected]</a></div>
         </div>
       </div>
 
-      <form id="appForm" autocomplete="off">
+      <form id="appForm">
 
-        <!-- â•â• SLIDE 1: MAIN MEMBER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-        <div class="slide active" data-step="1">
-          <div class="g2">
+        <!-- SLIDE 1: PRINCIPAL -->
+        <div class="slide active" id="slide1">
+          <div class="row2">
             <div class="fg">
-              <label>First Name *</label>
-              <input type="text" id="fname" placeholder="First name" required>
+              <label>Full Name *</label>
+              <input type="text" id="fullName" placeholder="First and last name">
             </div>
             <div class="fg">
-              <label>Last Name *</label>
-              <input type="text" id="lname" placeholder="Last name" required>
+              <label>Date of Birth *</label>
+              <input type="date" id="dob" onchange="showAge()">
+              <span id="ageBadge" class="age-badge" style="display:none"></span>
             </div>
-            <div class="fg">
-              <label>Date of Birth * <small>(Must be 18â€“65)</small></label>
-              <input type="date" id="dob" required>
+          </div>
+
+          <div class="fg">
+            <label>Select Plan *</label>
+            <div class="plan-grid">
+              <div class="pc" onclick="selectPlan('Premium',45000,450,540,this)">
+                <div class="pc-chk">✓</div>
+                <div class="pc-tier">Entry</div>
+                <div class="pc-name">Premium</div>
+                <div class="pc-cover">R45 000</div>
+                <div class="pc-sub">Cover Amount</div>
+                <div class="pc-pm">
+                  <span class="pc-tag">Single R450/m</span>
+                  <span class="pc-tag">Family R540/m</span>
+                </div>
+              </div>
+              <div class="pc" onclick="selectPlan('Prestige',75000,630,720,this)">
+                <div class="pc-chk">✓</div>
+                <div class="pc-tier">Popular</div>
+                <div class="pc-name">Prestige</div>
+                <div class="pc-cover">R75 000</div>
+                <div class="pc-sub">Cover Amount</div>
+                <div class="pc-pm">
+                  <span class="pc-tag">Single R630/m</span>
+                  <span class="pc-tag">Family R720/m</span>
+                </div>
+              </div>
+              <div class="pc" onclick="selectPlan('Executive',90000,990,1080,this)">
+                <div class="pc-chk">✓</div>
+                <div class="pc-tier">Premium</div>
+                <div class="pc-name">Executive</div>
+                <div class="pc-cover">R90 000</div>
+                <div class="pc-sub">Cover Amount</div>
+                <div class="pc-pm">
+                  <span class="pc-tag">Single R990/m</span>
+                  <span class="pc-tag">Family R1 080/m</span>
+                </div>
+              </div>
             </div>
+          </div>
+
+          <div class="row2">
             <div class="fg">
-              <label>South African ID Number</label>
-              <input type="text" id="sa_id" placeholder="13-digit RSA ID" maxlength="13">
-            </div>
-            <div class="fg">
-              <label>Mobile Number *</label>
-              <input type="tel" id="phone" placeholder="+27 / +263 / +44â€¦" required>
+              <label>Phone Number *</label>
+              <input type="tel" id="phone" placeholder="+27 or +263…">
             </div>
             <div class="fg">
               <label>Email Address *</label>
-              <input type="email" id="email" placeholder="email@example.com" required>
-            </div>
-          </div>
-          <div class="fg" style="margin-top:8px">
-            <label>ID / Passport Upload</label>
-            <label class="upload-zone" id="idZone">
-              <div class="uz-icon">ðŸ“Ž</div>
-              <div class="uz-text">
-                <strong id="idLabel">Click to upload your ID document</strong>
-                <span>PDF, JPG, PNG Â· max 10 MB</span>
-              </div>
-              <input type="file" id="id_upload" accept=".pdf,.jpg,.jpeg,.png"
-                     onchange="onFile(this,''idLabel'',''idZone'')">
-            </label>
-          </div>
-        </div>
-
-        <!-- â•â• SLIDE 2: SPOUSE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-        <div class="slide" data-step="2">
-          <div class="info-ban">
-            â„¹ï¸ Adding a spouse switches your premium to the <strong>family rate</strong>.
-            Spouse must be <strong>18â€“65 years</strong> of age.
-          </div>
-          <div class="fg">
-            <label>Marital Status</label>
-            <select id="marriedSelect">
-              <option value="no">Single / Not adding spouse</option>
-              <option value="yes">Married â€” add spouse to policy</option>
-            </select>
-          </div>
-          <div id="spouseFields" style="display:none">
-            <div class="g2">
-              <div class="fg">
-                <label>Spouse Full Name *</label>
-                <input type="text" id="spouse_name" placeholder="Spouse''s full name">
-              </div>
-              <div class="fg">
-                <label>Spouse Date of Birth *</label>
-                <input type="date" id="spouse_dob">
-              </div>
+              <input type="email" id="email" placeholder="email@example.com">
             </div>
           </div>
         </div>
 
-        <!-- â•â• SLIDE 3: CHILDREN â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-        <div class="slide" data-step="3">
-          <div class="info-ban">
-            ðŸ‘¶ Children under <strong>21</strong> covered automatically.
-            Up to <strong>25</strong> for full-time students or disabled dependants (proof required).
-            Maximum <strong>6 children</strong>.
+        <!-- SLIDE 2: DEPENDANTS -->
+        <div class="slide" id="slide2">
+          <div class="info-box">
+            👫 <strong>Spouse:</strong> max 1, age 18–65 &nbsp;|&nbsp;
+            👶 <strong>Children:</strong> max 6, age ≤21 (≤25 student/disabled)
           </div>
-          <div id="childrenList"></div>
-          <button type="button" class="btn-add" onclick="addChild()">+ Add Child</button>
-        </div>
-
-        <!-- â•â• SLIDE 4: EXTENDED FAMILY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-        <div class="slide" data-step="4">
-          <div class="info-ban">
-            ðŸ‘¨â€ðŸ‘©â€ðŸ‘§ Extended family members must be <strong>under 90 years</strong> of age.
-            Each member requires a separate cover amount and monthly premium.
-            Maximum <strong>6 members</strong>.
-          </div>
-          <div class="warn-ban">
-            âš ï¸ Extended family premiums are <strong>added to your total monthly premium</strong>
-            automatically. The full breakdown is shown on the Review page.
-          </div>
-          <div id="extList"></div>
-          <button type="button" class="btn-add" onclick="addExtended()">+ Add Extended Member</button>
-        </div>
-
-        <!-- â•â• SLIDE 5: PLAN & CURRENCY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-        <div class="slide" data-step="5">
-
-          <!-- Currency -->
-          <div class="currency-bar">
-            <label for="currencySelect">Your Region / Currency:</label>
-            <select id="currencySelect">
-              <option value="ZAR">ðŸ‡¿ðŸ‡¦ South Africa â€” ZAR (Rand)</option>
-              <option value="USD">ðŸŒ SADC Region â€” USD (Dollar)</option>
-              <option value="EUR">ðŸ‡ªðŸ‡º Europe â€” EUR (Euro)</option>
-            </select>
-          </div>
-
-          <!-- Plan cards -->
-          <div class="plan-grid">
-
-            <div class="plan-card" data-plan="Premium">
-              <div class="p-chk">âœ“ Selected</div>
-              <div class="p-top">
-                <div class="p-tier">Entry Level</div>
-                <div class="p-name">Premium</div>
-                <div class="p-amt">R45 000</div>
-                <div class="p-lbl">Cover Amount</div>
-                <div class="p-pricing">
-                  <span class="p-single">R450 single</span>
-                  <span class="p-family">R540 family</span>
-                </div>
-              </div>
-              <div class="p-body">
-                <div class="p-feat">Hearse &amp; Mini Dome</div>
-                <div class="p-feat">1 Return Air Ticket (ZW)</div>
-                <div class="p-feat">Grocery Allowance R4 500</div>
-                <div class="p-feat">Bus Benefit R5 400</div>
-                <div class="p-feat">4 Zambia T-Shirts</div>
-                <div class="p-feat">Refreshments R900</div>
-              </div>
-            </div>
-
-            <div class="plan-card" data-plan="Prestige">
-              <div class="p-chk">âœ“ Selected</div>
-              <div class="p-top">
-                <div class="p-tier">Most Popular</div>
-                <div class="p-name">Prestige</div>
-                <div class="p-amt">R75 000</div>
-                <div class="p-lbl">Cover Amount</div>
-                <div class="p-pricing">
-                  <span class="p-single">R630 single</span>
-                  <span class="p-family">R720 family</span>
-                </div>
-              </div>
-              <div class="p-body">
-                <div class="p-feat">Hearse &amp; Standard Dome</div>
-                <div class="p-feat">1 Return Air Ticket (ZW)</div>
-                <div class="p-feat">Grocery Allowance R7 200</div>
-                <div class="p-feat">Flowers R1 800</div>
-                <div class="p-feat">7 Zambia T-Shirts</div>
-                <div class="p-feat">Customised Banner</div>
-              </div>
-            </div>
-
-            <div class="plan-card" data-plan="Executive">
-              <div class="p-chk">âœ“ Selected</div>
-              <div class="p-top">
-                <div class="p-tier">Premium Cover</div>
-                <div class="p-name">Executive</div>
-                <div class="p-amt">R90 000</div>
-                <div class="p-lbl">Cover Amount</div>
-                <div class="p-pricing">
-                  <span class="p-single">R990 single</span>
-                  <span class="p-family">R1 080 family</span>
-                </div>
-              </div>
-              <div class="p-body">
-                <div class="p-feat">Hearse &amp; Royal Dome</div>
-                <div class="p-feat">2 Return Air Tickets (ZW)</div>
-                <div class="p-feat">Grocery Allowance R10 800</div>
-                <div class="p-feat">Flowers R2 700</div>
-                <div class="p-feat">10 Zambia T-Shirts</div>
-                <div class="p-feat">Customised Banner &amp; Tent</div>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- Address -->
-          <div class="sec-ttl">Residential Address</div>
-          <div class="fg">
-            <label>Street Address *</label>
-            <input type="text" id="street" placeholder="e.g. 14 Mahlakane Street" required>
-          </div>
-          <div class="g3">
-            <div class="fg">
-              <label>City *</label>
-              <input type="text" id="city" placeholder="City / Town" required>
-            </div>
-            <div class="fg">
-              <label id="provinceLabel">Province *</label>
-              <select id="province" required></select>
-            </div>
-            <div class="fg">
-              <label>Postal / ZIP Code *</label>
-              <input type="text" id="postal_code" placeholder="0000" maxlength="10" required>
-            </div>
-          </div>
-
-          <!-- Live price summary -->
-          <div class="price-pill" id="pricePill" style="display:none">
-            <div class="price-row">
-              <div class="pl">Cover</div>
-              <div class="pv" id="summCover">â€”</div>
-            </div>
-            <div class="price-row">
-              <div class="pl">Base Premium</div>
-              <div class="pv" id="summBase">â€”</div>
-            </div>
-            <div class="price-row">
-              <div class="pl">Extended</div>
-              <div class="pv" id="summExt">â€”</div>
-            </div>
-            <div class="price-row total-col">
-              <div class="pl">Total / Month</div>
-              <div class="pv" id="summTotal">â€”</div>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- â•â• SLIDE 6: REVIEW â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-        <div class="slide" data-step="6">
-          <div class="rv-grid" id="reviewArea">
-            <!-- Built by buildReview() in app.js -->
+          <div id="depList"></div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <button type="button" class="btn-add" id="btnSpouse" onclick="addDep('Spouse')">+ Add Spouse</button>
+            <button type="button" class="btn-add" id="btnChild"  onclick="addDep('Child')">+ Add Child</button>
           </div>
         </div>
 
-        <!-- â•â• SLIDE 7: CONSENT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-        <div class="slide" data-step="7">
-          <div class="consent-wrap">
-            <div class="consent-hdr">ðŸ“‹ &nbsp;Policy Declaration &amp; Consent</div>
-            <div class="consent-body">
-              <label class="consent-chk">
-                <input type="checkbox" id="consentCheck">
-                I confirm that all information provided in this application is true, complete,
-                and accurate to the best of my knowledge. I understand that false or misleading
-                information may result in the cancellation of my policy. I consent to Zororo Phumulani
-                Pty Ltd processing my personal data in accordance with POPIA.
-              </label>
-              <div class="terms-box">
-                <h5>Key Policy Conditions</h5>
-                <div class="t-row"><span class="t-dot">â€¢</span>Premiums are due on or before the <strong>1st of each month</strong></div>
-                <div class="t-row"><span class="t-dot">â€¢</span><strong>60-day grace period</strong> before policy lapses</div>
-                <div class="t-row"><span class="t-dot">â€¢</span>Accidental death â€” <strong>immediate cover</strong> from first premium payment</div>
-                <div class="t-row"><span class="t-dot">â€¢</span>Natural causes â€” <strong>3-month</strong> waiting period</div>
-                <div class="t-row"><span class="t-dot">â€¢</span>Extended family members â€” <strong>6-month</strong> waiting period</div>
-                <div class="t-row"><span class="t-dot">â€¢</span>Suicide â€” <strong>12-month</strong> waiting period applies</div>
-                <div class="t-row"><span class="t-dot">â€¢</span>Claims must be submitted within <strong>6 calendar months</strong> of death</div>
-                <div class="t-row"><span class="t-dot">â€¢</span>Policy documents delivered within <strong>24 hours</strong> via Email or WhatsApp</div>
-              </div>
-            </div>
+        <!-- SLIDE 3: REVIEW -->
+        <div class="slide" id="slide3">
+          <div class="rv-section">
+            <div class="rv-title">Principal Member</div>
+            <div class="rv-row"><span>Full Name</span><strong id="rvName">—</strong></div>
+            <div class="rv-row"><span>Date of Birth</span><strong id="rvDob">—</strong></div>
+            <div class="rv-row"><span>Age</span><strong id="rvAge">—</strong></div>
+            <div class="rv-row"><span>Plan</span><strong id="rvPlan">—</strong></div>
+            <div class="rv-row"><span>Phone</span><strong id="rvPhone">—</strong></div>
+            <div class="rv-row"><span>Email</span><strong id="rvEmail">—</strong></div>
+          </div>
+          <div class="rv-section" id="rvDepSection" style="display:none">
+            <div class="rv-title">Dependants</div>
+            <div id="rvDeps"></div>
+          </div>
+          <div class="rv-section">
+            <div class="rv-title">Premium Breakdown</div>
+            <div class="rv-row"><span>Cover Amount</span><strong id="rvCover">—</strong></div>
+            <div class="rv-row"><span>Base Premium</span><strong id="rvBase">—</strong></div>
+            <div class="rv-row" id="rvExtRow" style="display:none"><span>Extended Premium</span><strong id="rvExt">—</strong></div>
+          </div>
+          <div class="rv-total">
+            <span>Total Monthly Premium</span>
+            <strong id="rvTotal">—</strong>
+          </div>
+          <div class="waiting">
+            ⏳ <strong>Waiting periods:</strong> Accidental death — immediate &nbsp;|&nbsp;
+            Natural causes — 3 months &nbsp;|&nbsp; Extended family — 6 months &nbsp;|&nbsp; Suicide — 12 months
           </div>
         </div>
 
       </form>
-    </div><!-- /card-body -->
-
-    <!-- Form nav -->
-    <div class="form-nav">
-      <button type="button" class="btn btn-ghost" id="prevBtn"
-              onclick="goPrev()" style="display:none">â† Back</button>
-      <div class="nav-info" id="navInfo">Step 1 of 7 Â· Main Member Details</div>
-      <button type="button" class="btn btn-primary" id="nextBtn"
-              onclick="goNext()">Continue â†’</button>
-      <button type="button" class="btn btn-submit" id="submitBtn"
-              onclick="submitApp()">Submit Application âœ“</button>
     </div>
 
-  </div><!-- /form-card -->
-</div><!-- /app -->
+    <div class="card-foot">
+      <button class="btn btn-ghost" id="prevBtn" onclick="goPrev()" style="display:none">← Back</button>
+      <div class="nav-info" id="navInfo">Step 1 of 3</div>
+      <button class="btn btn-primary" id="nextBtn" onclick="goNext()">Continue →</button>
+      <button class="btn btn-submit" id="submitBtn" onclick="submitApp()">Submit Application ✓</button>
+    </div>
+  </div>
+</div>
 
-<script src="/static/app.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ── STATE ─────────────────────────────────────────
+const S = {
+  step: 1,
+  plan: null,      // {name, cover, single, family}
+  deps: [],        // [{id,type,name,dob,isStudent,isDisabled}]
+};
+
+const PLANS = {
+  Premium:   {cover:45000,single:450, family:540},
+  Prestige:  {cover:75000,single:630, family:720},
+  Executive: {cover:90000,single:990, family:1080},
+};
+
+// ── AGE ───────────────────────────────────────────
+function calcAge(dob){ return Math.floor((Date.now()-new Date(dob))/(365.25*864e5)); }
+
+function showAge(){
+  const d = document.getElementById('dob').value;
+  const b = document.getElementById('ageBadge');
+  if(!d){b.style.display='none';return;}
+  const a = calcAge(d);
+  b.style.display='inline-block';
+  if(a<18||a>65){b.className='age-badge err';b.textContent=`Age ${a} — must be 18–65`;}
+  else{b.className='age-badge';b.textContent=`Age: ${a} years`;}
+}
+
+// ── PLAN SELECTION ────────────────────────────────
+function selectPlan(name,cover,single,family,el){
+  document.querySelectorAll('.pc').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  S.plan = {name,cover,single,family};
+}
+
+// ── DEPENDANTS ────────────────────────────────────
+function addDep(type){
+  const spouseCount = S.deps.filter(d=>d.type==='Spouse').length;
+  const childCount  = S.deps.filter(d=>d.type==='Child').length;
+  if(type==='Spouse'&&spouseCount>=1) return alert('Maximum 1 spouse allowed.');
+  if(type==='Child' &&childCount>=6)  return alert('Maximum 6 children allowed.');
+  S.deps.push({id:'d'+Date.now(),type,name:'',dob:'',isStudent:false,isDisabled:false});
+  renderDeps();
+}
+
+function removeDep(id){
+  S.deps = S.deps.filter(d=>d.id!==id);
+  renderDeps();
+}
+
+function updateDep(id,field,val){
+  const d = S.deps.find(d=>d.id===id);
+  if(d) d[field]=val;
+  if(field==='dob'||field==='isStudent'||field==='isDisabled') renderDeps();
+}
+
+function renderDeps(){
+  const list = document.getElementById('depList');
+  list.innerHTML = S.deps.map(d=>{
+    const age   = d.dob ? calcAge(d.dob) : null;
+    const maxAge= (d.isStudent||d.isDisabled)?25:21;
+    let ageHtml = '';
+    if(age!==null){
+      if(d.type==='Spouse'){
+        ageHtml=age>=18&&age<=65
+          ?`<div class="dep-age ok">✓ Age ${age} — eligible</div>`
+          :`<div class="dep-age err">✗ Age ${age} — spouse must be 18–65</div>`;
+      } else {
+        ageHtml=age<=maxAge
+          ?`<div class="dep-age ok">✓ Age ${age} — eligible</div>`
+          :`<div class="dep-age err">✗ Age ${age} — max ${maxAge} for this child</div>`;
+      }
+    }
+    return `
+    <div class="dep-row">
+      <div class="dep-top">
+        <input type="text"  placeholder="${d.type} full name" value="${d.name}"
+               onchange="updateDep('${d.id}','name',this.value)"
+               style="flex:2">
+        <input type="date"  value="${d.dob}"
+               onchange="updateDep('${d.id}','dob',this.value)">
+        ${d.type==='Child'?`
+        <div class="dep-opts">
+          <label class="chk-lbl">
+            <input type="checkbox" ${d.isStudent?'checked':''}
+                   onchange="updateDep('${d.id}','isStudent',this.checked)"> Student
+          </label>
+          <label class="chk-lbl">
+            <input type="checkbox" ${d.isDisabled?'checked':''}
+                   onchange="updateDep('${d.id}','isDisabled',this.checked)"> Disabled
+          </label>
+        </div>`:''}
+        <button type="button" class="btn-rm" onclick="removeDep('${d.id}')">✕</button>
+      </div>
+      ${ageHtml}
+    </div>`;
+  }).join('');
+
+  // toggle add buttons
+  const sc = S.deps.filter(d=>d.type==='Spouse').length;
+  const cc = S.deps.filter(d=>d.type==='Child').length;
+  document.getElementById('btnSpouse').disabled = sc>=1;
+  document.getElementById('btnChild').disabled  = cc>=6;
+}
+
+// ── PREMIUM CALC ──────────────────────────────────
+function calcPremium(){
+  if(!S.plan) return null;
+  const hasFamily = S.deps.length > 0;
+  const base      = hasFamily ? S.plan.family : S.plan.single;
+  return {cover:S.plan.cover, base, total:base};
+}
+
+// ── REVIEW ────────────────────────────────────────
+function buildReview(){
+  const g = id=>document.getElementById(id)?.value?.trim()||'—';
+  const dob  = g('dob');
+  const age  = dob!=='—' ? calcAge(dob) : '—';
+  const pm   = calcPremium();
+  const hFam = S.deps.length>0;
+
+  document.getElementById('rvName').textContent  = g('fullName');
+  document.getElementById('rvDob').textContent   = dob;
+  document.getElementById('rvAge').textContent   = age!=='—'?`${age} years`:age;
+  document.getElementById('rvPlan').textContent  = S.plan?`${S.plan.name} Plan`:'—';
+  document.getElementById('rvPhone').textContent = g('phone');
+  document.getElementById('rvEmail').textContent = g('email');
+  document.getElementById('rvCover').textContent = pm?`R${pm.cover.toLocaleString('en-ZA')}`:'—';
+  document.getElementById('rvBase').textContent  = pm?`R${pm.base}/month`:'—';
+  document.getElementById('rvTotal').textContent = pm?`R${pm.total}/month`:'—';
+  document.getElementById('rvExtRow').style.display='none';
+
+  if(S.deps.length>0){
+    document.getElementById('rvDepSection').style.display='block';
+    document.getElementById('rvDeps').innerHTML = S.deps.map(d=>`
+      <div class="dep-summary-row">${d.type}: <strong>${d.name||'(unnamed)'}</strong>
+      ${d.dob?`— Age ${calcAge(d.dob)}`:''}
+      ${d.isStudent?' · Student':''}${d.isDisabled?' · Disabled':''}
+      </div>`).join('');
+  } else {
+    document.getElementById('rvDepSection').style.display='none';
+  }
+}
+
+// ── VALIDATION ────────────────────────────────────
+function validate(){
+  const g = id=>document.getElementById(id)?.value?.trim()||'';
+  if(S.step===1){
+    if(!g('fullName')) return alert('Please enter your full name.'),false;
+    if(!g('dob'))      return alert('Please enter your date of birth.'),false;
+    const a=calcAge(g('dob'));
+    if(a<18||a>65)     return alert(`Your age (${a}) must be between 18 and 65.`),false;
+    if(!S.plan)        return alert('Please select a plan.'),false;
+    if(!g('phone'))    return alert('Please enter your phone number.'),false;
+    if(!g('email'))    return alert('Please enter your email address.'),false;
+  }
+  if(S.step===2){
+    for(const d of S.deps){
+      if(!d.name.trim()) return alert('Please enter a name for each dependant.'),false;
+      if(!d.dob)         return alert(`Please enter date of birth for: ${d.name||'dependant'}`),false;
+      const a=calcAge(d.dob);
+      if(d.type==='Spouse'&&(a<18||a>65)) return alert(`Spouse "${d.name}" age ${a} must be 18–65.`),false;
+      if(d.type==='Child'){
+        const mx=(d.isStudent||d.isDisabled)?25:21;
+        if(a>mx) return alert(`Child "${d.name}" age ${a} exceeds max ${mx}.`),false;
+      }
+    }
+  }
+  return true;
+}
+
+// ── NAVIGATION ────────────────────────────────────
+const META = {
+  1:{title:'Step 1: Principal Member Details', sub:'Your personal information and plan selection',    num:'01'},
+  2:{title:'Step 2: Add Dependants',           sub:'Add spouse and/or children to your policy',       num:'02'},
+  3:{title:'Step 3: Review & Confirm',         sub:'Check all details before submitting',             num:'03'},
+};
+
+function goNext(){
+  if(!validate()) return;
+  if(S.step===2) buildReview();
+  setStep(S.step+1);
+}
+function goPrev(){ setStep(S.step-1); }
+
+function setStep(n){
+  S.step = Math.max(1,Math.min(3,n));
+  // slides
+  document.querySelectorAll('.slide').forEach(s=>s.classList.remove('active'));
+  document.getElementById('slide'+S.step)?.classList.add('active');
+  // header
+  const m=META[S.step];
+  document.getElementById('cardTitle').textContent=m.title;
+  document.getElementById('cardSub').textContent=m.sub;
+  document.getElementById('cardNum').textContent=m.num;
+  document.getElementById('navInfo').textContent=`Step ${S.step} of 3`;
+  // buttons
+  document.getElementById('prevBtn').style.display   = S.step>1?'inline-flex':'none';
+  document.getElementById('nextBtn').style.display   = S.step<3?'inline-flex':'none';
+  document.getElementById('submitBtn').style.display = S.step===3?'inline-flex':'none';
+  // progress
+  const fills=[0,50,100];
+  document.getElementById('progFill').style.width=fills[S.step-1]+'%';
+  document.querySelectorAll('.step-item').forEach((el,i)=>{
+    el.classList.remove('active','done');
+    if(i+1===S.step) el.classList.add('active');
+    if(i+1< S.step)  el.classList.add('done');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── SUBMIT ────────────────────────────────────────
+async function submitApp(){
+  const btn = document.getElementById('submitBtn');
+  const g   = id=>document.getElementById(id)?.value?.trim()||'';
+  const pm  = calcPremium();
+  const polNum = 'WWFP-'+Date.now();
+
+  const payload = {
+    policy_number:     polNum,
+    policy_type:       S.plan.name,
+    currency:          'ZAR',
+    policyholder_name: g('fullName'),
+    policyholder_dob:  g('dob'),
+    phone:             g('phone'),
+    email:             g('email'),
+    has_spouse:        S.deps.some(d=>d.type==='Spouse'),
+    spouse_name:       S.deps.find(d=>d.type==='Spouse')?.name||null,
+    spouse_dob:        S.deps.find(d=>d.type==='Spouse')?.dob||null,
+    children: S.deps.filter(d=>d.type==='Child').map(c=>({
+      name:c.name, dob:c.dob, is_student:c.isStudent, is_disabled:c.isDisabled
+    })),
+    extended_family:   [],
+    source:            'digital_form',
+  };
+
+  try{
+    btn.textContent='⌛ Submitting…'; btn.disabled=true;
+    const res  = await fetch('/api/v1/policies',{
+      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(Array.isArray(data.detail)?data.detail.join('\n'):data.detail||'Error');
+
+    // show success
+    document.getElementById('appForm').style.display='none';
+    document.getElementById('successScreen').style.display='block';
+    document.querySelector('.card-foot').style.display='none';
+    document.getElementById('progSteps').style.display='none';
+    document.getElementById('polRef').textContent=data.policy_number||polNum;
+    document.getElementById('sTotalPm').textContent=`R${pm.total}/month`;
+    document.getElementById('sCover').textContent=`R${pm.cover.toLocaleString('en-ZA')}`;
+    // mark all steps done
+    document.querySelectorAll('.step-item').forEach(el=>el.classList.add('done'));
+    document.getElementById('progFill').st
