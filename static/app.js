@@ -111,6 +111,10 @@ function updateStep(n) {
   if (next)   next.style.display   = STATE.step === TOTAL_STEPS ? ''none'' : ''inline-flex'';
   if (submit) submit.style.display = STATE.step === TOTAL_STEPS ? ''inline-flex'' : ''none'';
 
+  // update nav info text
+  const ni = document.getElementById(''navInfo'');
+  if (ni && meta) ni.textContent = `Step ${STATE.step} of 7 Â· ${meta.title}`;
+
   window.scrollTo({ top: 0, behavior: ''smooth'' });
 }
 
@@ -408,6 +412,8 @@ function bindPlanCards() {
     $$(''.plan-card'').forEach(c => c.classList.remove(''sel''));
     card.classList.add(''sel'');
     STATE.plan = card.dataset.plan;
+    const pill = document.getElementById(''pricePill'');
+    if (pill) pill.style.display = ''flex'';
     updatePriceSummary();
   });
 }
