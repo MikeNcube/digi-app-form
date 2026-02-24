@@ -1,136 +1,366 @@
-<!DOCTYPE html>
-<html>
+﻿<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Zororo Digi Funeral Insurance</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { font-family: Arial; margin: 0; padding: 0; background: #f4f6f9; }
-        .container { max-width: 700px; margin: auto; padding: 20px; background: white; margin-top: 30px; border-radius: 8px; }
-        .step { display: none; }
-        .step.active { display: block; }
-        input, select { width: 100%; padding: 8px; margin: 6px 0 12px 0; }
-        button { padding: 10px 15px; border: none; background: #006400; color: white; cursor: pointer; }
-        .nav-buttons { display: flex; justify-content: space-between; }
-        h2 { color: #006400; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zororo Phumulani | Apply for Cover</title>
+  <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
 
-<div class="container">
-    <h1>Zororo Digi Funeral Insurance</h1>
+<!-- â”€â”€â”€ HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+<header class="hdr">
+  <img class="logo-img" src="/static/logo.png" alt="Zororo Phumulani"
+       onerror="this.style.display=''none''">
+  <div class="brand">
+    <div class="brand-name">Zororo<em>phumulani</em></div>
+    <div class="brand-sub">Worldwide Funeral Plan Â· FSP15980 Â· Powered by Doves Zimbabwe</div>
+  </div>
+  <div class="hdr-badge">Authorised FSP</div>
+</header>
 
-    <form id="insuranceForm">
-
-        <!-- STEP 1 -->
-        <div class="step active">
-            <h2>Step 1: Principal Member</h2>
-            <input type="text" name="fullName" placeholder="Full Name" required>
-            <input type="text" name="idNumber" placeholder="ID / Passport Number" required>
-            <input type="text" name="dob" placeholder="Date of Birth (DD/MM/YYYY)" required>
-            <input type="text" name="country" placeholder="Country of Residence" required>
-        </div>
-
-        <!-- STEP 2 -->
-        <div class="step">
-            <h2>Step 2: Contact Details</h2>
-            <input type="text" name="phone" placeholder="Phone Number" required>
-            <input type="email" name="email" placeholder="Email Address" required>
-            <input type="text" name="zimAddress" placeholder="Zimbabwe Address" required>
-        </div>
-
-        <!-- STEP 3 -->
-        <div class="step">
-            <h2>Step 3: Plan Selection</h2>
-            <select name="plan" required>
-                <option value="">Select Plan</option>
-                <option value="Bronze">Bronze</option>
-                <option value="Silver">Silver</option>
-                <option value="Gold">Gold</option>
-                <option value="Platinum">Platinum</option>
-            </select>
-        </div>
-
-        <!-- STEP 4 -->
-        <div class="step">
-            <h2>Step 4: Add-Ons</h2>
-            <label><input type="checkbox" name="addons" value="Tombstone"> Tombstone Benefit</label><br>
-            <label><input type="checkbox" name="addons" value="Repatriation"> Repatriation Upgrade</label>
-        </div>
-
-        <!-- STEP 5 -->
-        <div class="step">
-            <h2>Step 5: Upload Documents</h2>
-            <input type="file" name="files" multiple>
-        </div>
-
-        <!-- STEP 6 -->
-        <div class="step">
-            <h2>Step 6: Consent</h2>
-            <label>
-                <input type="checkbox" id="consentCheck" required>
-                I declare the information provided is true.
-            </label>
-        </div>
-
-        <!-- STEP 7 -->
-        <div class="step">
-            <h2>Step 7: Submit</h2>
-            <p>Click submit to complete application.</p>
-        </div>
-
-        <div class="nav-buttons">
-            <button type="button" onclick="prevStep()">Previous</button>
-            <button type="button" onclick="nextStep()">Next</button>
-            <button type="button" onclick="submitForm()">Submit</button>
-        </div>
-
-    </form>
+<!-- â”€â”€â”€ HERO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+<div class="hero">
+  <div class="hero-inner">
+    <h1>Funeral Policy Application</h1>
+    <p>Complete the secure digital form in 7 steps. All information is encrypted and protected under POPIA.</p>
+    <div class="hero-line"></div>
+  </div>
 </div>
 
+<!-- â”€â”€â”€ APP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+<div class="app">
+
+  <!-- Step track -->
+  <div class="step-track" id="stepTrack">
+    <div class="step-line"></div>
+    <div class="step-fill" id="stepFill"></div>
+    <div class="s-step active"><div class="s-dot">1</div><div class="s-label">Member</div></div>
+    <div class="s-step"><div class="s-dot">2</div><div class="s-label">Spouse</div></div>
+    <div class="s-step"><div class="s-dot">3</div><div class="s-label">Children</div></div>
+    <div class="s-step"><div class="s-dot">4</div><div class="s-label">Extended</div></div>
+    <div class="s-step"><div class="s-dot">5</div><div class="s-label">Plan</div></div>
+    <div class="s-step"><div class="s-dot">6</div><div class="s-label">Review</div></div>
+    <div class="s-step"><div class="s-dot">7</div><div class="s-label">Confirm</div></div>
+  </div>
+
+  <div class="form-card">
+
+    <!-- Card header -->
+    <div class="card-hdr">
+      <div class="hdr-txt">
+        <h2 id="cardTitle">Main Member Details</h2>
+        <p  id="cardSub">Personal information of the primary policyholder</p>
+      </div>
+      <div class="hdr-ctr">
+        <span class="big" id="ctrNum">01</span>
+        <span class="sm">of 07</span>
+      </div>
+    </div>
+
+    <!-- Card body -->
+    <div class="card-body">
+
+      <!-- â”€â”€ SUCCESS SCREEN â”€â”€ -->
+      <div class="success-screen" id="successScreen">
+        <div class="s-ring">âœ“</div>
+        <h2>Application Submitted!</h2>
+        <p class="s-msg">Your Worldwide Funeral Plan application has been received. Policy documents will be delivered within 24 hours via Email or WhatsApp.</p>
+        <div class="p-ref">ðŸ· <span id="policyRef">WWFP-â€¦</span></div>
+        <p class="s-premium" id="successPremium"></p>
+        <div class="s-contacts">
+          <div class="s-pill">ðŸ“ž 0800 100 205</div>
+          <div class="s-pill">ðŸ“± +27 81 419 4980</div>
+          <div class="s-pill">âœ‰ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="244d4a424b645e4b564b564b09544c51495148454a4d0a474b0a5e45">[email&#160;protected]</a></div>
+        </div>
+      </div>
+
+      <form id="appForm" autocomplete="off">
+
+        <!-- â•â• SLIDE 1: MAIN MEMBER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+        <div class="slide active" data-step="1">
+          <div class="g2">
+            <div class="fg">
+              <label>First Name *</label>
+              <input type="text" id="fname" placeholder="First name" required>
+            </div>
+            <div class="fg">
+              <label>Last Name *</label>
+              <input type="text" id="lname" placeholder="Last name" required>
+            </div>
+            <div class="fg">
+              <label>Date of Birth * <small>(Must be 18â€“65)</small></label>
+              <input type="date" id="dob" required>
+            </div>
+            <div class="fg">
+              <label>South African ID Number</label>
+              <input type="text" id="sa_id" placeholder="13-digit RSA ID" maxlength="13">
+            </div>
+            <div class="fg">
+              <label>Mobile Number *</label>
+              <input type="tel" id="phone" placeholder="+27 / +263 / +44â€¦" required>
+            </div>
+            <div class="fg">
+              <label>Email Address *</label>
+              <input type="email" id="email" placeholder="email@example.com" required>
+            </div>
+          </div>
+          <div class="fg" style="margin-top:8px">
+            <label>ID / Passport Upload</label>
+            <label class="upload-zone" id="idZone">
+              <div class="uz-icon">ðŸ“Ž</div>
+              <div class="uz-text">
+                <strong id="idLabel">Click to upload your ID document</strong>
+                <span>PDF, JPG, PNG Â· max 10 MB</span>
+              </div>
+              <input type="file" id="id_upload" accept=".pdf,.jpg,.jpeg,.png"
+                     onchange="onFile(this,''idLabel'',''idZone'')">
+            </label>
+          </div>
+        </div>
+
+        <!-- â•â• SLIDE 2: SPOUSE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+        <div class="slide" data-step="2">
+          <div class="info-ban">
+            â„¹ï¸ Adding a spouse switches your premium to the <strong>family rate</strong>.
+            Spouse must be <strong>18â€“65 years</strong> of age.
+          </div>
+          <div class="fg">
+            <label>Marital Status</label>
+            <select id="marriedSelect">
+              <option value="no">Single / Not adding spouse</option>
+              <option value="yes">Married â€” add spouse to policy</option>
+            </select>
+          </div>
+          <div id="spouseFields" style="display:none">
+            <div class="g2">
+              <div class="fg">
+                <label>Spouse Full Name *</label>
+                <input type="text" id="spouse_name" placeholder="Spouse''s full name">
+              </div>
+              <div class="fg">
+                <label>Spouse Date of Birth *</label>
+                <input type="date" id="spouse_dob">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- â•â• SLIDE 3: CHILDREN â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+        <div class="slide" data-step="3">
+          <div class="info-ban">
+            ðŸ‘¶ Children under <strong>21</strong> covered automatically.
+            Up to <strong>25</strong> for full-time students or disabled dependants (proof required).
+            Maximum <strong>6 children</strong>.
+          </div>
+          <div id="childrenList"></div>
+          <button type="button" class="btn-add" onclick="addChild()">+ Add Child</button>
+        </div>
+
+        <!-- â•â• SLIDE 4: EXTENDED FAMILY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+        <div class="slide" data-step="4">
+          <div class="info-ban">
+            ðŸ‘¨â€ðŸ‘©â€ðŸ‘§ Extended family members must be <strong>under 90 years</strong> of age.
+            Each member requires a separate cover amount and monthly premium.
+            Maximum <strong>6 members</strong>.
+          </div>
+          <div class="warn-ban">
+            âš ï¸ Extended family premiums are <strong>added to your total monthly premium</strong>
+            automatically. The full breakdown is shown on the Review page.
+          </div>
+          <div id="extList"></div>
+          <button type="button" class="btn-add" onclick="addExtended()">+ Add Extended Member</button>
+        </div>
+
+        <!-- â•â• SLIDE 5: PLAN & CURRENCY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+        <div class="slide" data-step="5">
+
+          <!-- Currency -->
+          <div class="currency-bar">
+            <label for="currencySelect">Your Region / Currency:</label>
+            <select id="currencySelect">
+              <option value="ZAR">ðŸ‡¿ðŸ‡¦ South Africa â€” ZAR (Rand)</option>
+              <option value="USD">ðŸŒ SADC Region â€” USD (Dollar)</option>
+              <option value="EUR">ðŸ‡ªðŸ‡º Europe â€” EUR (Euro)</option>
+            </select>
+          </div>
+
+          <!-- Plan cards -->
+          <div class="plan-grid">
+
+            <div class="plan-card" data-plan="Premium">
+              <div class="p-chk">âœ“ Selected</div>
+              <div class="p-top">
+                <div class="p-tier">Entry Level</div>
+                <div class="p-name">Premium</div>
+                <div class="p-amt">R45 000</div>
+                <div class="p-lbl">Cover Amount</div>
+                <div class="p-pricing">
+                  <span class="p-single">R450 single</span>
+                  <span class="p-family">R540 family</span>
+                </div>
+              </div>
+              <div class="p-body">
+                <div class="p-feat">Hearse &amp; Mini Dome</div>
+                <div class="p-feat">1 Return Air Ticket (ZW)</div>
+                <div class="p-feat">Grocery Allowance R4 500</div>
+                <div class="p-feat">Bus Benefit R5 400</div>
+                <div class="p-feat">4 Zambia T-Shirts</div>
+                <div class="p-feat">Refreshments R900</div>
+              </div>
+            </div>
+
+            <div class="plan-card" data-plan="Prestige">
+              <div class="p-chk">âœ“ Selected</div>
+              <div class="p-top">
+                <div class="p-tier">Most Popular</div>
+                <div class="p-name">Prestige</div>
+                <div class="p-amt">R75 000</div>
+                <div class="p-lbl">Cover Amount</div>
+                <div class="p-pricing">
+                  <span class="p-single">R630 single</span>
+                  <span class="p-family">R720 family</span>
+                </div>
+              </div>
+              <div class="p-body">
+                <div class="p-feat">Hearse &amp; Standard Dome</div>
+                <div class="p-feat">1 Return Air Ticket (ZW)</div>
+                <div class="p-feat">Grocery Allowance R7 200</div>
+                <div class="p-feat">Flowers R1 800</div>
+                <div class="p-feat">7 Zambia T-Shirts</div>
+                <div class="p-feat">Customised Banner</div>
+              </div>
+            </div>
+
+            <div class="plan-card" data-plan="Executive">
+              <div class="p-chk">âœ“ Selected</div>
+              <div class="p-top">
+                <div class="p-tier">Premium Cover</div>
+                <div class="p-name">Executive</div>
+                <div class="p-amt">R90 000</div>
+                <div class="p-lbl">Cover Amount</div>
+                <div class="p-pricing">
+                  <span class="p-single">R990 single</span>
+                  <span class="p-family">R1 080 family</span>
+                </div>
+              </div>
+              <div class="p-body">
+                <div class="p-feat">Hearse &amp; Royal Dome</div>
+                <div class="p-feat">2 Return Air Tickets (ZW)</div>
+                <div class="p-feat">Grocery Allowance R10 800</div>
+                <div class="p-feat">Flowers R2 700</div>
+                <div class="p-feat">10 Zambia T-Shirts</div>
+                <div class="p-feat">Customised Banner &amp; Tent</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Address -->
+          <div class="sec-ttl">Residential Address</div>
+          <div class="fg">
+            <label>Street Address *</label>
+            <input type="text" id="street" placeholder="e.g. 14 Mahlakane Street" required>
+          </div>
+          <div class="g3">
+            <div class="fg">
+              <label>City *</label>
+              <input type="text" id="city" placeholder="City / Town" required>
+            </div>
+            <div class="fg">
+              <label id="provinceLabel">Province *</label>
+              <select id="province" required></select>
+            </div>
+            <div class="fg">
+              <label>Postal / ZIP Code *</label>
+              <input type="text" id="postal_code" placeholder="0000" maxlength="10" required>
+            </div>
+          </div>
+
+          <!-- Live price summary -->
+          <div class="price-pill" id="pricePill" style="display:none">
+            <div class="price-row">
+              <div class="pl">Cover</div>
+              <div class="pv" id="summCover">â€”</div>
+            </div>
+            <div class="price-row">
+              <div class="pl">Base Premium</div>
+              <div class="pv" id="summBase">â€”</div>
+            </div>
+            <div class="price-row">
+              <div class="pl">Extended</div>
+              <div class="pv" id="summExt">â€”</div>
+            </div>
+            <div class="price-row total-col">
+              <div class="pl">Total / Month</div>
+              <div class="pv" id="summTotal">â€”</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- â•â• SLIDE 6: REVIEW â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+        <div class="slide" data-step="6">
+          <div class="rv-grid" id="reviewArea">
+            <!-- Built by buildReview() in app.js -->
+          </div>
+        </div>
+
+        <!-- â•â• SLIDE 7: CONSENT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+        <div class="slide" data-step="7">
+          <div class="consent-wrap">
+            <div class="consent-hdr">ðŸ“‹ &nbsp;Policy Declaration &amp; Consent</div>
+            <div class="consent-body">
+              <label class="consent-chk">
+                <input type="checkbox" id="consentCheck">
+                I confirm that all information provided in this application is true, complete,
+                and accurate to the best of my knowledge. I understand that false or misleading
+                information may result in the cancellation of my policy. I consent to Zororo Phumulani
+                Pty Ltd processing my personal data in accordance with POPIA.
+              </label>
+              <div class="terms-box">
+                <h5>Key Policy Conditions</h5>
+                <div class="t-row"><span class="t-dot">â€¢</span>Premiums are due on or before the <strong>1st of each month</strong></div>
+                <div class="t-row"><span class="t-dot">â€¢</span><strong>60-day grace period</strong> before policy lapses</div>
+                <div class="t-row"><span class="t-dot">â€¢</span>Accidental death â€” <strong>immediate cover</strong> from first premium payment</div>
+                <div class="t-row"><span class="t-dot">â€¢</span>Natural causes â€” <strong>3-month</strong> waiting period</div>
+                <div class="t-row"><span class="t-dot">â€¢</span>Extended family members â€” <strong>6-month</strong> waiting period</div>
+                <div class="t-row"><span class="t-dot">â€¢</span>Suicide â€” <strong>12-month</strong> waiting period applies</div>
+                <div class="t-row"><span class="t-dot">â€¢</span>Claims must be submitted within <strong>6 calendar months</strong> of death</div>
+                <div class="t-row"><span class="t-dot">â€¢</span>Policy documents delivered within <strong>24 hours</strong> via Email or WhatsApp</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div><!-- /card-body -->
+
+    <!-- Form nav -->
+    <div class="form-nav">
+      <button type="button" class="btn btn-ghost" id="prevBtn"
+              onclick="goPrev()" style="display:none">â† Back</button>
+      <div class="nav-info" id="navInfo">Step 1 of 7 Â· Main Member Details</div>
+      <button type="button" class="btn btn-primary" id="nextBtn"
+              onclick="goNext()">Continue â†’</button>
+      <button type="button" class="btn btn-submit" id="submitBtn"
+              onclick="submitApp()">Submit Application âœ“</button>
+    </div>
+
+  </div><!-- /form-card -->
+</div><!-- /app -->
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="/static/app.js"></script>
+
+<!-- Patch: show price pill & update nav-info -->
 <script>
-let currentStep = 0;
-const steps = document.querySelectorAll(".step");
-
-function showStep(index) {
-    steps.forEach((step, i) => {
-        step.classList.remove("active");
-        if (i === index) step.classList.add("active");
-    });
-}
-
-function nextStep() {
-    if (currentStep < steps.length - 1) {
-        currentStep++;
-        showStep(currentStep);
+  // Show price pill when plan is selected
+  document.addEventListener(''click'', e => {
+    if (e.target.closest(''.plan-card'')) {
+      document.getElementById(''pricePill'').style.display = ''flex'';
     }
-}
+  });
 
-function prevStep() {
-    if (currentStep > 0) {
-        currentStep--;
-        showStep(currentStep);
-    }
-}
-
-async function submitForm() {
-    const consent = document.getElementById("consentCheck");
-    if (!consent.checked) {
-        alert("Please accept the declaration.");
-        return;
-    }
-
-    const form = document.getElementById("insuranceForm");
-    const formData = new FormData(form);
-
-    const response = await fetch("/submit", {
-        method: "POST",
-        body: formData
-    });
-
-    const result = await response.json();
-    alert(result.message);
-}
-</script>
-
-</body>
-</html>
+  // Update nav info text on step change (called from app.js updateStep)
+  const _origUpdate = updateStep;
+  function upd
