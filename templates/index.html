@@ -175,7 +175,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
       <div class="succ" id="succScreen" style="display:none">
         <div class="succ-icon">✓</div>
         <h2>Policy Submitted Successfully!</h2>
-        <p>Your application has been received and a completed PDF has been emailed to <strong>mike.ncube@zororophumulani.co.za</strong>. Documents delivered within 24 hours via Email or WhatsApp.</p>
+        <p>Your application has been received and a completed PDF has been emailed to <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b6dbdfddd398d8d5c3d4d3f6ccd9c4d9c4d9c6dec3dbc3dad7d8df98d5d998ccd7">[email&#160;protected]</a></strong>. Documents delivered within 24 hours via Email or WhatsApp.</p>
         <div class="pol-ref">🏷 <span id="polRef">WWFP-…</span></div>
         <div class="sg">
           <div class="sc"><div class="l">Monthly Premium</div><div class="v" id="spm">—</div></div>
@@ -186,7 +186,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
         <div class="s-pills">
           <div class="s-pill">📞 0800 100 205</div>
           <div class="s-pill">📱 +27 81 419 4980</div>
-          <div class="s-pill">✉ info@zororo-phumulani.co.za</div>
+          <div class="s-pill">✉ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a6cfc8c0c9e6dcc9d4c9d4c98bd6ced3cbd3cac7c8cf88c5c988dcc7">[email&#160;protected]</a></div>
         </div>
       </div>
 
@@ -341,7 +341,28 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
 
         <!-- ═══ SLIDE 4: BANKING ═══ -->
         <div class="slide" id="s4">
-          <div class="info-box">🏦 Debit order details for monthly premium collection. Premiums are due by the <strong>1st of each month</strong>. A <strong>60-day grace period</strong> applies.</div>
+          <div class="info-box">🏦 Choose your preferred payment method. Premiums are due by the <strong>1st of each month</strong>. A <strong>60-day grace period</strong> applies.</div>
+
+          <div style="margin-bottom:20px">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:8px">Payment Method *</div>
+            <div class="plan-type-row">
+              <button type="button" class="pt-btn sel" id="pmDebit"  onclick="setPayMethod('debit')">🏦 Debit Order</button>
+              <button type="button" class="pt-btn"     id="pmOnline" onclick="setPayMethod('online')">🌐 Online Payment</button>
+            </div>
+          </div>
+
+          <div id="onlinePayBox" style="display:none;text-align:center;padding:28px 20px;background:var(--off);border:2px solid var(--border);border-radius:12px;margin-bottom:16px">
+            <div style="font-size:36px;margin-bottom:10px">🌐</div>
+            <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px">Continue Payment Online</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.6">You will be redirected to the Zororo Phumulani secure payment portal to complete your monthly premium setup.</div>
+            <a href="https://pay.zororophumulani.co.za/" target="_blank" rel="noopener"
+               style="display:inline-flex;align-items:center;gap:8px;background:var(--navy);color:#fff;text-decoration:none;padding:12px 28px;border-radius:9px;font-size:13px;font-weight:700;border:1px solid rgba(201,168,76,.3);box-shadow:0 4px 14px rgba(8,23,46,.2)">
+              🔒 Go to Payment Portal →
+            </a>
+            <div style="font-size:10px;color:var(--muted);margin-top:12px">Secure · Encrypted · SSL Protected</div>
+          </div>
+
+          <div id="debitBox">
           <div class="r2">
             <div class="fg"><label>Bank Name *</label>
               <select id="bankName">
@@ -373,6 +394,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
               </select>
             </div>
           </div>
+          </div><!-- /debitBox -->
         </div>
 
         <!-- ═══ SLIDE 5: DECLARATIONS ═══ -->
@@ -384,13 +406,26 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
                 <option value="no">No</option><option value="yes">Yes</option>
               </select>
             </div>
-            <div class="fg"><label>Gross Monthly Income (approx)</label>
-              <select id="grossIncome">
-                <option value="">— Select range —</option>
-                <option>Below R5,000</option><option>R5,000 – R10,000</option>
-                <option>R10,000 – R20,000</option><option>R20,000 – R40,000</option>
-                <option>Above R40,000</option>
+            <div class="fg">
+              <label>Gross Monthly Income (approx)</label>
+              <select id="grossIncomeSelect" onchange="onIncomeSelect()">
+                <option value="disclose">Choose not to disclose</option>
+                <option value="range">Select a range…</option>
+                <option value="type">Type in amount…</option>
               </select>
+              <div id="incomeRangeBox" style="display:none;margin-top:6px">
+                <select id="grossIncomeRange">
+                  <option value="">— Select range —</option>
+                  <option id="ir1">Below 5,000</option>
+                  <option id="ir2">5,000 – 10,000</option>
+                  <option id="ir3">10,000 – 20,000</option>
+                  <option id="ir4">20,000 – 40,000</option>
+                  <option id="ir5">Above 40,000</option>
+                </select>
+              </div>
+              <div id="incomeTypeBox" style="display:none;margin-top:6px">
+                <input type="text" id="grossIncomeType" placeholder="e.g. 15 000" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13.5px">
+              </div>
             </div>
           </div>
           <div class="fg"><label>Is this replacing an existing policy?</label>
@@ -412,10 +447,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
             I understand the waiting periods, terms and conditions as outlined in the policy schedule.
             I confirm that I have been informed of my rights under POPIA.
           </div>
-          <div class="fg" style="margin-bottom:0">
-            <label class="ck" style="font-size:13px;gap:8px">
-              <input type="checkbox" id="declareCheck" style="width:16px;height:16px;accent-color:var(--blue)">
-              I agree to the above declaration and authorise the debit order *
+          <div style="margin-bottom:0;padding:12px 14px;border:2px solid var(--border);border-radius:9px;background:var(--off);cursor:pointer" onclick="document.getElementById('declareCheck').click()" id="declareBox">
+            <label class="ck" style="font-size:13px;gap:10px;cursor:pointer;pointer-events:none">
+              <input type="checkbox" id="declareCheck" style="width:17px;height:17px;accent-color:var(--blue);flex-shrink:0" onclick="event.stopPropagation();highlightDeclare()">
+              <span>I agree to the above declaration and authorise the debit order. I confirm I have read and understood the terms and conditions. *</span>
             </label>
           </div>
         </div>
@@ -476,7 +511,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 var PLANS = {
   Premium:   {cover:45000,single:450, family:540,  benefits:['Hearse & Mini Dome Casket','1 Return Air Ticket (Zimbabwe)','Grocery Allowance R4 500','Bus Benefit R5 400','Refreshments (bottled water, cash)']},
   Prestige:  {cover:75000,single:630, family:720,  benefits:['Hearse & Standard Dome Casket','1 Return Air Ticket (Zimbabwe)','Grocery Allowance R7 200','Flowers','Bus Benefit R5 400']},
@@ -739,11 +774,14 @@ function validate(){
     if(!gv('benRel'))    {alert('Please select beneficiary relationship.');return false;}
   }
   if(ST.step===4){
-    if(!gv('bankName'))  {alert('Please select your bank.');return false;}
-    if(!gv('acctHolder')){alert('Please enter account holder name.');return false;}
-    if(!gv('acctNumber')){alert('Please enter your account number.');return false;}
-    if(!gv('acctType'))  {alert('Please select account type.');return false;}
-    if(!gv('deductDate')){alert('Please select deduction date.');return false;}
+    if(payMethod==='debit'){
+      if(!gv('bankName'))  {alert('Please select your bank.');return false;}
+      if(!gv('acctHolder')){alert('Please enter account holder name.');return false;}
+      if(!gv('acctNumber')){alert('Please enter your account number.');return false;}
+      if(!gv('acctType'))  {alert('Please select account type.');return false;}
+      if(!gv('deductDate')){alert('Please select deduction date.');return false;}
+    }
+    // online: no validation needed, user visits external link
   }
   if(ST.step===5){
     if(!document.getElementById('declareCheck').checked){alert('Please read and accept the declaration to continue.');return false;}
@@ -807,7 +845,8 @@ function submitApp(){
     branch_code:gv('branchCode'), deduction_date:gv('deductDate'),
     agent_name:gv('agentName'), agent_phone:gv('agentPhone'),
     has_other_policies:gv('otherPolicies')==='yes',
-    gross_income:gv('grossIncome'),
+    gross_income:getGrossIncome(),
+    payment_method:payMethod,
     replacing_policy:gv('replacingPolicy')==='yes',
     source:'digital_form'
   };
@@ -824,14 +863,4 @@ function submitApp(){
     document.getElementById('cardSub').textContent='Thank you — your policy is being processed';
     document.getElementById('cardNum').textContent='✓';
     document.getElementById('polRef').textContent=r.data.policy_number||polNum;
-    document.getElementById('spm').textContent=fmt(pm.total)+'/month';
-    document.getElementById('scov').textContent=plan?fmt(plan.cover):'—';
-    window.scrollTo({top:0,behavior:'smooth'});
-  })
-  .catch(function(err){alert('Submission failed:\n'+err.message);btn.textContent='Submit Application ✓';btn.disabled=false;});
-}
-
-refreshPlanPrices();
-</script>
-</body>
-</html>
+    do
