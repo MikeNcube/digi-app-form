@@ -50,18 +50,18 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
 .sec{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:22px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
 .age-tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;margin-top:3px}
 .age-ok{color:var(--green);background:#d1fae5}.age-err{color:var(--red);background:#fee2e2}
-.upload-zone{border:2px dashed var(--bmd);border-radius:9px;padding:14px;background:var(--off);cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .2s;position:relative;overflow:hidden}
+.upload-zone{border:2px dashed var(--bmd);border-radius:9px;padding:14px;background:var(--off);cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .2s;position:relative;overflow:hidden;z-index:1}
 .upload-zone:hover{border-color:var(--blue);background:var(--pale)}
 .upload-zone.filled{border-color:var(--green);background:#f0fdf6;border-style:solid}
 .upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .uz-icon{width:36px;height:36px;border-radius:8px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
 .uz-text strong{display:block;font-size:12.5px;font-weight:600;color:var(--slate);margin-bottom:1px}
 .uz-sub{font-size:11px;color:var(--muted)}.upload-zone.filled .uz-text strong{color:var(--green)}
-.plan-type-row{display:flex;gap:10px;margin-bottom:14px}
+.plan-type-row{display:flex;gap:10px;margin-bottom:14px;position:relative;z-index:2}
 .pt-btn{flex:1;padding:9px;border:2px solid var(--border);border-radius:9px;background:#fff;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--muted);transition:all .18s;text-align:center}
 .pt-btn:hover{border-color:var(--blue);color:var(--blue)}.pt-btn.sel{border-color:var(--blue);background:var(--pale);color:var(--blue)}
-.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-.pc{border:2px solid var(--border);border-radius:11px;padding:12px 10px;cursor:pointer;transition:all .2s;text-align:center;position:relative;background:#fff;user-select:none}
+.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;position:relative;z-index:2}
+.pc{border:2px solid var(--border);border-radius:11px;padding:12px 10px;cursor:pointer;transition:all .2s;text-align:center;position:relative;background:#fff;user-select:none;z-index:2}
 .pc:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 6px 18px rgba(26,86,219,.1)}
 .pc.sel{border-color:var(--blue);background:var(--navy);transform:translateY(-2px);box-shadow:0 8px 22px rgba(26,86,219,.18)}
 .pc-tier{font-size:7px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
@@ -70,7 +70,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var
 .pc-lbl{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}.pc.sel .pc-lbl{color:rgba(255,255,255,.3)}
 .pc-pm{font-size:11px;font-weight:700;color:var(--slate);background:var(--border);padding:3px 8px;border-radius:20px;display:inline-block}.pc.sel .pc-pm{background:rgba(255,255,255,.12);color:rgba(255,255,255,.7)}
 .pc-chk{display:none;position:absolute;top:6px;right:6px;background:var(--blue);color:#fff;font-size:7.5px;font-weight:700;padding:2px 6px;border-radius:20px}.pc.sel .pc-chk{display:block}
-.benefits-box{background:var(--off);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:9px;padding:12px 14px;margin-top:10px;font-size:11.5px;color:var(--slate);line-height:1.9}
+.benefits-box{background:var(--off);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:9px;padding:12px 14px;margin-top:10px;font-size:11.5px;color:var(--slate);line-height:1.9;position:relative;z-index:2}
 .benefits-box strong{color:var(--navy);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;display:block;margin-bottom:6px}
 .price-box{background:var(--navy);border-radius:10px;padding:14px 18px;display:flex;gap:0;border:1px solid rgba(201,168,76,.15);margin-top:12px}
 .pb{flex:1;text-align:center;padding:6px 10px;border-right:1px solid rgba(255,255,255,.07)}.pb:last-child{border-right:none}
