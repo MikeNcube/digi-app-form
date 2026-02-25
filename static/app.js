@@ -1,667 +1,449 @@
-﻿/**
- * Zororo Phumulani â€” Worldwide Funeral Plan
- * app.js | Complete Logic Engine v2.0
- * Pricing Â· Currency Â· Age validation Â· Dynamic members Â· Review builder
- */
 
-''use strict'';
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  CONSTANTS  (mirrors backend â€” single source of truth)
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-const PLANS = {
-  Premium:   { cover: 45000, single: 450,  family: 540,  label: ''Premium Plan''   },
-  Prestige:  { cover: 75000, single: 630,  family: 720,  label: ''Prestige Plan''  },
-  Executive: { cover: 90000, single: 990,  family: 1080, label: ''Executive Plan'' },
+var PLANS = {
+  Premium:   {cover:45000, single:450,  family:540,  benefits:['Hearse and Mini Dome Casket','1 Return Air Ticket (Zimbabwe)','Grocery Allowance R4 500','Bus Benefit R5 400','Refreshments (bottled water, cash)']},
+  Prestige:  {cover:75000, single:630,  family:720,  benefits:['Hearse and Standard Dome Casket','1 Return Air Ticket (Zimbabwe)','Grocery Allowance R7 200','Flowers','Bus Benefit R5 400']},
+  Executive: {cover:90000, single:990,  family:1080, benefits:['Hearse and Royal Dome Casket','2 Return Air Tickets (Zimbabwe)','Grocery Allowance R10 800','Flowers','Bus Benefit R5 400']}
 };
-
-const EXT_COVER = { 2000: 60, 3000: 80, 4000: 110, 5000: 220 };
-
-const FX = { ZAR: 1.0, USD: 0.054, EUR: 0.050 };
-const SYM = { ZAR: ''R'', USD: ''$'', EUR: ''â‚¬'' };
-
-const REGIONS = {
-  ZAR: [''Gauteng'',''Western Cape'',''Eastern Cape'',''KwaZulu-Natal'',
-        ''Limpopo'',''Mpumalanga'',''North West'',''Northern Cape'',''Free State''],
-  USD: [''Zimbabwe'',''Zambia'',''Botswana'',''Namibia'',''Mozambique'',
-        ''Malawi'',''Tanzania'',''Angola'',''DRC'',''Eswatini''],
-  EUR: [''United Kingdom'',''Germany'',''Netherlands'',''Belgium'',
-        ''France'',''Portugal'',''Spain'',''Other EU''],
+var EXT_OPTIONS = [
+  {cover:2000, pm:60,  desc:'1 Tier Casket, R1 000 Chema Inyembezi, 2-Seater Transport'},
+  {cover:3000, pm:80,  desc:'1 Tier Casket, R1 500 Chema Inyembezi, 6-Seater Transport'},
+  {cover:4000, pm:110, desc:'2 Tier Casket, R2 000 Chema Inyembezi, 13-Seater Transport'},
+  {cover:5000, pm:220, desc:'Std Dome Casket, R2 500 Chema, 13-Seater, Bus Benefit R3 000, Flight Option'}
+];
+var COUNTRY_CURR = {
+  'South Africa':'R','Zimbabwe':'$','Zambia':'$','Botswana':'P','Namibia':'N$','Mozambique':'$',
+  'Malawi':'$','Eswatini':'E','Lesotho':'L','Tanzania':'$','Kenya':'$','Nigeria':'NGN ',
+  'Ghana':'GH ','United Kingdom':'GBP ','Germany':'EUR ','Netherlands':'EUR ','Belgium':'EUR ',
+  'France':'EUR ','Portugal':'EUR ','Spain':'EUR ','Australia':'A$','New Zealand':'NZ$',
+  'Canada':'C$','United States':'$'
 };
+var ST = {step:1, planName:null, planType:'single', deps:[]};
+var payMethod = 'debit';
 
-const TOTAL_STEPS = 7;
+function calcAge(dob){ return dob ? Math.floor((Date.now()-new Date(dob))/(365.25*864e5)) : null; }
+function gv(id){ var e=document.getElementById(id); return e ? e.value.trim() : ''; }
+function fmt(n){ return 'R'+Math.round(n).toLocaleString('en-ZA'); }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  STATE
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-const STATE = {
-  step:      1,
-  currency:  ''ZAR'',
-  plan:      null,
-  hasSpouse: false,
-  children:  [],    // { id, name, dob, isStudent, isDisabled, proofFile }
-  extended:  [],    // { id, name, dob, coverAmount }
-  uploadedDocs: {}, // policy_id â†’ doc list (after creation)
-  policyId:  null,
-};
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  DOM HELPERS
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-const $  = (sel, ctx = document) => ctx.querySelector(sel);
-const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
-const fmt = (n, cur = STATE.currency) =>
-  `${SYM[cur]}${Math.round(n * FX[cur]).toLocaleString(''en-ZA'')}`;
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  INIT
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-document.addEventListener(''DOMContentLoaded'', () => {
-  bindCurrency();
-  bindSpouseToggle();
-  bindPlanCards();
-  renderProvince();
-  renderExtCovers();
-  updateStep(1);
-  updatePriceSummary();
+window.addEventListener('load', function(){
+  document.getElementById('dob').max = new Date().toISOString().split('T')[0];
 });
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  STEP NAVIGATION
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-function goNext() {
-  if (!validateStep(STATE.step)) return;
-  if (STATE.step === TOTAL_STEPS - 1) buildReview();
-  updateStep(STATE.step + 1);
+function showAge(inp){
+  var b=document.getElementById('ageBadge'), a=calcAge(inp.value);
+  if(a===null){b.style.display='none';return;}
+  b.style.display='inline-block';
+  if(a<18||a>65){b.className='age-tag age-err';b.textContent='Age '+a+' - must be 18-65';}
+  else{b.className='age-tag age-ok';b.textContent='Age '+a+' years';}
 }
 
-function goPrev() {
-  updateStep(STATE.step - 1);
+function onUpload(inp, lblId, zoneId){
+  var f=inp.files[0]; if(!f) return;
+  document.getElementById(lblId).textContent = f.name+' uploaded';
+  document.getElementById(zoneId).className = 'upload-zone filled';
 }
 
-function updateStep(n) {
-  STATE.step = Math.min(Math.max(n, 1), TOTAL_STEPS);
-  // hide all slides
-  $$(''.slide'').forEach(s => s.classList.remove(''active''));
-  const slide = $(`[data-step="${STATE.step}"]`);
-  if (slide) slide.classList.add(''active'');
-  // progress bar
-  const fill = $(''#stepFill'');
-  if (fill) fill.style.width = `${((STATE.step - 1) / (TOTAL_STEPS - 1)) * 100}%`;
-  // step dots
-  $$(''.s-step'').forEach((el, i) => {
-    el.classList.remove(''active'', ''done'');
-    if (i + 1 === STATE.step) el.classList.add(''active'');
-    if (i + 1 <  STATE.step) el.classList.add(''done'');
-  });
-  // header
-  const meta = STEP_META[STATE.step];
-  if (meta) {
-    const t = $(''#cardTitle''); const s = $(''#cardSub'');
-    if (t) t.textContent = meta.title;
-    if (s) s.textContent = meta.sub;
-    const n2 = $(''#ctrNum'');
-    if (n2) n2.textContent = String(STATE.step).padStart(2, ''0'');
+function setPlanType(type){
+  ST.planType = type;
+  document.getElementById('ptSingle').className = 'pt-btn'+(type==='single'?' sel':'');
+  document.getElementById('ptFamily').className  = 'pt-btn'+(type==='family'?' sel':'');
+  refreshPlanPrices();
+  if(ST.planName) showPriceBox();
+}
+
+function refreshPlanPrices(){
+  var names = ['Premium','Prestige','Executive'];
+  for(var i=0;i<names.length;i++){
+    var n=names[i], p=PLANS[n], pm=ST.planType==='family'?p.family:p.single;
+    document.getElementById('pca_'+n).textContent = fmt(p.cover);
+    document.getElementById('ppm_'+n).textContent = fmt(pm)+'/month';
   }
-  // nav buttons
-  const prev   = $(''#prevBtn'');
-  const next   = $(''#nextBtn'');
-  const submit = $(''#submitBtn'');
-  if (prev)   prev.style.display   = STATE.step === 1 ? ''none'' : ''inline-flex'';
-  if (next)   next.style.display   = STATE.step === TOTAL_STEPS ? ''none'' : ''inline-flex'';
-  if (submit) submit.style.display = STATE.step === TOTAL_STEPS ? ''inline-flex'' : ''none'';
-
-  // update nav info text
-  const ni = document.getElementById(''navInfo'');
-  if (ni && meta) ni.textContent = `Step ${STATE.step} of 7 Â· ${meta.title}`;
-
-  window.scrollTo({ top: 0, behavior: ''smooth'' });
 }
 
-const STEP_META = {
-  1: { title: ''Main Member Details'',        sub: ''Personal information of the primary policyholder'' },
-  2: { title: ''Spouse Details'',             sub: ''Optional â€” spouse must be 18â€“65 years of age'' },
-  3: { title: ''Children'',                   sub: ''Add up to 6 children â€” age limits apply'' },
-  4: { title: ''Extended Family'',            sub: ''Add up to 6 extended members â€” must be under 90'' },
-  5: { title: ''Coverage Plan & Location'',   sub: ''Select your plan and region for currency'' },
-  6: { title: ''Review Your Application'',    sub: ''Verify all details â€” go back to edit anything'' },
-  7: { title: ''Declaration & Consent'',      sub: ''Read and accept the terms to submit'' },
+function selectPlan(name){
+  ST.planName = name;
+  var names = ['Premium','Prestige','Executive'];
+  for(var i=0;i<names.length;i++){
+    document.getElementById('pc_'+names[i]).className = 'pc'+(names[i]===name?' sel':'');
+  }
+  var plan = PLANS[name];
+  document.getElementById('benTitle').textContent = name+' Plan - Included Benefits';
+  var html = '';
+  for(var j=0;j<plan.benefits.length;j++) html += '<div>&#10003; '+plan.benefits[j]+'</div>';
+  document.getElementById('benList').innerHTML = html;
+  document.getElementById('benefitsBox').style.display = 'block';
+  showPriceBox();
+}
+
+function showPriceBox(){
+  if(!ST.planName) return;
+  var p=PLANS[ST.planName], pm=ST.planType==='family'?p.family:p.single;
+  document.getElementById('priceBox').style.display = 'flex';
+  document.getElementById('pbCover').textContent = fmt(p.cover);
+  document.getElementById('pbType').textContent  = ST.planType==='family'?'Family':'Single';
+  document.getElementById('pbPm').textContent    = fmt(pm)+'/month';
+}
+
+function calcTotalPremium(){
+  if(!ST.planName) return {base:0, ext:0, total:0};
+  var plan=PLANS[ST.planName];
+  var hasFamily = ST.deps.some(function(d){return d.type==='Spouse'||d.type==='Child';});
+  var base = (hasFamily||ST.planType==='family') ? plan.family : plan.single;
+  var ext  = 0;
+  for(var i=0;i<ST.deps.length;i++) if(ST.deps[i].type==='Extended') ext+=ST.deps[i].pm;
+  return {base:base, ext:ext, total:base+ext};
+}
+
+function setPayMethod(m){
+  payMethod = m;
+  document.getElementById('pmDebit').className  = 'pt-btn'+(m==='debit'?' sel':'');
+  document.getElementById('pmOnline').className = 'pt-btn'+(m==='online'?' sel':'');
+  document.getElementById('debitBox').style.display     = m==='debit'?'block':'none';
+  document.getElementById('onlinePayBox').style.display = m==='online'?'block':'none';
+}
+
+function handleIncomeMode(){
+  var v = gv('incomeMode');
+  document.getElementById('incomeRangeBox').style.display = v==='range'?'block':'none';
+  document.getElementById('incomeTypeBox').style.display  = v==='type'?'block':'none';
+  if(v==='range') updateIncomeCurrency();
+}
+
+function updateIncomeCurrency(){
+  var sym = COUNTRY_CURR[gv('country')] || 'R';
+  var ranges = ['Below '+sym+'5,000',sym+'5,000 - '+sym+'10,000',sym+'10,000 - '+sym+'20,000',sym+'20,000 - '+sym+'40,000','Above '+sym+'40,000'];
+  for(var i=1;i<=5;i++){
+    var el=document.getElementById('ir'+i);
+    if(el){el.textContent=ranges[i-1];el.value=ranges[i-1];}
+  }
+  var ti=document.getElementById('incomeAmount');
+  if(ti) ti.placeholder='e.g. '+sym+'15 000';
+}
+
+function getGrossIncome(){
+  var v = gv('incomeMode');
+  if(v==='none'||!v) return 'Not disclosed';
+  if(v==='range') return gv('incomeRange')||'Not specified';
+  if(v==='type')  return gv('incomeAmount')||'Not specified';
+  return 'Not disclosed';
+}
+
+function toggleDeclare(){
+  var cb  = document.getElementById('declareCheck');
+  var box = document.getElementById('declareBox');
+  cb.checked = !cb.checked;
+  box.style.borderColor = cb.checked ? 'var(--green)' : 'var(--border)';
+  box.style.background  = cb.checked ? '#f0fdf4'      : 'var(--off)';
+}
+
+function addDep(type){
+  var sc=0,cc=0,ec=0;
+  for(var i=0;i<ST.deps.length;i++){
+    if(ST.deps[i].type==='Spouse')   sc++;
+    if(ST.deps[i].type==='Child')    cc++;
+    if(ST.deps[i].type==='Extended') ec++;
+  }
+  if(type==='Spouse'  &&sc>=1){alert('Maximum 1 spouse.');return;}
+  if(type==='Child'   &&cc>=6){alert('Maximum 6 children.');return;}
+  if(type==='Extended'&&ec>=6){alert('Maximum 6 extended members.');return;}
+  ST.deps.push({id:'d'+Date.now(),type:type,name:'',dob:'',relationship:'',isStudent:false,isDisabled:false,coverAmount:2000,pm:60});
+  renderDeps();
+}
+
+function removeDep(id){
+  var next=[];
+  for(var i=0;i<ST.deps.length;i++) if(ST.deps[i].id!==id) next.push(ST.deps[i]);
+  ST.deps=next; renderDeps();
+}
+
+function renderDeps(){
+  var list=document.getElementById('depList');
+  list.innerHTML='';
+  for(var i=0;i<ST.deps.length;i++) buildDepRow(ST.deps[i],list);
+  var sc=0,cc=0,ec=0;
+  for(var j=0;j<ST.deps.length;j++){
+    if(ST.deps[j].type==='Spouse')   sc++;
+    if(ST.deps[j].type==='Child')    cc++;
+    if(ST.deps[j].type==='Extended') ec++;
+  }
+  document.getElementById('btnSpouse').disabled   = sc>=1;
+  document.getElementById('btnChild').disabled    = cc>=6;
+  document.getElementById('btnExtended').disabled = ec>=6;
+  document.getElementById('extNote').style.display = ec>0?'block':'none';
+}
+
+function buildDepRow(d, container){
+  var wrap=document.createElement('div'); wrap.className='dep-row';
+
+  var hdr=document.createElement('div'); hdr.className='dep-header';
+  var tag=document.createElement('span'); tag.className='dep-type-tag';
+  tag.textContent=d.type==='Extended'?'Extended Family':d.type;
+  var rm=document.createElement('button'); rm.type='button'; rm.className='btn-rm';
+  rm.textContent='Remove';
+  (function(did){rm.onclick=function(){removeDep(did);};})(d.id);
+  hdr.appendChild(tag); hdr.appendChild(rm);
+
+  var body=document.createElement('div'); body.className='dep-body';
+
+  var nw=document.createElement('div');
+  var nl=document.createElement('div'); nl.className='dep-lbl'; nl.textContent='Full Name *';
+  var ni=document.createElement('input'); ni.type='text'; ni.className='dep-inp';
+  ni.placeholder='Full name'; ni.value=d.name;
+  (function(dep){ni.oninput=function(){dep.name=this.value;};})(d);
+  nw.appendChild(nl); nw.appendChild(ni);
+
+  var dw=document.createElement('div');
+  var dl=document.createElement('div'); dl.className='dep-lbl'; dl.textContent='Date of Birth *';
+  var di=document.createElement('input'); di.type='date'; di.className='dep-inp';
+  di.max=new Date().toISOString().split('T')[0];
+  if(d.dob) di.value=d.dob;
+  var ageMsg=document.createElement('div'); ageMsg.className='dep-age-msg';
+  (function(dep,msg){
+    di.oninput=di.onchange=function(){
+      dep.dob=this.value;
+      var age=calcAge(this.value);
+      if(age===null){msg.style.display='none';return;}
+      msg.style.display='block';
+      var ok=false;
+      if(dep.type==='Spouse') ok=age>=18&&age<=65;
+      else if(dep.type==='Extended') ok=age<90;
+      else{var mx=(dep.isStudent||dep.isDisabled)?25:21; ok=age<=mx;}
+      msg.style.background=ok?'#d1fae5':'#fee2e2';
+      msg.style.color=ok?'#047857':'#dc2626';
+      var label='';
+      if(dep.type==='Spouse') label=ok?'Age '+age+' eligible':'Age '+age+' must be 18-65';
+      else if(dep.type==='Extended') label=ok?'Age '+age+' eligible':'Age '+age+' must be under 90';
+      else{var mx2=(dep.isStudent||dep.isDisabled)?25:21; label=ok?'Age '+age+' eligible':'Age '+age+' exceeds max '+mx2;}
+      msg.textContent=label;
+    };
+  })(d,ageMsg);
+  dw.appendChild(dl); dw.appendChild(di);
+  body.appendChild(nw); body.appendChild(dw);
+
+  if(d.type==='Extended'){
+    var rw=document.createElement('div');
+    var rl=document.createElement('div'); rl.className='dep-lbl'; rl.textContent='Relationship';
+    var rs=document.createElement('select'); rs.className='dep-inp';
+    var relOpts=['- Select -','Parent','Grandparent','Sibling','Aunt/Uncle','Cousin','In-law','Other'];
+    for(var ri=0;ri<relOpts.length;ri++){
+      var ro=document.createElement('option'); ro.value=ri===0?'':relOpts[ri]; ro.textContent=relOpts[ri]; rs.appendChild(ro);
+    }
+    if(d.relationship) rs.value=d.relationship;
+    (function(dep){rs.onchange=function(){dep.relationship=this.value;};})(d);
+    rw.appendChild(rl); rw.appendChild(rs);
+    body.appendChild(rw);
+
+    var cg=document.createElement('div'); cg.className='ext-cover-grid';
+    for(var ei=0;ei<EXT_OPTIONS.length;ei++){
+      (function(opt,dep){
+        var btn=document.createElement('button'); btn.type='button';
+        btn.className='ec-btn'+(dep.coverAmount===opt.cover?' sel':'');
+        btn.innerHTML='<div class="ec-cover">R'+opt.cover.toLocaleString('en-ZA')+'</div><div class="ec-pm">R'+opt.pm+'/month</div><div class="ec-desc">'+opt.desc+'</div>';
+        btn.onclick=function(){
+          dep.coverAmount=opt.cover; dep.pm=opt.pm;
+          var btns=cg.querySelectorAll('.ec-btn');
+          for(var bi=0;bi<btns.length;bi++) btns[bi].className='ec-btn';
+          btn.className='ec-btn sel';
+        };
+        cg.appendChild(btn);
+      })(EXT_OPTIONS[ei],d);
+    }
+    body.appendChild(cg);
+  }
+
+  if(d.type==='Child'){
+    var opts=document.createElement('div'); opts.className='dep-opts';
+    function mkCk(lbl,field,dep2){
+      var l=document.createElement('label'); l.className='ck';
+      var cb=document.createElement('input'); cb.type='checkbox'; cb.checked=dep2[field];
+      (function(f,dp,inp){cb.onchange=function(){dp[f]=this.checked;if(dp.dob)inp.oninput.call(inp);};})(field,dep2,di);
+      var sp=document.createElement('span'); sp.textContent=' '+lbl;
+      l.appendChild(cb); l.appendChild(sp); return l;
+    }
+    opts.appendChild(mkCk('Student (max 25)','isStudent',d));
+    opts.appendChild(mkCk('Disabled (max 25)','isDisabled',d));
+    body.appendChild(opts);
+  }
+
+  wrap.appendChild(hdr); wrap.appendChild(body); wrap.appendChild(ageMsg);
+  container.appendChild(wrap);
+}
+
+function buildReview(){
+  var pm=calcTotalPremium(), plan=PLANS[ST.planName];
+  var dob=gv('dob'), age=calcAge(dob);
+  var idF=document.getElementById('idFile');
+  document.getElementById('rvName').textContent    = gv('fullName')||'-';
+  document.getElementById('rvDob').textContent     = dob||'-';
+  document.getElementById('rvAge').textContent     = age!==null?age+' years':'-';
+  document.getElementById('rvPhone').textContent   = gv('phone')||'-';
+  document.getElementById('rvEmail').textContent   = gv('email')||'-';
+  document.getElementById('rvCountry').textContent = gv('country')||'-';
+  document.getElementById('rvAddress').textContent = gv('address')||'-';
+  document.getElementById('rvId').textContent      = (idF&&idF.files[0])?idF.files[0].name:'Not uploaded';
+  document.getElementById('rvBenName').textContent = (gv('benFirst')+' '+gv('benLast')).trim()||'-';
+  document.getElementById('rvBenPhone').textContent= gv('benPhone')||'-';
+  document.getElementById('rvBenRel').textContent  = gv('benRel')||'-';
+  document.getElementById('rvPayMethod').textContent = payMethod==='online'?'Online Payment':'Debit Order';
+  document.getElementById('rvBankRow').style.display  = payMethod==='debit'?'flex':'none';
+  document.getElementById('rvAcctRow').style.display  = payMethod==='debit'?'flex':'none';
+  document.getElementById('rvDeductRow').style.display= payMethod==='debit'?'flex':'none';
+  document.getElementById('rvBank').textContent    = gv('bankName')||'-';
+  document.getElementById('rvAcct').textContent    = gv('acctNumber')?(gv('acctType')+' ****'+gv('acctNumber').slice(-4)):'-';
+  document.getElementById('rvDeduct').textContent  = gv('deductDate')||'-';
+  document.getElementById('rvPlan').textContent    = ST.planName?ST.planName+' Plan':'-';
+  document.getElementById('rvType').textContent    = ST.planType==='family'?'Family':'Single';
+  document.getElementById('rvCover').textContent   = plan?fmt(plan.cover):'-';
+  document.getElementById('rvBase').textContent    = fmt(pm.base)+'/month';
+  document.getElementById('rvTotal').textContent   = fmt(pm.total)+'/month';
+  var extRow=document.getElementById('rvExtRow');
+  if(pm.ext>0){extRow.style.display='flex'; document.getElementById('rvExt').textContent=fmt(pm.ext)+'/month';}
+  else extRow.style.display='none';
+  var depSec=document.getElementById('rvDepSec');
+  if(ST.deps.length>0){
+    depSec.style.display='block';
+    var html='';
+    for(var i=0;i<ST.deps.length;i++){
+      var dep=ST.deps[i], a=dep.dob?calcAge(dep.dob):null;
+      var extra=dep.type==='Extended'?' - R'+dep.coverAmount.toLocaleString('en-ZA')+' cover, R'+dep.pm+'/m'+(dep.relationship?' ('+dep.relationship+')':''):((dep.isStudent?' Student':'')+(dep.isDisabled?' Disabled':''));
+      html+='<div class="rv-r"><span>'+dep.type+'</span><strong>'+(dep.name||'unnamed')+(a!==null?', Age '+a:'')+extra+'</strong></div>';
+    }
+    document.getElementById('rvDeps').innerHTML=html;
+  } else depSec.style.display='none';
+}
+
+function validate(){
+  if(ST.step===1){
+    if(!gv('fullName'))  {alert('Please enter your full name.');return false;}
+    if(!gv('dob'))       {alert('Please enter your date of birth.');return false;}
+    var a=calcAge(gv('dob')); if(a<18||a>65){alert('Age '+a+' is outside 18-65.');return false;}
+    if(!gv('phone'))     {alert('Please enter your phone number.');return false;}
+    if(!gv('email'))     {alert('Please enter your email address.');return false;}
+    if(!gv('country'))   {alert('Please select your country of residence.');return false;}
+    if(!gv('address'))   {alert('Please enter your residential address.');return false;}
+    if(!ST.planName)     {alert('Please select a plan.');return false;}
+  }
+  if(ST.step===2){
+    for(var i=0;i<ST.deps.length;i++){
+      var d=ST.deps[i];
+      if(!d.name.trim()){alert('Please enter a name for each member.');return false;}
+      if(!d.dob){alert('Please enter date of birth for '+(d.name||'member'));return false;}
+      var da=calcAge(d.dob);
+      if(d.type==='Spouse'&&(da<18||da>65)){alert('Spouse "'+d.name+'" age '+da+' must be 18-65.');return false;}
+      if(d.type==='Child'){var mx=(d.isStudent||d.isDisabled)?25:21;if(da>mx){alert('Child "'+d.name+'" age '+da+' exceeds max '+mx);return false;}}
+      if(d.type==='Extended'&&da>=90){alert('Extended member "'+d.name+'" must be under 90.');return false;}
+    }
+  }
+  if(ST.step===3){
+    if(!gv('benFirst')){alert('Please enter beneficiary first name.');return false;}
+    if(!gv('benLast')) {alert('Please enter beneficiary last name.');return false;}
+    if(!gv('benPhone')){alert('Please enter beneficiary phone number.');return false;}
+    if(!gv('benRel'))  {alert('Please select beneficiary relationship.');return false;}
+  }
+  if(ST.step===4&&payMethod==='debit'){
+    if(!gv('bankName'))  {alert('Please select your bank.');return false;}
+    if(!gv('acctHolder')){alert('Please enter account holder name.');return false;}
+    if(!gv('acctNumber')){alert('Please enter your account number.');return false;}
+    if(!gv('acctType'))  {alert('Please select account type.');return false;}
+    if(!gv('deductDate')){alert('Please select deduction date.');return false;}
+  }
+  if(ST.step===5){
+    if(!document.getElementById('declareCheck').checked){alert('Please accept the declaration to continue.');return false;}
+  }
+  return true;
+}
+
+var META={
+  1:{title:'Step 1: Principal Member Details',   sub:'Personal information and plan selection',    num:'01'},
+  2:{title:'Step 2: Add Dependants',              sub:'Spouse, children and extended family',       num:'02'},
+  3:{title:'Step 3: Beneficiary Details',         sub:'Who receives the payout',                   num:'03'},
+  4:{title:'Step 4: Payment Details',             sub:'Monthly premium collection',                num:'04'},
+  5:{title:'Step 5: Declarations',                sub:'Needs analysis and authorisation',          num:'05'},
+  6:{title:'Step 6: Review and Confirm',          sub:'Verify all details before submitting',      num:'06'}
 };
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  VALIDATION PER STEP
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-function validateStep(step) {
-  switch (step) {
-    case 1: return validateMainMember();
-    case 2: return validateSpouse();
-    case 3: return validateChildren();
-    case 4: return validateExtended();
-    case 5: return validatePlan();
-    default: return true;
+function goNext(){if(!validate())return; if(ST.step===5)buildReview(); setStep(ST.step+1);}
+function goPrev(){setStep(ST.step-1);}
+
+function setStep(n){
+  ST.step=Math.max(1,Math.min(6,n));
+  for(var i=1;i<=6;i++){
+    var el=document.getElementById('s'+i);
+    if(!el) continue;
+    el.style.display=(i===ST.step)?'block':'none';
+    if(i===ST.step) el.classList.add('active'); else el.classList.remove('active');
   }
-}
-
-function validateMainMember() {
-  const fname = $(''#fname'')?.value.trim();
-  const lname = $(''#lname'')?.value.trim();
-  const dob   = $(''#dob'')?.value;
-  const phone = $(''#phone'')?.value.trim();
-  const email = $(''#email'')?.value.trim();
-  if (!fname) return alert(''Please enter your first name.''), false;
-  if (!lname) return alert(''Please enter your last name.''), false;
-  if (!dob)   return alert(''Please enter your date of birth.''), false;
-  const a = ageFromDob(dob);
-  if (a < 18 || a > 65) return alert(`Main member age (${a}) must be between 18 and 65.`), false;
-  if (!phone) return alert(''Please enter a phone number.''), false;
-  if (!email) return alert(''Please enter an email address.''), false;
-  return true;
-}
-
-function validateSpouse() {
-  if (!STATE.hasSpouse) return true;
-  const sname = $(''#spouse_name'')?.value.trim();
-  const sdob  = $(''#spouse_dob'')?.value;
-  if (!sname) return alert(''Please enter spouse full name.''), false;
-  if (!sdob)  return alert(''Please enter spouse date of birth.''), false;
-  const sa = ageFromDob(sdob);
-  if (sa < 18 || sa > 65) return alert(`Spouse age (${sa}) must be 18â€“65.`), false;
-  return true;
-}
-
-function validateChildren() {
-  for (const ch of STATE.children) {
-    if (!ch.name.trim()) return alert(''Please enter a name for each child.''), false;
-    if (!ch.dob)         return alert(`Please enter date of birth for child: ${ch.name}`), false;
-    const ca  = ageFromDob(ch.dob);
-    const max = (ch.isStudent || ch.isDisabled) ? 25 : 21;
-    if (ca > max) {
-      return alert(`Child "${ch.name}" is ${ca} years old â€” maximum is ${max} for ${ch.isStudent ? ''students'' : ch.isDisabled ? ''disabled'' : ''children''}.`), false;
-    }
-    if ((ch.isStudent || ch.isDisabled) && !ch.proofFile) {
-      return alert(`Please upload proof for "${ch.name}" (student/disability certificate).`), false;
-    }
+  var m=META[ST.step];
+  document.getElementById('cardTitle').textContent=m.title;
+  document.getElementById('cardSub').textContent=m.sub;
+  document.getElementById('cardNum').textContent=m.num;
+  document.getElementById('navInfo').textContent='Step '+ST.step+' of 6';
+  document.getElementById('prevBtn').style.display   = ST.step>1?'inline-flex':'none';
+  document.getElementById('nextBtn').style.display   = ST.step<6?'inline-flex':'none';
+  document.getElementById('submitBtn').style.display = ST.step===6?'inline-flex':'none';
+  var items=document.querySelectorAll('.si');
+  for(var j=0;j<items.length;j++){
+    items[j].classList.remove('active','done');
+    if(j+1===ST.step) items[j].classList.add('active');
+    if(j+1< ST.step)  items[j].classList.add('done');
   }
-  return true;
+  document.getElementById('progFill').style.width=Math.round((ST.step-1)/5*100)+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function validateExtended() {
-  for (const ex of STATE.extended) {
-    if (!ex.name.trim()) return alert(''Please enter a name for each extended member.''), false;
-    if (!ex.dob)         return alert(`Please enter DOB for: ${ex.name}`), false;
-    const ea = ageFromDob(ex.dob);
-    if (ea >= 90) return alert(`Extended member "${ex.name}" is ${ea} â€” must be under 90.`), false;
-    if (!ex.coverAmount) return alert(`Please select cover amount for: ${ex.name}`), false;
+function submitApp(){
+  var btn=document.getElementById('submitBtn');
+  var pm=calcTotalPremium(), plan=PLANS[ST.planName];
+  var polNum='WWFP-'+Date.now();
+  var children=[], extended=[];
+  for(var i=0;i<ST.deps.length;i++){
+    var d=ST.deps[i];
+    if(d.type==='Child')    children.push({name:d.name,dob:d.dob,is_student:d.isStudent,is_disabled:d.isDisabled});
+    if(d.type==='Extended') extended.push({name:d.name,dob:d.dob,relationship:d.relationship,cover_amount:d.coverAmount,premium:d.pm});
   }
-  return true;
-}
-
-function validatePlan() {
-  if (!STATE.plan) return alert(''Please select a coverage plan.''), false;
-  return true;
-}
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  AGE HELPERS
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-function ageFromDob(dobStr) {
-  if (!dobStr) return 0;
-  return Math.floor((Date.now() - new Date(dobStr)) / (365.25 * 24 * 3600 * 1000));
-}
-
-function checkChildAge(input, childId) {
-  const ch  = STATE.children.find(c => c.id === childId);
-  if (!ch || !input.value) return;
-  ch.dob    = input.value;
-  const age = ageFromDob(input.value);
-  const max = (ch.isStudent || ch.isDisabled) ? 25 : 21;
-  const warn = input.closest(''.dep-row'')?.querySelector(''.age-warn'');
-  if (warn) {
-    if (age > max) {
-      warn.textContent = `âš  Age ${age} exceeds max ${max}`;
-      warn.style.display = ''block'';
-    } else {
-      warn.style.display = ''none'';
-    }
-  }
-}
-
-function checkExtAge(input, extId) {
-  const ex = STATE.extended.find(e => e.id === extId);
-  if (!ex || !input.value) return;
-  ex.dob    = input.value;
-  const age = ageFromDob(input.value);
-  const warn = input.closest(''.dep-row'')?.querySelector(''.age-warn'');
-  if (warn) {
-    if (age >= 90) {
-      warn.textContent = `âš  Age ${age} â€” must be under 90`;
-      warn.style.display = ''block'';
-    } else {
-      warn.style.display = ''none'';
-    }
-  }
-}
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  CURRENCY
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-function bindCurrency() {
-  const sel = $(''#currencySelect'');
-  if (!sel) return;
-  sel.addEventListener(''change'', function () {
-    STATE.currency = this.value;
-    renderProvince();
-    updatePriceSummary();
-  });
-}
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  PROVINCE / REGION
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-function renderProvince() {
-  const sel = $(''#province'');
-  if (!sel) return;
-  const list = REGIONS[STATE.currency] || REGIONS.ZAR;
-  sel.innerHTML = `<option value="">Select ${STATE.currency === ''ZAR'' ? ''province'' : ''country''}...</option>`
-    + list.map(r => `<option value="${r}">${r}</option>`).join('''');
-}
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  SPOUSE
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-function bindSpouseToggle() {
-  const sel = $(''#marriedSelect'');
-  if (!sel) return;
-  sel.addEventListener(''change'', function () {
-    STATE.hasSpouse = this.value === ''yes'';
-    const fields = $(''#spouseFields'');
-    if (fields) fields.style.display = STATE.hasSpouse ? ''block'' : ''none'';
-    updatePriceSummary();
-  });
-}
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  CHILDREN
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-function addChild() {
-  if (STATE.children.length >= 6) return alert(''Maximum 6 children allowed.'');
-  const id  = ''ch_'' + Date.now();
-  const obj = { id, name: '''', dob: null, isStudent: false, isDisabled: false, proofFile: null };
-  STATE.children.push(obj);
-  renderChildren();
-}
-
-function removeChild(id) {
-  STATE.children = STATE.children.filter(c => c.id !== id);
-  renderChildren();
-  updatePriceSummary();
-}
-
-function renderChildren() {
-  const list = $(''#childrenList'');
-  if (!list) return;
-  list.innerHTML = STATE.children.map(ch => `
-    <div class="dep-row" data-id="${ch.id}">
-      <div class="dep-fields">
-        <div class="dep-row-top">
-          <input type="text"   class="dep-name" placeholder="Child''s full name"
-                 value="${ch.name}" onchange="updateChild(''${ch.id}'',''name'',this.value)">
-          <input type="date"   class="dep-dob"
-                 value="${ch.dob || ''''}"
-                 onchange="updateChild(''${ch.id}'',''dob'',this.value);checkChildAge(this,''${ch.id}'')">
-          <button type="button" class="btn-rm" onclick="removeChild(''${ch.id}'')">âœ•</button>
-        </div>
-        <div class="dep-options">
-          <label class="chk-lbl">
-            <input type="checkbox" ${ch.isStudent ? ''checked'' : ''''}
-                   onchange="updateChild(''${ch.id}'',''isStudent'',this.checked);renderChildren()">
-            Student (up to 25)
-          </label>
-          <label class="chk-lbl">
-            <input type="checkbox" ${ch.isDisabled ? ''checked'' : ''''}
-                   onchange="updateChild(''${ch.id}'',''isDisabled'',this.checked);renderChildren()">
-            Disabled (up to 25)
-          </label>
-          ${(ch.isStudent || ch.isDisabled) ? `
-          <label class="upload-sm">
-            <span>${ch.proofFile ? ''âœ“ '' + ch.proofFile.name : ''ðŸ“Ž Upload proof certificate''}</span>
-            <input type="file" accept=".pdf,.jpg,.jpeg,.png"
-                   onchange="updateChild(''${ch.id}'',''proofFile'',this.files[0]);renderChildren()">
-          </label>` : ''''}
-        </div>
-        <div class="age-warn" style="display:none"></div>
-      </div>
-    </div>
-  `).join('''');
-  updatePriceSummary();
-}
-
-function updateChild(id, field, value) {
-  const ch = STATE.children.find(c => c.id === id);
-  if (ch) ch[field] = value;
-}
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  EXTENDED FAMILY
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-function renderExtCovers() {
-  // Used when building each ext row''s select
-}
-
-function addExtended() {
-  if (STATE.extended.length >= 6) return alert(''Maximum 6 extended members allowed.'');
-  const id  = ''ex_'' + Date.now();
-  STATE.extended.push({ id, name: '''', dob: null, coverAmount: 2000 });
-  renderExtended();
-}
-
-function removeExtended(id) {
-  STATE.extended = STATE.extended.filter(e => e.id !== id);
-  renderExtended();
-  updatePriceSummary();
-}
-
-function renderExtended() {
-  const list = $(''#extList'');
-  if (!list) return;
-  const coverOptions = Object.entries(EXT_COVER)
-    .map(([cov, pm]) =>
-      `<option value="${cov}">${fmt(+cov)} cover â€” ${fmt(pm)}/month</option>`
-    ).join('''');
-
-  list.innerHTML = STATE.extended.map(ex => `
-    <div class="dep-row" data-id="${ex.id}">
-      <div class="dep-fields">
-        <div class="dep-row-top">
-          <input type="text"  class="dep-name" placeholder="Full name"
-                 value="${ex.name}" onchange="updateExt(''${ex.id}'',''name'',this.value)">
-          <input type="date"  class="dep-dob"
-                 value="${ex.dob || ''''}"
-                 onchange="updateExt(''${ex.id}'',''dob'',this.value);checkExtAge(this,''${ex.id}'')">
-          <select onchange="updateExt(''${ex.id}'',''coverAmount'',+this.value);updatePriceSummary()">
-            ${coverOptions}
-          </select>
-          <button type="button" class="btn-rm" onclick="removeExtended(''${ex.id}'')">âœ•</button>
-        </div>
-        <div class="age-warn" style="display:none"></div>
-      </div>
-    </div>
-  `).join('''');
-  // restore selected values
-  STATE.extended.forEach(ex => {
-    const row = list.querySelector(`[data-id="${ex.id}"]`);
-    if (!row) return;
-    const sel = row.querySelector(''select'');
-    if (sel) sel.value = String(ex.coverAmount);
-  });
-  updatePriceSummary();
-}
-
-function updateExt(id, field, value) {
-  const ex = STATE.extended.find(e => e.id === id);
-  if (ex) ex[field] = value;
-}
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  PLAN SELECTION
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-function bindPlanCards() {
-  document.addEventListener(''click'', e => {
-    const card = e.target.closest(''.plan-card'');
-    if (!card) return;
-    $$(''.plan-card'').forEach(c => c.classList.remove(''sel''));
-    card.classList.add(''sel'');
-    STATE.plan = card.dataset.plan;
-    const pill = document.getElementById(''pricePill'');
-    if (pill) pill.style.display = ''flex'';
-    updatePriceSummary();
-  });
-}
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  PRICING ENGINE
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-function computePricing() {
-  if (!STATE.plan) return null;
-  const plan    = PLANS[STATE.plan];
-  const rate    = FX[STATE.currency];
-  const hasFamily = STATE.hasSpouse || STATE.children.length > 0;
-  const base    = hasFamily ? plan.family : plan.single;
-  const extPm   = STATE.extended.reduce((s, e) => s + (EXT_COVER[e.coverAmount] || 60), 0);
-  const total   = base + extPm;
-  return {
-    cover:    Math.round(plan.cover * rate),
-    base:     Math.round(base  * rate),
-    extPm:    Math.round(extPm * rate),
-    total:    Math.round(total * rate),
-    currency: STATE.currency,
+  var spouse=null;
+  for(var k=0;k<ST.deps.length;k++) if(ST.deps[k].type==='Spouse'){spouse=ST.deps[k];break;}
+  var payload={
+    policy_number:polNum, policy_type:ST.planName, currency:'ZAR', plan_type:ST.planType,
+    policyholder_name:gv('fullName'), policyholder_dob:gv('dob'),
+    phone:gv('phone'), email:gv('email'),
+    street:gv('address'), city:'', province:gv('country'), postal_code:'', country:gv('country'),
+    has_spouse:spouse!==null,
+    spouse_name:spouse?spouse.name:null, spouse_dob:spouse?spouse.dob:null,
+    children:children, extended_family:extended,
+    beneficiary_name:gv('benFirst')+' '+gv('benLast'),
+    beneficiary_phone:gv('benPhone'), beneficiary_relationship:gv('benRel'),
+    bank_name:gv('bankName'), account_holder:gv('acctHolder'),
+    account_number:gv('acctNumber'), account_type:gv('acctType'),
+    branch_code:gv('branchCode'), deduction_date:gv('deductDate'),
+    agent_name:gv('agentName'), agent_phone:gv('agentPhone'),
+    has_other_policies:gv('otherPolicies')==='yes',
+    gross_income:getGrossIncome(),
+    payment_method:payMethod,
+    replacing_policy:gv('replacingPolicy')==='yes',
+    source:'digital_form'
   };
-}
-
-function updatePriceSummary() {
-  const p = computePricing();
-  if (!p) return;
-  const els = {
-    coverAmt:  $(''#summCover''),
-    basePm:    $(''#summBase''),
-    extPm:     $(''#summExt''),
-    totalPm:   $(''#summTotal''),
-  };
-  if (els.coverAmt) els.coverAmt.textContent = fmt(p.cover / FX[STATE.currency]);
-  if (els.basePm)   els.basePm.textContent   = fmt(p.base  / FX[STATE.currency]);
-  if (els.extPm)    els.extPm.textContent    = fmt(p.extPm / FX[STATE.currency]);
-  if (els.totalPm)  els.totalPm.textContent  = fmt(p.total / FX[STATE.currency]);
-
-  // update plan card prices for current currency
-  $$(''.plan-card'').forEach(card => {
-    const pl = PLANS[card.dataset.plan];
-    if (!pl) return;
-    const cvr = card.querySelector(''.p-amt'');
-    const si  = card.querySelector(''.p-single'');
-    const fa  = card.querySelector(''.p-family'');
-    if (cvr) cvr.textContent = fmt(pl.cover);
-    if (si)  si.textContent  = `${SYM[STATE.currency]}${Math.round(pl.single * FX[STATE.currency]).toLocaleString()} single`;
-    if (fa)  fa.textContent  = `${SYM[STATE.currency]}${Math.round(pl.family * FX[STATE.currency]).toLocaleString()} family`;
+  btn.textContent='Submitting...'; btn.disabled=true;
+  fetch('/api/v1/policies',{
+    method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)
+  }).then(function(res){
+    return res.json().then(function(d){return{ok:res.ok,data:d};});
+  }).then(function(r){
+    if(!r.ok) throw new Error(Array.isArray(r.data.detail)?r.data.detail.join('\n'):r.data.detail||'Server error');
+    document.getElementById('appForm').style.display='none';
+    document.getElementById('succScreen').style.display='block';
+    document.querySelector('.cf').style.display='none';
+    document.getElementById('prog').style.display='none';
+    document.getElementById('cardTitle').textContent='Application Complete';
+    document.getElementById('cardSub').textContent='Thank you - your policy is being processed';
+    document.getElementById('cardNum').textContent='OK';
+    document.getElementById('polRef').textContent=r.data.policy_number||polNum;
+    document.getElementById('spm').textContent=fmt(pm.total)+'/month';
+    document.getElementById('scov').textContent=plan?fmt(plan.cover):'-';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }).catch(function(err){
+    alert('Submission failed:\n'+err.message);
+    btn.textContent='Submit Application'; btn.disabled=false;
   });
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  REVIEW BUILDER
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-function buildReview() {
-  const pricing = computePricing();
-  const area    = $(''#reviewArea'');
-  if (!area || !pricing) return;
-
-  const g = id => document.getElementById(id)?.value?.trim() || ''â€”'';
-  const hasFamily = STATE.hasSpouse || STATE.children.length > 0;
-
-  area.innerHTML = `
-    <div class="rv-box">
-      <h4>Main Member</h4>
-      <div class="rv-main">${g(''fname'')} ${g(''lname'')}</div>
-      <div class="rv-sub">DOB: ${g(''dob'')} Â· Age: ${ageFromDob(g(''dob''))}</div>
-      <div class="rv-sub">${g(''phone'')} Â· ${g(''email'')}</div>
-    </div>
-
-    <div class="rv-box">
-      <h4>Spouse</h4>
-      ${STATE.hasSpouse
-        ? `<div class="rv-main">${g(''spouse_name'')}</div>
-           <div class="rv-sub">DOB: ${g(''spouse_dob'')} Â· Age: ${ageFromDob(g(''spouse_dob''))}</div>`
-        : `<div class="rv-sub muted">No spouse added</div>`}
-    </div>
-
-    <div class="rv-box">
-      <h4>Children (${STATE.children.length})</h4>
-      ${STATE.children.length === 0
-        ? `<div class="rv-sub muted">No children added</div>`
-        : STATE.children.map(ch =>
-            `<div class="rv-sub">
-              <strong>${ch.name}</strong> â€” Age ${ageFromDob(ch.dob)}
-              ${ch.isStudent ? '' Â· Student'' : ''''}
-              ${ch.isDisabled ? '' Â· Disabled'' : ''''}
-              ${ch.proofFile ? ` Â· <span class="tag-ok">Proof âœ“</span>` : ''''}
-            </div>`
-          ).join('''')}
-    </div>
-
-    <div class="rv-box">
-      <h4>Extended Family (${STATE.extended.length})</h4>
-      ${STATE.extended.length === 0
-        ? `<div class="rv-sub muted">No extended members added</div>`
-        : STATE.extended.map(ex =>
-            `<div class="rv-sub">
-              <strong>${ex.name}</strong> â€” Age ${ageFromDob(ex.dob)}
-              Â· Cover ${fmt(ex.coverAmount)}
-              Â· <span class="tag-pm">${fmt(EXT_COVER[ex.coverAmount])}/month</span>
-            </div>`
-          ).join('''')}
-    </div>
-
-    <div class="rv-box">
-      <h4>Address</h4>
-      <div class="rv-main">${g(''street'')}</div>
-      <div class="rv-sub">${g(''city'')}, ${g(''province'')} Â· ${g(''postal_code'')}</div>
-    </div>
-
-    <div class="rv-box span2 gold-top">
-      <h4>Coverage Plan â€” Premium Breakdown</h4>
-      <div class="rv-main">${PLANS[STATE.plan]?.label || ''â€”''}</div>
-      <div class="rv-pricing">
-        <div class="rv-row"><span>Cover Amount</span><strong>${fmt(pricing.cover / FX[STATE.currency])}</strong></div>
-        <div class="rv-row"><span>${hasFamily ? ''Family'' : ''Single''} Premium</span><strong>${fmt(pricing.base / FX[STATE.currency])}/month</strong></div>
-        ${pricing.extPm > 0
-          ? `<div class="rv-row"><span>Extended Member Premiums</span><strong>${fmt(pricing.extPm / FX[STATE.currency])}/month</strong></div>`
-          : ''''}
-        <div class="rv-row total-row"><span>Total Monthly Premium</span><strong>${fmt(pricing.total / FX[STATE.currency])}/month</strong></div>
-        ${STATE.currency !== ''ZAR''
-          ? `<div class="rv-row sub-row"><span>Displayed in ${STATE.currency} (1 ZAR = ${FX[STATE.currency]} ${STATE.currency})</span></div>`
-          : ''''}
-      </div>
-    </div>
-  `;
-}
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  FILE UPLOAD HELPER (ID doc)
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-function onFile(input, labelId, zoneId) {
-  const f = input.files[0];
-  if (!f) return;
-  const lbl  = document.getElementById(labelId);
-  const zone = document.getElementById(zoneId);
-  if (lbl)  lbl.textContent = ''âœ“ '' + f.name;
-  if (zone) zone.classList.add(''filled'');
-}
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  SUBMIT
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-async function submitApp() {
-  const btn = $(''#submitBtn'');
-  if (!$(''#consentCheck'')?.checked) return alert(''Please accept the declaration to proceed.'');
-
-  // Build payload
-  const g = id => document.getElementById(id)?.value?.trim() || '''';
-  const pricing   = computePricing();
-  const polNum    = ''WWFP-'' + Date.now();
-
-  const payload = {
-    policy_number:     polNum,
-    policy_type:       STATE.plan,
-    currency:          STATE.currency,
-    policyholder_name: `${g(''fname'')} ${g(''lname'')}`,
-    policyholder_dob:  g(''dob''),
-    phone:             g(''phone''),
-    email:             g(''email''),
-    street:            g(''street''),
-    city:              g(''city''),
-    province:          g(''province''),
-    postal_code:       g(''postal_code''),
-    has_spouse:        STATE.hasSpouse,
-    spouse_name:       STATE.hasSpouse ? g(''spouse_name'') : null,
-    spouse_dob:        STATE.hasSpouse ? g(''spouse_dob'')  : null,
-    children:          STATE.children.map(ch => ({
-      name:        ch.name,
-      dob:         ch.dob,
-      is_student:  ch.isStudent,
-      is_disabled: ch.isDisabled,
-    })),
-    extended_family: STATE.extended.map(ex => ({
-      name:         ex.name,
-      dob:          ex.dob,
-      cover_amount: ex.coverAmount,
-      premium:      EXT_COVER[ex.coverAmount] || 60,
-    })),
-    source: ''digital_form'',
-  };
-
-  try {
-    btn.innerHTML = ''âŒ› Submittingâ€¦'';
-    btn.disabled  = true;
-
-    const res  = await fetch(''/api/v1/policies'', {
-      method:  ''POST'',
-      headers: { ''Content-Type'': ''application/json'' },
-      body:    JSON.stringify(payload),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(Array.isArray(data.detail)
-      ? data.detail.join(''\n'') : data.detail || ''Server error'');
-
-    STATE.policyId = data.policy_id;
-
-    // Upload ID doc if selected
-    const idFile = $(''#id_upload'')?.files[0];
-    if (idFile) await uploadDoc(STATE.policyId, ''id'', idFile);
-
-    // Upload child proofs
-    for (const ch of STATE.children) {
-      if (ch.proofFile) await uploadDoc(STATE.policyId, ''student_proof'', ch.proofFile);
-    }
-
-    showSuccess(data.policy_number, pricing);
-  } catch (err) {
-    alert(''Submission failed:\n'' + err.message);
-  } finally {
-    btn.innerHTML = ''Submit Application âœ“'';
-    btn.disabled  = false;
-  }
-}
-
-async function uploadDoc(policyId, docType, file) {
-  const fd = new FormData();
-  fd.append(''policy_id'',     policyId);
-  fd.append(''document_type'', docType);
-  fd.append(''file'',          file);
-  try {
-    await fetch(''/api/v1/documents/upload'', { method: ''POST'', body: fd });
-  } catch (e) {
-    console.warn(''Doc upload failed:'', e);
-  }
-}
-
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-//  SUCCESS SCREEN
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-function showSuccess(policyNumber, pricing) {
-  const form  = $(''#appForm'');
-  const nav   = $(''.form-nav'');
-  const track = $(''#stepTrack'');
-  const succ  = $(''#successScreen'');
-  if (form)  form.style.display  = ''none'';
-  if (nav)   nav.style.display   = ''none'';
-  if (track) track.style.display = ''none'';
-  if (succ)  succ.style.display  = ''block'';
-
-  const ref = $(''#policyRef'');
-  if (ref) ref.textContent = policyNumber;
-
-  const pm = $(''#successPremium'');
-  if (pm && pricing)
-    pm.textContent = `Total monthly premium: ${fmt(pricing.total / FX[STATE.currency])} ${STATE.currency}`;
-
-  document.querySelector(''.form-card'')?.scrollIntoView({ behavior: ''smooth'', block: ''start'' });
-}
-
+refreshPlanPrices();
