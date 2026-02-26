@@ -286,8 +286,8 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
   <div class="progress-steps" id="progressSteps">
     <div class="step-tab active" data-step="1"><div class="step-num">1</div><div class="step-label">Main Member</div></div>
     <div class="step-tab" data-step="2"><div class="step-num">2</div><div class="step-label">Documents</div></div>
-    <div class="step-tab" data-step="3"><div class="step-num">3</div><div class="step-label">Family</div></div>
-    <div class="step-tab" data-step="4"><div class="step-num">4</div><div class="step-label">Cover &amp; Plan</div></div>
+    <div class="step-tab" data-step="3"><div class="step-num">3</div><div class="step-label">Cover &amp; Plan</div></div>
+    <div class="step-tab" data-step="4"><div class="step-num">4</div><div class="step-label">Family</div></div>
     <div class="step-tab" data-step="5"><div class="step-num">5</div><div class="step-label">Payment</div></div>
     <div class="step-tab" data-step="6"><div class="step-num">6</div><div class="step-label">Declarations</div></div>
     <div class="step-tab" data-step="7"><div class="step-num">7</div><div class="step-label">Review &amp; Sign</div></div>
@@ -391,41 +391,32 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
     <button class="btn btn-pri" onclick="nextSlide(1)">Continue →</button></div>
 </div>
 
-<!-- ══ SLIDE 2: DOCUMENT UPLOADS (MANDATORY) ══ -->
+<!-- ══ SLIDE 2: DOCUMENT UPLOAD (MANDATORY) ══ -->
 <div class="slide" id="slide2">
   <div class="card">
-    <div class="card-title">Required Documents</div>
-    <div class="card-sub">Both documents below are mandatory for FICA compliance and must be uploaded before your application can be submitted.</div>
+    <div class="card-title">Identity Document Upload</div>
+    <div class="card-sub">A certified copy of your Passport or ID is required before your application can be submitted. FIC documentation is handled separately by your agent.</div>
 
-    <div class="sec-label">1. FIC (Financial Intelligence Centre) Document</div>
-    <div class="upload-zone" id="ficZone">
-      <input type="file" id="fic_upload" accept=".pdf,.jpg,.jpeg,.png"/>
-      <div class="uz-icon">🏛️</div>
-      <div class="uz-text"><strong>Click to upload FIC document</strong> or drag and drop</div>
-      <div class="uz-text">PDF, JPG or PNG · Max 5MB</div>
-      <div class="uz-reqbadge">REQUIRED</div>
-      <div class="uz-fname" id="fic_name"></div>
-    </div>
-    <div class="field-note" style="margin-top:6px;">A South African green ID book, smart ID card, or equivalent FICA-compliant document.</div>
-
-    <hr class="divider"/>
-    <div class="sec-label" style="margin-top:0">2. Passport or ID Copy</div>
+    <div class="sec-label">Passport or ID Copy <span class="req">*</span></div>
     <div class="upload-zone" id="passportZone">
       <input type="file" id="passport_upload" accept=".pdf,.jpg,.jpeg,.png"/>
       <div class="uz-icon">🪪</div>
-      <div class="uz-text"><strong>Click to upload Passport or ID copy</strong></div>
+      <div class="uz-text"><strong>Click to upload your Passport or ID copy</strong> or drag and drop</div>
       <div class="uz-text">PDF, JPG or PNG · Max 5MB</div>
       <div class="uz-reqbadge">REQUIRED</div>
       <div class="uz-fname" id="passport_name"></div>
     </div>
-    <div class="field-note" style="margin-top:6px;">Must be a certified copy. Passport for non-SA nationals, ID for South African nationals.</div>
+    <div class="field-note" style="margin-top:8px;">
+      South African nationals: certified copy of green ID book or smart ID card.<br/>
+      Non-SA nationals (Zimbabwean, etc.): certified copy of valid passport.
+    </div>
 
-    <div class="field" style="margin-top:18px;">
+    <div class="field" style="margin-top:20px;">
       <label>ID / Passport Number <span class="req">*</span></label>
       <input type="text" id="mm_id_number" placeholder="SA ID (13 digits) or Passport number"/>
     </div>
 
-    <div id="docs_err" class="inline-err">⚠ Please upload both required documents before continuing.</div>
+    <div id="docs_err" class="inline-err">⚠ Please upload your Passport or ID copy before continuing.</div>
   </div>
   <div class="nav-bar">
     <button class="btn btn-sec" onclick="prevSlide(2)">← Back</button>
@@ -433,43 +424,11 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
   </div>
 </div>
 
-<!-- ══ SLIDE 3: FAMILY & DEPENDANTS ══ -->
+<!-- ══ SLIDE 3: COVER & PLAN (before Family) ══ -->
 <div class="slide" id="slide3">
   <div class="card">
-    <div class="card-title">Family &amp; Dependants</div>
-    <div class="card-sub">Add family members to be covered. Required for Family plan selection on the next step.</div>
-
-    <!-- SPOUSE -->
-    <div class="sec-label">Spouse (Maximum 1)</div>
-    <div id="spouseSection">
-      <div class="dep-cnt">No spouse added.</div>
-      <button class="btn-add" onclick="addSpouse()"><span>＋</span> Add Spouse</button>
-    </div>
-
-    <hr class="divider"/>
-    <div class="sec-label">Children (Maximum 6)</div>
-    <div class="dep-cnt" id="child_cnt">0 of 6 children added</div>
-    <div class="dep-list" id="childList"></div>
-    <button class="btn-add" id="addChildBtn" onclick="addChild()"><span>＋</span> Add Child</button>
-
-    <hr class="divider"/>
-    <div class="sec-label">Extended Family (Maximum 6)</div>
-    <div class="dep-cnt">Each extended family member selects their own cover tier. Must reside in Zimbabwe or South Africa.</div>
-    <div class="dep-cnt" id="efm_cnt">0 of 6 extended family members added</div>
-    <div class="dep-list" id="efmList"></div>
-    <button class="btn-add" id="addEfmBtn" onclick="addEfm()"><span>＋</span> Add Extended Family Member</button>
-  </div>
-  <div class="nav-bar">
-    <button class="btn btn-sec" onclick="prevSlide(3)">← Back</button>
-    <button class="btn btn-pri" onclick="nextSlide(3)">Continue →</button>
-  </div>
-</div>
-
-<!-- ══ SLIDE 4: COVER & PLAN ══ -->
-<div class="slide" id="slide4">
-  <div class="card">
     <div class="card-title">Cover &amp; Plan Selection</div>
-    <div class="card-sub">Choose your cover type then select a plan.</div>
+    <div class="card-sub">Select your cover type and plan first. You will add family members on the next step.</div>
 
     <div class="sec-label">Cover Type</div>
     <div class="toggle-g" style="max-width:300px;margin-bottom:18px">
@@ -479,7 +438,7 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
       <label for="ct_family" onclick="setCoverType('family')">Family Cover</label>
     </div>
     <div id="fam_warn" class="inline-warn" style="display:none">
-      ⚠ Family cover requires at least one dependant. Please add a spouse or child on the previous step first.
+      ⚠ Family cover requires at least one dependant. Please add a spouse or child on the next step.
     </div>
 
     <div class="sec-label" style="margin-top:4px">Select Plan</div>
@@ -516,17 +475,55 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
         </ul>
       </div>
     </div>
-    <div id="plan_total_wrap" style="display:none;margin-top:16px">
+
+    <!-- CURRENCY CONVERTER -->
+    <div id="plan_total_wrap" style="display:none;margin-top:18px">
       <div class="prem-box">
         <div>
           <div class="prem-label">Estimated Monthly Premium</div>
           <div class="prem-detail" id="plan_detail"></div>
+          <div id="converted_display" style="font-size:.78rem;color:rgba(255,255,255,.65);margin-top:4px"></div>
         </div>
         <div class="prem-amount" id="plan_total">R0</div>
       </div>
+
+      <!-- Currency selector -->
+      <div style="background:#f8f9fc;border:1.5px solid var(--border);border-radius:var(--radius);
+                  padding:16px 18px;margin-top:12px">
+        <div class="sec-label" style="margin-bottom:12px">Currency Conversion (Optional)</div>
+        <div class="field-row" style="margin-bottom:0;align-items:center">
+          <div class="field" style="margin-bottom:0">
+            <label style="font-size:.78rem">Display currency</label>
+            <select id="currency_sel" onchange="updateCurrencyDisplay()">
+              <option value="ZAR">ZAR — South African Rand</option>
+              <option value="USD">USD — US Dollar</option>
+              <option value="GBP">GBP — British Pound</option>
+              <option value="EUR">EUR — Euro</option>
+              <option value="AUD">AUD — Australian Dollar</option>
+              <option value="CAD">CAD — Canadian Dollar</option>
+              <option value="ZWL">ZWL — Zimbabwe Gold (ZiG)</option>
+              <option value="BWP">BWP — Botswana Pula</option>
+              <option value="NAD">NAD — Namibian Dollar</option>
+            </select>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label style="font-size:.78rem">Exchange rate (ZAR per 1 unit)</label>
+            <input type="number" id="fx_rate" placeholder="e.g. 21.52 for GBP"
+                   step="0.0001" min="0.0001" oninput="updateCurrencyDisplay()"/>
+            <div class="field-note" id="fx_hint">Enter current exchange rate</div>
+          </div>
+        </div>
+        <div id="currency_breakdown" style="display:none;margin-top:14px;
+             background:#fff;border-radius:7px;padding:12px 14px;
+             border:1px solid var(--border);font-size:.83rem">
+          <div style="font-weight:700;color:var(--navy);margin-bottom:8px"
+               id="currency_title">Premium Breakdown</div>
+          <div id="currency_rows"></div>
+        </div>
+      </div>
     </div>
 
-    <!-- BENEFICIARY (embedded in slide 4 for flow) -->
+    <!-- BENEFICIARY -->
     <hr class="divider"/>
     <div class="sec-label">Beneficiary Details</div>
     <div class="card-sub" style="margin-bottom:14px">The person who will receive the payout in the event of a claim.</div>
@@ -546,6 +543,38 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
           <option>Sibling</option><option>Other family member</option>
         </select></div>
     </div>
+  </div>
+  <div class="nav-bar">
+    <button class="btn btn-sec" onclick="prevSlide(3)">← Back</button>
+    <button class="btn btn-pri" onclick="nextSlide(3)">Continue →</button>
+  </div>
+</div>
+
+<!-- ══ SLIDE 4: FAMILY & DEPENDANTS (after Plan) ══ -->
+<div class="slide" id="slide4">
+  <div class="card">
+    <div class="card-title">Family &amp; Dependants</div>
+    <div class="card-sub">Add family members to be covered. Required if you selected Family Cover on the previous step.</div>
+
+    <!-- SPOUSE -->
+    <div class="sec-label">Spouse (Maximum 1)</div>
+    <div id="spouseSection">
+      <div class="dep-cnt">No spouse added.</div>
+      <button class="btn-add" onclick="addSpouse()"><span>＋</span> Add Spouse</button>
+    </div>
+
+    <hr class="divider"/>
+    <div class="sec-label">Children (Maximum 6)</div>
+    <div class="dep-cnt" id="child_cnt">0 of 6 children added</div>
+    <div class="dep-list" id="childList"></div>
+    <button class="btn-add" id="addChildBtn" onclick="addChild()"><span>＋</span> Add Child</button>
+
+    <hr class="divider"/>
+    <div class="sec-label">Extended Family (Maximum 6)</div>
+    <div class="dep-cnt">Each extended family member selects their own cover tier. Must reside in Zimbabwe or South Africa.</div>
+    <div class="dep-cnt" id="efm_cnt">0 of 6 extended family members added</div>
+    <div class="dep-list" id="efmList"></div>
+    <button class="btn-add" id="addEfmBtn" onclick="addEfm()"><span>＋</span> Add Extended Family Member</button>
   </div>
   <div class="nav-bar">
     <button class="btn btn-sec" onclick="prevSlide(4)">← Back</button>
@@ -666,7 +695,7 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
       <div class="field"><label>Number of Dependants</label>
         <input type="number" id="d_numdeps" min="0" max="20" placeholder="0"/></div>
       <div class="field"><label>Monthly Gross Income <span class="req">*</span></label>
-        <select id="d_income">
+        <select id="d_income" onchange="onIncomeChange()">
           <option value="">Select range or prefer not to disclose</option>
           <option value="prefer_not">Prefer not to disclose</option>
           <option value="under_5000">Under R5,000</option>
@@ -677,11 +706,13 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
           <option value="over_50000">Over R50,000</option>
         </select></div>
     </div>
-    <div class="field-row">
-      <div class="field"><label>Monthly Expenses</label>
-        <input type="text" id="d_expenses" placeholder="e.g. R8,500"/></div>
-      <div class="field"><label>Available Cash / Savings</label>
-        <input type="text" id="d_cash" placeholder="e.g. R15,000"/></div>
+    <div id="financial_detail_wrap">
+      <div class="field-row">
+        <div class="field"><label>Monthly Expenses</label>
+          <input type="text" id="d_expenses" placeholder="e.g. R8,500"/></div>
+        <div class="field"><label>Available Cash / Savings</label>
+          <input type="text" id="d_cash" placeholder="e.g. R15,000"/></div>
+      </div>
     </div>
 
     <hr class="divider"/>

@@ -338,9 +338,7 @@ def validate_application(data: PolicyApplication):
                 "Family cover requires at least one dependant (spouse or child). "
                 "Please add dependants or switch to Single cover.")
 
-    # Document uploads mandatory
-    if not data.fic_uploaded:
-        raise HTTPException(400, "FIC document upload is required before submission.")
+    # Passport/ID upload mandatory (FIC handled externally)
     if not data.passport_uploaded:
         raise HTTPException(400, "Passport / ID copy upload is required before submission.")
 
@@ -921,7 +919,11 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
 # ─── EMAIL ──────────────────────────────────────────────────────
 def send_email_ssl(to_addr: str, subject: str, html_body: str,
                    pdf_bytes: bytes, pdf_filename: str) -> bool:
-    """Send via SSL on port 465 (Zororo mail server)."""
+    """
+    Send ONE email to ONE recipient via SSL port 465.
+    Builds a completely fresh MIMEMultipart + SMTP session per call
+    to prevent any cross-delivery between client and admin emails.
+    """
     smtp_host = os.environ.get("SMTP_HOST", "mail.zororo-phumulani.co.za")
     smtp_port = int(os.environ.get("SMTP_PORT", "465"))
     smtp_user = os.environ.get("SMTP_USER", "")
@@ -931,10 +933,12 @@ def send_email_ssl(to_addr: str, subject: str, html_body: str,
         log.warning(f"SMTP credentials not set — skipping email to {to_addr}")
         return False
 
+    # Build a fresh message object for THIS recipient only
     msg = MIMEMultipart("mixed")
     msg["From"]    = smtp_user
-    msg["To"]      = to_addr
+    msg["To"]      = to_addr          # Explicit single recipient in header
     msg["Subject"] = subject
+    msg["Message-ID"] = f"<{uuid.uuid4()}@zororo-phumulani.co.za>"
 
     alt = MIMEMultipart("alternative")
     alt.attach(MIMEText(html_body, "html", "utf-8"))
@@ -950,10 +954,12 @@ def send_email_ssl(to_addr: str, subject: str, html_body: str,
 
     try:
         ctx = ssl.create_default_context()
+        # Open a brand-new SMTP connection for each email
         with smtplib.SMTP_SSL(smtp_host, smtp_port, context=ctx) as s:
             s.login(smtp_user, smtp_pass)
-            s.sendmail(smtp_user, to_addr, msg.as_string())
-        log.info(f"Email delivered → {to_addr}")
+            # sendmail with explicit envelope-to — only this address receives it
+            s.sendmail(smtp_user, [to_addr], msg.as_string())
+        log.info(f"Email delivered → {to_addr} | Subject: {subject[:60]}")
         return True
     except Exception as exc:
         log.error(f"Email FAILED → {to_addr}: {exc}")
