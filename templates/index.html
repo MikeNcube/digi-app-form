@@ -476,50 +476,26 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
       </div>
     </div>
 
-    <!-- CURRENCY CONVERTER -->
+    <!-- PREMIUM SUMMARY — auto-converts based on country selected on slide 1 -->
     <div id="plan_total_wrap" style="display:none;margin-top:18px">
       <div class="prem-box">
         <div>
           <div class="prem-label">Estimated Monthly Premium</div>
           <div class="prem-detail" id="plan_detail"></div>
-          <div id="converted_display" style="font-size:.78rem;color:rgba(255,255,255,.65);margin-top:4px"></div>
+          <div id="converted_display" style="font-size:.76rem;color:rgba(255,255,255,.60);margin-top:3px"></div>
         </div>
         <div class="prem-amount" id="plan_total">R0</div>
       </div>
-
-      <!-- Currency selector -->
-      <div style="background:#f8f9fc;border:1.5px solid var(--border);border-radius:var(--radius);
-                  padding:16px 18px;margin-top:12px">
-        <div class="sec-label" style="margin-bottom:12px">Currency Conversion (Optional)</div>
-        <div class="field-row" style="margin-bottom:0;align-items:center">
-          <div class="field" style="margin-bottom:0">
-            <label style="font-size:.78rem">Display currency</label>
-            <select id="currency_sel" onchange="updateCurrencyDisplay()">
-              <option value="ZAR">ZAR — South African Rand</option>
-              <option value="USD">USD — US Dollar</option>
-              <option value="GBP">GBP — British Pound</option>
-              <option value="EUR">EUR — Euro</option>
-              <option value="AUD">AUD — Australian Dollar</option>
-              <option value="CAD">CAD — Canadian Dollar</option>
-              <option value="ZWL">ZWL — Zimbabwe Gold (ZiG)</option>
-              <option value="BWP">BWP — Botswana Pula</option>
-              <option value="NAD">NAD — Namibian Dollar</option>
-            </select>
-          </div>
-          <div class="field" style="margin-bottom:0">
-            <label style="font-size:.78rem">Exchange rate (ZAR per 1 unit)</label>
-            <input type="number" id="fx_rate" placeholder="e.g. 21.52 for GBP"
-                   step="0.0001" min="0.0001" oninput="updateCurrencyDisplay()"/>
-            <div class="field-note" id="fx_hint">Enter current exchange rate</div>
-          </div>
-        </div>
-        <div id="currency_breakdown" style="display:none;margin-top:14px;
-             background:#fff;border-radius:7px;padding:12px 14px;
-             border:1px solid var(--border);font-size:.83rem">
-          <div style="font-weight:700;color:var(--navy);margin-bottom:8px"
-               id="currency_title">Premium Breakdown</div>
-          <div id="currency_rows"></div>
-        </div>
+      <!-- Rate source note — shown for non-ZAR countries -->
+      <div id="fx_rate_note" style="display:none;margin-top:6px;font-size:.74rem;
+           color:var(--muted);text-align:right;padding-right:2px"></div>
+      <!-- Itemised breakdown table — always shown once plan selected -->
+      <div id="currency_breakdown" style="display:none;margin-top:10px;
+           background:#f8f9fc;border:1.5px solid var(--border);border-radius:var(--radius);
+           padding:12px 14px">
+        <div style="font-weight:700;color:var(--navy);margin-bottom:8px;font-size:.83rem"
+             id="currency_title">Premium Breakdown</div>
+        <div id="currency_rows"></div>
       </div>
     </div>
 

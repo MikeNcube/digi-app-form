@@ -304,6 +304,10 @@ class PolicyApplication(BaseModel):
     fais_accepted:   bool = False
     fic_uploaded:    bool = False
     passport_uploaded: bool = False
+    display_currency:  Optional[str]   = "ZAR"
+    display_currency_sym: Optional[str] = "R"
+    fx_rate_used:      Optional[float] = None
+    fx_rate_live:      Optional[bool]  = False
     submission_timestamp: Optional[str] = None
 
 
@@ -572,11 +576,22 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
              "TOTAL PREMIUM",   f"R{int(data.total_premium):,}/month"),
     ]))
 
-    # Highlighted premium block
+    # Highlighted premium block — show local currency equivalent if non-ZAR
+    fx_note = ""
+    if (data.display_currency and data.display_currency != "ZAR"
+            and data.fx_rate_used and data.fx_rate_used > 0):
+        local_total = round(data.total_premium * data.fx_rate_used, 2)
+        sym = data.display_currency_sym or data.display_currency
+        rate_src = "live rate" if data.fx_rate_live else "indicative rate"
+        fx_note = (f'  ·  <font size="10" color="#e8a020"><b>'
+                   f'≈ {sym}{local_total:,.2f} {data.display_currency}</b></font>'
+                   f'<font size="7" color="rgba(255,255,255,0.6)"> ({rate_src})</font>')
+
     prem_box = Table([[
         Paragraph(
             f'<font size="8" color="white">TOTAL MONTHLY PREMIUM</font><br/>'
-            f'<font size="22" color="#e8a020"><b>R{int(data.total_premium):,}</b></font><br/>'
+            f'<font size="22" color="#e8a020"><b>R{int(data.total_premium):,}</b></font>'
+            f'{fx_note}<br/>'
             f'<font size="8" color="rgba(255,255,255,0.75)">'
             f'{data.plan_name}  ·  '
             f'{"Family" if data.cover_type=="family" else "Single"} Cover  ·  '
@@ -918,7 +933,7 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
 
 # ─── EMAIL ──────────────────────────────────────────────────────
 def send_email_ssl(to_addr: str, subject: str, html_body: str,
-                   pdf_bytes: bytes, pdf_filename: str) -> bool:
+                   pdf_bytes: Optional[bytes], pdf_filename: str) -> bool:
     """
     Send ONE email to ONE recipient via SSL port 465.
     Builds a completely fresh MIMEMultipart + SMTP session per call
@@ -1087,7 +1102,7 @@ async def health():
     return {
         "status":        "ok",
         "service":       "Zororo Phumulani Application API",
-        "version":       "3.0.0",
+        "version":       "5.0.0",
         "policy_count":  count,
         "tc_version":    TC_VERSION,
         "smtp_configured": bool(smtp_user),
@@ -1140,30 +1155,35 @@ async def submit_policy(payload: PolicyApplication, request: Request):
     except Exception as exc:
         log.error(f"PDF generation error: {exc}")
 
-    # Send emails
+    # Send emails — independently, one failure must NOT block the other
     mm_          = payload.main_member
     agent_name   = payload.agent.name if payload.agent and payload.agent.name else ""
     pdf_filename = f"ZP_Application_{policy_number}.pdf"
     emails_sent  = 0
 
-    if pdf_bytes:
-        # ① Client email
-        if mm_.email:
+    # ① Client email — always attempt, PDF attached if available
+    if mm_.email:
+        try:
             ok = send_email_ssl(
                 mm_.email,
                 f"Your Zororo Phumulani Application – {policy_number}",
                 _email_client(policy_number, mm_.first_name,
                               payload.plan_name, payload.total_premium, today_str),
-                pdf_bytes,
+                pdf_bytes,       # None is handled gracefully in send_email_ssl
                 pdf_filename,
             )
             if ok:
                 emails_sent += 1
+                log.info(f"Client email OK → {mm_.email}")
+            else:
+                log.warning(f"Client email FAILED → {mm_.email}")
+        except Exception as exc:
+            log.error(f"Client email exception → {mm_.email}: {exc}")
 
-        # ② Admin / agent email
-        notify_email = os.environ.get(
-            "NOTIFY_EMAIL", "mike.ncube@zororophumulani.co.za")
-        if notify_email:
+    # ② Admin / agent email — always attempt independently
+    notify_email = os.environ.get("NOTIFY_EMAIL", "mike.ncube@zororophumulani.co.za")
+    if notify_email:
+        try:
             ok = send_email_ssl(
                 notify_email,
                 f"NEW APPLICATION: {policy_number} – {mm_.first_name} {mm_.last_name}",
@@ -1176,24 +1196,28 @@ async def submit_policy(payload: PolicyApplication, request: Request):
                     today_str,
                     client_ip,
                 ),
-                pdf_bytes,
+                pdf_bytes,       # same PDF bytes, independent message object
                 pdf_filename,
             )
             if ok:
                 emails_sent += 1
+                log.info(f"Admin email OK → {notify_email}")
+            else:
+                log.warning(f"Admin email FAILED → {notify_email}")
+        except Exception as exc:
+            log.error(f"Admin email exception → {notify_email}: {exc}")
 
-        # Update email counter in DB
-        try:
-            conn = sqlite3.connect(DB_PATH)
-            conn.execute(
-                "UPDATE policies SET pdf_generated=1, emails_sent=? "
-                "WHERE policy_number=?",
-                (emails_sent, policy_number),
-            )
-            conn.commit()
-            conn.close()
-        except Exception:
-            pass
+    # Update DB with final email count
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        conn.execute(
+            "UPDATE policies SET pdf_generated=?, emails_sent=? WHERE policy_number=?",
+            (1 if pdf_bytes else 0, emails_sent, policy_number),
+        )
+        conn.commit()
+        conn.close()
+    except Exception as exc:
+        log.error(f"DB email update error: {exc}")
 
     return {
         "success":       True,
