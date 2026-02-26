@@ -1,674 +1,1069 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zororo Phumulani | Digital Insurance Application</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Zororo Phumulani – Policy Application</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════
+   ZORORO PHUMULANI — Application Form v3
+   © 2025 Zororo Phumulani Investments (Pty) Ltd
+═══════════════════════════════════════════════════ */
+:root{
+  --navy:#0a1628; --blue:#1a3a6e; --mid:#2456a4;
+  --accent:#e8a020; --ltblue:#d6e4f7; --bg:#f2f5fb;
+  --white:#fff; --text:#1a1a2e; --muted:#6b7a99;
+  --border:#c8d6ea; --success:#1a7a4a; --error:#c0392b;
+  --radius:10px; --shadow:0 2px 18px rgba(10,22,40,.09);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 
-        :root {
-            --deep-blue:  #1e3a8a;
-            --mid-blue:   #2563eb;
-            --light-blue: #3b82f6;
-            --pale-blue:  #eff6ff;
-            --success:    #10b981;
-            --danger:     #ef4444;
-            --white:      #ffffff;
-            --text-dark:  #1e293b;
-            --text-muted: #64748b;
-            --border:     #e2e8f0;
-            --bg:         #f1f5f9;
-        }
+/* HEADER */
+.app-header{background:linear-gradient(135deg,var(--navy)0%,var(--blue)100%);
+  padding:16px 28px;display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 4px 20px rgba(0,0,0,.25);position:sticky;top:0;z-index:200}
+.hbrand-name{font-family:'Playfair Display',serif;color:#fff;font-size:1.25rem;letter-spacing:.02em}
+.hbrand-name span{color:var(--accent)}
+.hbrand-sub{font-size:.68rem;color:rgba(255,255,255,.5);letter-spacing:.05em;margin-top:1px}
+.hbadge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  color:rgba(255,255,255,.8);padding:4px 12px;border-radius:20px;font-size:.7rem;font-weight:600}
 
-        body {
-            font-family: 'Source Sans 3', sans-serif;
-            background: var(--bg);
-            min-height: 100vh;
-        }
+/* PROGRESS */
+.progress-wrap{background:#fff;border-bottom:1px solid var(--border);overflow-x:auto}
+.progress-steps{display:flex;min-width:560px;max-width:900px;margin:0 auto}
+.step-tab{flex:1;display:flex;flex-direction:column;align-items:center;padding:12px 4px;
+  cursor:pointer;position:relative}
+.step-tab::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:transparent;transition:background .3s}
+.step-tab.active::after{background:var(--accent)}
+.step-tab.done::after{background:var(--mid)}
+.step-num{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;
+  color:var(--muted);transition:all .3s;margin-bottom:4px}
+.step-tab.active .step-num{background:var(--accent);border-color:var(--accent);color:var(--navy)}
+.step-tab.done .step-num{background:var(--mid);border-color:var(--mid);color:#fff}
+.step-label{font-size:.63rem;font-weight:600;color:var(--muted);text-align:center;line-height:1.2}
+.step-tab.active .step-label{color:var(--navy)}
+.step-tab.done .step-label{color:var(--mid)}
 
-        /* ─── BRANDED HEADER ─── */
-        .portal-header {
-            background: var(--white);
-            border-bottom: 1px solid var(--border);
-            padding: 22px 40px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            box-shadow: 0 2px 12px rgba(30,58,138,0.07);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .logo-wrap {
-            flex-shrink: 0;
-            width: 72px; height: 72px;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            background: var(--pale-blue);
-            display: flex; align-items: center; justify-content: center;
-        }
-        .logo-wrap img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
-        .logo-placeholder {
-            width: 100%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-            background: linear-gradient(135deg, var(--deep-blue), var(--mid-blue));
-        }
-        .logo-placeholder span {
-            font-family: 'Playfair Display', serif;
-            font-size: 26px; font-weight: 700; color: white;
-        }
-        .brand-text { flex: 1; }
-        .brand-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 26px; font-weight: 700;
-            color: var(--deep-blue); letter-spacing: -0.5px; line-height: 1.1;
-        }
-        .brand-name span { color: var(--mid-blue); }
-        .brand-tagline {
-            font-size: 12.5px; font-weight: 400;
-            color: var(--text-muted); letter-spacing: 0.8px;
-            text-transform: uppercase; margin-top: 3px;
-        }
-        .header-badge {
-            flex-shrink: 0;
-            background: var(--pale-blue); border: 1px solid #bfdbfe;
-            color: var(--deep-blue); font-size: 10.5px; font-weight: 600;
-            letter-spacing: 0.6px; text-transform: uppercase;
-            padding: 4px 11px; border-radius: 20px;
-        }
+/* LAYOUT */
+.form-wrap{max-width:800px;margin:32px auto 80px;padding:0 16px}
+.slide{display:none;animation:fsIn .3s ease}
+.slide.active{display:block}
+@keyframes fsIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
-        /* ─── FORM CONTAINER ─── */
-        .form-container {
-            max-width: 820px;
-            margin: 32px auto;
-            background: var(--white);
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(30,58,138,0.08);
-            padding: 40px 48px;
-        }
+/* CARD */
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:28px;margin-bottom:18px}
+.card-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--navy);margin-bottom:4px}
+.card-sub{font-size:.83rem;color:var(--muted);margin-bottom:22px;line-height:1.5}
+.sec-label{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--mid);margin-bottom:14px;margin-top:4px}
+.divider{border:none;border-top:1px solid var(--border);margin:20px 0}
 
-        /* ─── SLIDES ─── */
-        .slide { display: none; animation: slideIn 0.25s ease-out; }
-        .slide.active { display: block; }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(16px); }
-            to   { opacity: 1; transform: translateX(0); }
-        }
+/* FORM FIELDS */
+.field-row{display:flex;gap:14px;margin-bottom:14px}
+.field-row>.field{flex:1;min-width:0}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:.78rem;font-weight:700;color:var(--text);margin-bottom:5px}
+.req{color:var(--error);margin-left:2px}
+input[type=text],input[type=email],input[type=tel],input[type=date],
+input[type=number],select,textarea{
+  width:100%;padding:9px 13px;border:1.5px solid var(--border);border-radius:7px;
+  font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--text);background:#fff;
+  transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;appearance:none}
+input:focus,select:focus,textarea:focus{
+  outline:none;border-color:var(--mid);box-shadow:0 0 0 3px rgba(36,86,164,.12)}
+input.err,select.err,textarea.err{border-color:var(--error)}
+.field-note{font-size:.73rem;color:var(--muted);margin-top:3px}
+.age-disp{font-size:.75rem;color:var(--mid);font-weight:700;min-height:16px;margin-top:3px}
+.age-err{color:var(--error)}
+textarea{resize:vertical;min-height:64px}
 
-        .slide-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 22px; font-weight: 600;
-            color: var(--deep-blue);
-            margin-bottom: 28px; padding-bottom: 14px;
-            border-bottom: 2px solid var(--pale-blue);
-        }
+/* TOGGLE */
+.toggle-g{display:flex;background:var(--bg);border:1.5px solid var(--border);
+  border-radius:8px;padding:3px;gap:3px}
+.toggle-g input{display:none}
+.toggle-g label{flex:1;text-align:center;padding:7px 10px;border-radius:6px;font-size:.83rem;
+  font-weight:500;cursor:pointer;color:var(--muted);transition:all .2s;margin:0}
+.toggle-g input:checked+label{background:var(--mid);color:#fff;
+  box-shadow:0 2px 8px rgba(36,86,164,.3)}
 
-        /* ─── FORM ELEMENTS ─── */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-        .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
-        .form-group label {
-            font-size: 13px; font-weight: 600;
-            color: var(--text-dark); letter-spacing: 0.3px;
-        }
-        .form-group input,
-        .form-group select {
-            padding: 11px 14px;
-            border: 1.5px solid var(--border);
-            border-radius: 8px;
-            font-family: 'Source Sans 3', sans-serif;
-            font-size: 14.5px; color: var(--text-dark);
-            background: var(--white);
-            transition: border-color 0.2s, box-shadow 0.2s;
-            outline: none; width: 100%;
-        }
-        .form-group input:focus,
-        .form-group select:focus {
-            border-color: var(--mid-blue);
-            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
-        }
+/* PLAN CARDS */
+.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.plan-card{border:2px solid var(--border);border-radius:var(--radius);padding:16px 12px;
+  cursor:pointer;transition:all .22s;position:relative;text-align:center}
+.plan-card:hover{border-color:var(--mid);transform:translateY(-2px);
+  box-shadow:0 6px 18px rgba(36,86,164,.12)}
+.plan-card.sel{border-color:var(--accent);background:linear-gradient(135deg,#fff8eb,#fffdf5);
+  box-shadow:0 4px 20px rgba(232,160,32,.2)}
+.plan-card input{display:none}
+.plan-name{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--navy);margin-bottom:3px}
+.plan-cover{font-size:.75rem;color:var(--muted);margin-bottom:8px}
+.plan-price{font-size:1.35rem;font-weight:800;color:var(--mid)}
+.plan-price-sm{font-size:.68rem;color:var(--muted);font-weight:400}
+.plan-badge{position:absolute;top:-10px;right:8px;background:var(--accent);color:var(--navy);
+  font-size:.62rem;font-weight:800;padding:2px 8px;border-radius:10px;text-transform:uppercase}
+.plan-benefits{font-size:.73rem;color:var(--muted);margin-top:8px;text-align:left;line-height:1.65}
+.plan-benefits li{list-style:none;padding:1px 0}
+.plan-benefits li::before{content:"✓ ";color:var(--success);font-weight:800}
 
-        /* Upload box */
-        .upload-box {
-            border: 1.5px dashed #93c5fd; border-radius: 8px;
-            padding: 14px; background: var(--pale-blue);
-            cursor: pointer; display: flex; align-items: center;
-            gap: 10px; color: var(--mid-blue); font-size: 14px;
-            transition: border-color 0.2s;
-        }
-        .upload-box:hover { border-color: var(--mid-blue); }
-        .upload-box input[type="file"] { display: none; }
+/* UPLOAD ZONES — must stay as div not label */
+.upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:20px;
+  text-align:center;cursor:pointer;transition:all .2s;background:var(--bg);position:relative}
+.upload-zone:hover{border-color:var(--mid);background:var(--ltblue)}
+.upload-zone.uploaded{border-color:var(--success);background:#f0faf4}
+.upload-zone.upload-err{border-color:var(--error);background:#fdf0f0}
+.upload-zone input[type=file]{display:none}
+.uz-icon{font-size:1.8rem;margin-bottom:6px}
+.uz-text{font-size:.82rem;color:var(--muted)}
+.uz-text strong{color:var(--mid)}
+.uz-fname{font-size:.78rem;color:var(--success);font-weight:700;margin-top:5px}
+.uz-reqbadge{font-size:.65rem;background:#fef3cd;color:#7a5500;border:1px solid #f0c060;
+  padding:2px 8px;border-radius:10px;display:inline-block;margin-top:6px}
 
-        /* Dynamic rows (children / extended) */
-        .dynamic-row {
-            background: var(--pale-blue); padding: 14px;
-            border-radius: 8px; margin-bottom: 10px;
-            display: flex; gap: 10px; align-items: flex-end;
-        }
-        .dynamic-row input {
-            padding: 9px 12px; border: 1.5px solid var(--border);
-            border-radius: 8px; font-family: 'Source Sans 3', sans-serif;
-            font-size: 14px; flex: 1; outline: none;
-        }
-        .dynamic-row input:focus { border-color: var(--mid-blue); }
-        .btn-add {
-            background: var(--deep-blue); color: white;
-            border: none; padding: 9px 18px; border-radius: 8px;
-            cursor: pointer; font-size: 13.5px; font-weight: 600;
-            margin-top: 8px; transition: background 0.2s;
-        }
-        .btn-add:hover { background: var(--mid-blue); }
-        .btn-remove {
-            background: var(--danger); color: white;
-            border: none; padding: 9px 12px; border-radius: 8px;
-            cursor: pointer; font-weight: bold; flex-shrink: 0;
-        }
+/* DEPENDANT CARDS */
+.dep-list{display:flex;flex-direction:column;gap:12px}
+.dep-card{border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.dep-hdr{background:var(--ltblue);padding:9px 14px;display:flex;align-items:center;
+  justify-content:space-between;font-size:.8rem;font-weight:700;color:var(--blue)}
+.dep-body{padding:14px}
+.btn-rm{background:none;border:1px solid var(--error);color:var(--error);
+  padding:3px 9px;border-radius:5px;cursor:pointer;font-size:.73rem;font-family:inherit;
+  transition:all .2s}
+.btn-rm:hover{background:var(--error);color:#fff}
+.btn-add{display:flex;align-items:center;gap:8px;background:none;
+  border:1.5px dashed var(--mid);color:var(--mid);padding:9px 16px;border-radius:8px;
+  cursor:pointer;font-size:.83rem;font-weight:600;font-family:inherit;
+  width:100%;transition:all .2s;margin-top:4px}
+.btn-add:hover{background:var(--ltblue)}
+.dep-cnt{font-size:.73rem;color:var(--muted);margin:3px 0 8px}
 
-        /* Plan cards */
-        .plan-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 8px; }
-        .plan-card {
-            border: 2px solid var(--border); border-radius: 12px;
-            padding: 20px 16px; cursor: pointer; transition: all 0.2s;
-            text-align: center;
-        }
-        .plan-card:hover { border-color: var(--mid-blue); box-shadow: 0 4px 12px rgba(37,99,235,0.1); }
-        .plan-card.selected { border-color: var(--mid-blue); background: var(--pale-blue); }
-        .plan-card .plan-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 17px; font-weight: 700; color: var(--deep-blue);
-        }
-        .plan-card .plan-cover {
-            font-size: 22px; font-weight: 700;
-            color: var(--mid-blue); margin: 8px 0 4px;
-        }
-        .plan-card .plan-premium {
-            font-size: 13px; color: var(--text-muted);
-        }
-        .plan-card .plan-type-badge {
-            display: inline-block; font-size: 11px; font-weight: 600;
-            letter-spacing: 0.5px; text-transform: uppercase;
-            background: var(--pale-blue); color: var(--deep-blue);
-            padding: 3px 8px; border-radius: 10px; margin-bottom: 10px;
-        }
-        /* Hidden real select for form submission */
-        #plan_selection { display: none; }
+/* EFM TIER GRID */
+.tier-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:6px}
+.tier-opt{border:1.5px solid var(--border);border-radius:6px;padding:7px 5px;
+  text-align:center;cursor:pointer;transition:all .2s;font-size:.73rem}
+.tier-opt:hover{border-color:var(--mid)}
+.tier-opt.sel{border-color:var(--accent);background:#fff8eb}
+.tier-opt input{display:none}
+.tier-cover{font-weight:800;color:var(--navy);font-size:.82rem}
+.tier-price{color:var(--muted);margin-top:1px}
 
-        /* Review boxes */
-        .review-box {
-            background: var(--pale-blue); border: 1px solid #bfdbfe;
-            border-radius: 10px; padding: 14px 18px; margin-bottom: 12px;
-        }
-        .review-box h4 {
-            font-size: 10.5px; font-weight: 700; letter-spacing: 0.8px;
-            text-transform: uppercase; color: var(--mid-blue); margin-bottom: 6px;
-        }
-        .review-box p { font-size: 14.5px; color: var(--text-dark); }
+/* SUMMARY BOX */
+.prem-box{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;
+  border-radius:var(--radius);padding:18px 22px;display:flex;
+  justify-content:space-between;align-items:center;margin:14px 0}
+.prem-label{font-size:.85rem;opacity:.75}
+.prem-amount{font-family:'Playfair Display',serif;font-size:1.9rem}
+.prem-detail{font-size:.72rem;opacity:.6;margin-top:2px}
+.waiting-box{background:var(--ltblue);border-left:4px solid var(--mid);
+  border-radius:0 var(--radius) var(--radius) 0;padding:12px 16px;
+  font-size:.8rem;color:var(--blue);line-height:1.75}
 
-        /* Consent */
-        .consent-box {
-            border: 1.5px solid var(--border); border-radius: 10px;
-            padding: 20px; background: var(--pale-blue);
-        }
-        .consent-label {
-            display: flex; gap: 12px; align-items: flex-start;
-            cursor: pointer; font-size: 14.5px; line-height: 1.5;
-            color: var(--text-dark);
-        }
-        .consent-label input[type="checkbox"] {
-            width: 18px; height: 18px; margin-top: 2px;
-            accent-color: var(--mid-blue); flex-shrink: 0;
-        }
+/* REVIEW TABLE */
+.rev-sec{margin-bottom:20px}
+.rev-sec-title{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--mid);margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.rev-row{display:flex;justify-content:space-between;padding:6px 0;
+  border-bottom:1px solid #f0f3f8;font-size:.83rem}
+.rev-row:last-child{border-bottom:none}
+.rev-k{color:var(--muted);font-weight:600;flex:0 0 44%}
+.rev-v{color:var(--text);text-align:right;flex:0 0 54%}
 
-        /* Navigation buttons */
-        .form-nav {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--border);
-        }
-        .btn {
-            padding: 12px 28px; border-radius: 8px; font-family: 'Source Sans 3', sans-serif;
-            font-size: 14.5px; font-weight: 600; cursor: pointer;
-            border: none; transition: all 0.2s ease; letter-spacing: 0.3px;
-        }
-        .btn-primary { background: var(--mid-blue); color: var(--white); }
-        .btn-primary:hover {
-            background: var(--deep-blue); transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(30,58,138,0.25);
-        }
-        .btn-secondary {
-            background: transparent; color: var(--text-muted);
-            border: 1.5px solid var(--border);
-        }
-        .btn-secondary:hover { border-color: var(--mid-blue); color: var(--mid-blue); }
-        .btn-submit {
-            background: linear-gradient(135deg, var(--deep-blue), var(--mid-blue));
-            color: var(--white); display: none;
-        }
-        .btn-submit:hover {
-            opacity: 0.92; transform: translateY(-1px);
-            box-shadow: 0 4px 16px rgba(30,58,138,0.3);
-        }
-        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+/* CONSENT CHECKBOXES */
+.tc-box{background:#f8f9fc;border:1.5px solid var(--border);border-radius:var(--radius);
+  padding:16px 18px;margin:14px 0}
+.tc-row{display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+.tc-row input{display:none}
+.cbox{width:22px;height:22px;min-width:22px;border:2px solid var(--border);border-radius:5px;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
+  background:#fff;margin-top:1px}
+.cbox.on{background:var(--success)!important;border-color:var(--success)!important}
+.cbox.on::after{content:"✓";font-size:13px;color:#fff;font-weight:900}
+.tc-txt{font-size:.83rem;line-height:1.6;color:var(--text);flex:1}
+.tc-txt a{color:var(--mid);font-weight:700;text-decoration:none;border-bottom:1px solid currentColor}
+.tc-txt a:hover{color:var(--navy)}
+.popia-notice{background:#eef3fb;border:1px solid #bed0eb;border-radius:var(--radius);
+  padding:12px 16px;font-size:.77rem;color:var(--blue);line-height:1.65}
 
-        /* Success screen */
-        .success-screen {
-            display: none; text-align: center; padding: 40px 20px;
-        }
-        .success-screen .tick {
-            font-size: 64px; margin-bottom: 16px;
-        }
-        .success-screen h2 {
-            font-family: 'Playfair Display', serif;
-            color: var(--deep-blue); font-size: 26px; margin-bottom: 10px;
-        }
-        .success-screen p { color: var(--text-muted); font-size: 15px; }
-        .success-screen .policy-ref {
-            display: inline-block; margin-top: 18px;
-            background: var(--pale-blue); border: 1px solid #bfdbfe;
-            color: var(--deep-blue); font-weight: 700; font-size: 15px;
-            padding: 10px 24px; border-radius: 8px; letter-spacing: 0.5px;
-        }
+/* INLINE ALERT */
+.inline-warn{background:#fff8eb;border:1px solid #f0c060;border-radius:7px;
+  padding:9px 14px;font-size:.78rem;color:#7a5500;margin:10px 0}
+.inline-err{background:#fdf0f0;border:1px solid #e8a0a0;border-radius:7px;
+  padding:9px 14px;font-size:.78rem;color:#7a1a1a;margin:10px 0;display:none}
 
-        @media (max-width: 640px) {
-            .form-container { padding: 24px 18px; margin: 16px; }
-            .grid { grid-template-columns: 1fr; }
-            .plan-cards { grid-template-columns: 1fr; }
-            .portal-header { padding: 16px 18px; gap: 12px; }
-            .brand-name { font-size: 20px; }
-            .header-badge { display: none; }
-        }
-    </style>
+/* SIGNATURE */
+.sig-options{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.sig-btn{flex:1;min-width:130px;border:1.5px solid var(--border);border-radius:8px;
+  padding:11px 8px;text-align:center;cursor:pointer;font-size:.8rem;
+  color:var(--muted);background:#fff;font-family:inherit;transition:all .2s;font-weight:600}
+.sig-btn:hover{border-color:var(--mid);color:var(--navy)}
+.sig-btn.active{border-color:var(--accent);background:#fff8eb;color:var(--navy)}
+.sig-btn span{display:block;font-size:1.3rem;margin-bottom:3px}
+.sig-panel{display:none;animation:fsIn .25s ease}
+.sig-panel.active{display:block}
+canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:crosshair;
+  display:block;width:100%;max-height:160px;touch-action:none;background:#fdfdfd}
+.sig-ctrls{display:flex;gap:8px;margin-top:6px}
+.btn-sig-clr{background:none;border:1px solid var(--border);color:var(--muted);
+  padding:5px 12px;border-radius:6px;cursor:pointer;font-size:.78rem;font-family:inherit}
+.typed-preview{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--navy);
+  padding:14px;border:1.5px solid var(--border);border-radius:8px;
+  min-height:56px;background:#fff;margin-top:7px}
+
+/* NAV BUTTONS */
+.nav-bar{display:flex;justify-content:space-between;align-items:center;margin-top:22px}
+.btn{padding:11px 26px;border-radius:8px;font-family:inherit;font-size:.88rem;
+  font-weight:700;cursor:pointer;border:none;transition:all .2s}
+.btn-sec{background:#fff;color:var(--mid);border:1.5px solid var(--border)}
+.btn-sec:hover{background:var(--ltblue);border-color:var(--mid)}
+.btn-pri{background:linear-gradient(135deg,var(--mid),var(--blue));color:#fff;
+  box-shadow:0 4px 14px rgba(36,86,164,.28)}
+.btn-pri:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(36,86,164,.38)}
+.btn-pri:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn-sub{background:linear-gradient(135deg,var(--accent),#d4890a);color:var(--navy);
+  box-shadow:0 4px 14px rgba(232,160,32,.32);font-size:.92rem;padding:13px 34px}
+.btn-sub:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(232,160,32,.42)}
+.btn-sub:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+/* PAYMENT */
+.pay-panel{display:none}
+.pay-panel.active{display:block;animation:fsIn .25s ease}
+
+/* SUCCESS */
+#successScreen{display:none;max-width:580px;margin:60px auto;padding:0 16px;text-align:center}
+.suc-icon{font-size:3.5rem;margin-bottom:16px}
+.suc-title{font-family:'Playfair Display',serif;font-size:1.9rem;color:var(--navy);margin-bottom:10px}
+.suc-sub{color:var(--muted);font-size:.9rem;line-height:1.7;margin-bottom:24px}
+.pol-ref-box{background:var(--ltblue);border-radius:var(--radius);padding:18px;margin-bottom:20px}
+.pol-ref-lbl{font-size:.72rem;font-weight:800;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--mid)}
+.pol-ref-num{font-family:'Playfair Display',serif;font-size:1.75rem;color:var(--navy);margin-top:3px}
+
+/* TERMS MODAL */
+#termsModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);
+  z-index:9999;overflow-y:auto;padding:32px 16px}
+.terms-box{max-width:720px;margin:0 auto;background:#fff;border-radius:12px;padding:32px;position:relative}
+.terms-close{position:absolute;top:14px;right:16px;background:none;border:none;
+  font-size:1.4rem;cursor:pointer;color:#888;line-height:1}
+.terms-content{font-size:.82rem;line-height:1.85;color:#333;
+  max-height:65vh;overflow-y:auto;padding-right:6px}
+.terms-content h3{margin:18px 0 8px;color:var(--blue);font-size:.9rem}
+.terms-content p{margin-bottom:8px}
+.terms-content ul{padding-left:20px;margin-bottom:10px}
+.terms-content li{margin-bottom:4px}
+.terms-scroll-note{font-size:.75rem;color:var(--muted);margin-top:8px;text-align:center;
+  font-style:italic}
+
+/* RESPONSIVE */
+@media(max-width:620px){
+  .app-header{padding:12px 14px}
+  .card{padding:18px 14px}
+  .plan-grid{grid-template-columns:1fr}
+  .tier-grid{grid-template-columns:repeat(2,1fr)}
+  .field-row{flex-direction:column;gap:0}
+  .sig-options{flex-direction:column}
+}
+</style>
 </head>
 <body>
 
-<!-- ═══════════════════ BRANDED HEADER ═══════════════════ -->
-<header class="portal-header">
-    <div class="logo-wrap">
-        <!--
-            When your logo is ready, replace the placeholder with:
-            <img src="/static/logo.png" alt="Zororo Phumulani Logo">
-        -->
-        <div class="logo-placeholder"><span>Z</span></div>
-    </div>
-    <div class="brand-text">
-        <div class="brand-name">Zororo<span>phumulani</span></div>
-        <div class="brand-tagline">Digital Insurance Application Portal</div>
-    </div>
-    <div class="header-badge">Authorised FSP</div>
+<!-- ═══ HEADER ═══ -->
+<header class="app-header">
+  <div>
+    <div class="hbrand-name">Zororo <span>Phumulani</span></div>
+    <div class="hbrand-sub">FSP48558 · Powered by Doves Zimbabwe · KGA Life FSP15980</div>
+  </div>
+  <div class="hbadge">WWF Digital Application</div>
 </header>
 
-<!-- ═══════════════════ FORM ═══════════════════ -->
-<div class="form-container">
-
-    <!-- SUCCESS SCREEN (shown after submit) -->
-    <div class="success-screen" id="successScreen">
-        <div class="tick">✅</div>
-        <h2>Application Submitted!</h2>
-        <p>Your policy application has been received and is being processed.</p>
-        <div class="policy-ref" id="policyRefDisplay"></div>
-        <p style="margin-top:16px; font-size:13px; color:var(--text-muted);">
-            You will receive confirmation via Email or WhatsApp within 24 hours.
-        </p>
-    </div>
-
-    <form id="insuranceForm">
-
-        <!-- ── SLIDE 1: Main Member Details ── -->
-        <div class="slide active">
-            <h2 class="slide-title">Main Member Details</h2>
-            <div class="grid">
-                <div class="form-group">
-                    <label for="fname">First Name</label>
-                    <input type="text" id="fname" placeholder="Enter first name" required>
-                </div>
-                <div class="form-group">
-                    <label for="lname">Last Name</label>
-                    <input type="text" id="lname" placeholder="Enter last name" required>
-                </div>
-                <div class="form-group">
-                    <label for="dob">Date of Birth</label>
-                    <input type="date" id="dob" required>
-                </div>
-                <div class="form-group">
-                    <label for="phone">Phone</label>
-                    <input type="tel" id="phone" placeholder="+27 000 000 0000" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" placeholder="email@example.com" required>
-            </div>
-            <div class="form-group">
-                <label>ID Upload</label>
-                <label class="upload-box" for="id_upload">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
-                    </svg>
-                    <span id="id_upload_label">Choose File · No file chosen</span>
-                    <input type="file" id="id_upload" accept=".pdf,.jpg,.jpeg,.png"
-                        onchange="document.getElementById('id_upload_label').textContent = this.files[0]?.name || 'Choose File · No file chosen'">
-                </label>
-            </div>
-        </div>
-
-        <!-- ── SLIDE 2: Spouse Details ── -->
-        <div class="slide">
-            <h2 class="slide-title">Spouse Details <span style="font-size:14px; font-family:'Source Sans 3'; color:var(--text-muted); font-weight:400;">(Optional — max age 64)</span></h2>
-            <div class="grid">
-                <div class="form-group">
-                    <label for="spouse_name">Spouse Full Name</label>
-                    <input type="text" id="spouse_name" placeholder="Enter spouse name">
-                </div>
-                <div class="form-group">
-                    <label for="spouse_dob">Spouse Date of Birth</label>
-                    <input type="date" id="spouse_dob" onchange="validateSpouseAge(this)">
-                </div>
-            </div>
-        </div>
-
-        <!-- ── SLIDE 3: Children / Dependents ── -->
-        <div class="slide">
-            <h2 class="slide-title">Children / Dependents <span style="font-size:14px; font-family:'Source Sans 3'; color:var(--text-muted); font-weight:400;">(Max 6)</span></h2>
-            <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">
-                Under 21 normally · Under 25 if student proof uploaded · Disabled children under 25 with doctor's proof.
-            </p>
-            <div id="children-list"></div>
-            <button type="button" class="btn-add" onclick="addDependent()">+ Add Child</button>
-        </div>
-
-        <!-- ── SLIDE 4: Extended Family ── -->
-        <div class="slide">
-            <h2 class="slide-title">Extended Family <span style="font-size:14px; font-family:'Source Sans 3'; color:var(--text-muted); font-weight:400;">(Max 6, under 90 years)</span></h2>
-            <div id="extended-list"></div>
-            <button type="button" class="btn-add" onclick="addExtended()">+ Add Member</button>
-        </div>
-
-        <!-- ── SLIDE 5: Select Coverage Plan ── -->
-        <div class="slide">
-            <h2 class="slide-title">Select Coverage Plan</h2>
-            <!-- BUG FIX: Real plan data from WWFP brochure (was Bronze/Silver/Gold) -->
-            <!-- BUG FIX: Format is "type|plan_name|coverage|premium" (4 parts, was 3) -->
-            <input type="hidden" id="plan_selection">
-            <div class="plan-cards">
-                <div class="plan-card" onclick="selectPlan(this, 'Premium|Premium Plan|45000|450')">
-                    <div class="plan-type-badge">Single R450 / Family R540</div>
-                    <div class="plan-name">Premium Plan</div>
-                    <div class="plan-cover">R45 000</div>
-                    <div class="plan-premium">Cover Amount</div>
-                </div>
-                <div class="plan-card" onclick="selectPlan(this, 'Prestige|Prestige Plan|75000|630')">
-                    <div class="plan-type-badge">Single R630 / Family R720</div>
-                    <div class="plan-name">Prestige Plan</div>
-                    <div class="plan-cover">R75 000</div>
-                    <div class="plan-premium">Cover Amount</div>
-                </div>
-                <div class="plan-card" onclick="selectPlan(this, 'Executive|Executive Plan|90000|990')">
-                    <div class="plan-type-badge">Single R990 / Family R1080</div>
-                    <div class="plan-name">Executive Plan</div>
-                    <div class="plan-cover">R90 000</div>
-                    <div class="plan-premium">Cover Amount</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── SLIDE 6: System Review ── -->
-        <div class="slide">
-            <h2 class="slide-title">Review Your Application</h2>
-            <div id="review-area"></div>
-        </div>
-
-        <!-- ── SLIDE 7: Final Declaration ── -->
-        <div class="slide">
-            <h2 class="slide-title">Final Declaration</h2>
-            <div class="consent-box">
-                <label class="consent-label">
-                    <input type="checkbox" id="consent_check">
-                    I confirm that all the information provided in this application is accurate and complete.
-                    I understand that false or misleading information may result in the cancellation of my policy.
-                    I consent to Zororo Phumulani processing my personal data for insurance purposes.
-                </label>
-            </div>
-        </div>
-
-        <!-- Navigation -->
-        <div class="form-nav">
-            <button type="button" class="btn btn-secondary" id="backBtn"
-                    onclick="changeSlide(-1)" style="display:none;">← Back</button>
-            <button type="button" class="btn btn-primary" id="nextBtn"
-                    onclick="changeSlide(1)">Next Step →</button>
-            <button type="button" class="btn btn-submit" id="submitBtn"
-                    onclick="submitGlobalApp()">Confirm & Submit</button>
-        </div>
-
-    </form>
+<!-- ═══ PROGRESS ═══ -->
+<div class="progress-wrap">
+  <div class="progress-steps" id="progressSteps">
+    <div class="step-tab active" data-step="1"><div class="step-num">1</div><div class="step-label">Main Member</div></div>
+    <div class="step-tab" data-step="2"><div class="step-num">2</div><div class="step-label">Documents</div></div>
+    <div class="step-tab" data-step="3"><div class="step-num">3</div><div class="step-label">Family</div></div>
+    <div class="step-tab" data-step="4"><div class="step-num">4</div><div class="step-label">Cover &amp; Plan</div></div>
+    <div class="step-tab" data-step="5"><div class="step-num">5</div><div class="step-label">Payment</div></div>
+    <div class="step-tab" data-step="6"><div class="step-num">6</div><div class="step-label">Declarations</div></div>
+    <div class="step-tab" data-step="7"><div class="step-num">7</div><div class="step-label">Review &amp; Sign</div></div>
+  </div>
 </div>
 
-<script>
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.slide');
+<!-- ═══ FORM WRAPPER ═══ -->
+<div class="form-wrap" id="formWrap">
 
-    // ── Navigation ──
-    function changeSlide(n) {
-        if (n === 1 && !validateSlide()) return;
-        slides[currentSlide].classList.remove('active');
-        currentSlide += n;
-        if (currentSlide < 0) currentSlide = 0;
-        if (currentSlide >= slides.length) currentSlide = slides.length - 1;
-        if (currentSlide === 5) renderReview();
-        slides[currentSlide].classList.add('active');
-        updateUI();
-        // Scroll to top of form on slide change
-        document.querySelector('.form-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+<!-- ══ SLIDE 1: MAIN MEMBER DETAILS ══ -->
+<div class="slide active" id="slide1">
+  <div class="card">
+    <div class="card-title">Main Member Details</div>
+    <div class="card-sub">Primary policyholder. Must be 18–65 years of age at application.</div>
 
-    function updateUI() {
-        const backBtn  = document.getElementById('backBtn');
-        const nextBtn  = document.getElementById('nextBtn');
-        const submitBtn = document.getElementById('submitBtn');
-        if (backBtn)   backBtn.style.display   = currentSlide === 0 ? 'none' : 'block';
-        if (nextBtn)   nextBtn.style.display   = currentSlide === slides.length - 1 ? 'none' : 'block';
-        if (submitBtn) submitBtn.style.display = currentSlide === slides.length - 1 ? 'block' : 'none';
-    }
+    <div class="field-row">
+      <div class="field"><label>First Name <span class="req">*</span></label>
+        <input type="text" id="mm_first" placeholder="First name"/></div>
+      <div class="field"><label>Last Name <span class="req">*</span></label>
+        <input type="text" id="mm_last" placeholder="Last name"/></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Date of Birth <span class="req">*</span></label>
+        <input type="date" id="mm_dob"/>
+        <div class="age-disp" id="mm_age"></div></div>
+      <div class="field"><label>Gender <span class="req">*</span></label>
+        <select id="mm_gender">
+          <option value="">Select</option>
+          <option>Male</option><option>Female</option>
+          <option>Other</option><option>Prefer not to say</option>
+        </select></div>
+    </div>
+    <div class="field"><label>Nationality <span class="req">*</span></label>
+      <select id="mm_nationality">
+        <option value="">Select nationality</option>
+        <option>Zimbabwean</option><option>South African</option>
+        <option>Zambian</option><option>Botswanan</option>
+        <option>Mozambican</option><option>Malawian</option>
+        <option>Namibian</option><option>Other</option>
+      </select></div>
+    <div class="field-row">
+      <div class="field"><label>Contact Number <span class="req">*</span></label>
+        <input type="tel" id="mm_phone" placeholder="+27 8X XXX XXXX"/></div>
+      <div class="field"><label>WhatsApp Number</label>
+        <input type="tel" id="mm_whatsapp" placeholder="If different from above"/>
+        <div class="field-note">Leave blank if same as contact number</div></div>
+    </div>
+    <div class="field"><label>Email Address <span class="req">*</span></label>
+      <input type="email" id="mm_email" placeholder="email@example.com"/>
+      <div class="field-note">Your application PDF will be emailed here</div></div>
 
-    // ── Validation ──
-    function validateSlide() {
-        // Plan slide: must have a plan selected
-        if (currentSlide === 4 && !document.getElementById('plan_selection').value) {
-            alert("Please select a coverage plan to continue.");
-            return false;
-        }
-        // Required fields on other slides
-        const inputs = slides[currentSlide].querySelectorAll('[required]');
-        for (let input of inputs) {
-            if (!input.value.trim()) {
-                alert("Please fill in all required fields before continuing.");
-                input.focus();
-                return false;
-            }
-        }
-        return true;
-    }
+    <hr class="divider"/>
+    <div class="sec-label">Residential Address</div>
 
-    // BUG FIX: Spouse age validation against brochure rule (max 64)
-    function validateSpouseAge(input) {
-        if (!input.value) return;
-        const dob = new Date(input.value);
-        const age = Math.floor((new Date() - dob) / (365.25 * 24 * 60 * 60 * 1000));
-        if (age > 64) {
-            alert("Spouse must be 64 years or younger to join the scheme.");
-            input.value = "";
-        }
-    }
+    <!-- Country → Province → Postal → Area Code cascade -->
+    <div class="field"><label>Country of Residence <span class="req">*</span></label>
+      <select id="mm_country" onchange="onCountryChange()">
+        <option value="">Select country</option>
+        <optgroup label="Southern Africa (SADC)">
+          <option value="ZA">South Africa</option>
+          <option value="ZW">Zimbabwe</option>
+          <option value="ZM">Zambia</option><option value="BW">Botswana</option>
+          <option value="MZ">Mozambique</option><option value="MW">Malawi</option>
+          <option value="NA">Namibia</option><option value="LS">Lesotho</option>
+          <option value="SZ">Eswatini</option><option value="TZ">Tanzania</option>
+          <option value="MU">Mauritius</option><option value="MG">Madagascar</option>
+          <option value="CD">DR Congo</option><option value="AO">Angola</option>
+          <option value="SC">Seychelles</option>
+        </optgroup>
+        <optgroup label="Europe">
+          <option value="GB">United Kingdom</option><option value="DE">Germany</option>
+          <option value="NL">Netherlands</option><option value="BE">Belgium</option>
+          <option value="SE">Sweden</option><option value="NO">Norway</option>
+          <option value="IE">Ireland</option><option value="FR">France</option>
+        </optgroup>
+        <optgroup label="Oceania">
+          <option value="AU">Australia</option><option value="NZ">New Zealand</option>
+        </optgroup>
+        <optgroup label="Americas">
+          <option value="US">United States</option><option value="CA">Canada</option>
+        </optgroup>
+      </select></div>
 
-    // ── Dynamic rows ──
-    function addDependent() {
-        const list = document.getElementById('children-list');
-        if (list.children.length >= 6) {
-            alert("Maximum 6 children / dependents allowed.");
-            return;
-        }
-        const div = document.createElement('div');
-        div.className = 'dynamic-row';
-        div.innerHTML = `
-            <input type="text" class="dep-name" placeholder="Full Name" style="flex:2">
-            <input type="date" class="dep-dob" title="Date of Birth">
-            <button type="button" class="btn-remove" onclick="this.parentElement.remove()">×</button>`;
-        list.appendChild(div);
-    }
+    <div id="province_wrap" style="display:none">
+      <div class="field"><label>Province <span class="req">*</span></label>
+        <select id="mm_province" onchange="onProvinceChange()">
+          <option value="">Select province</option>
+        </select></div>
+    </div>
 
-    function addExtended() {
-        const list = document.getElementById('extended-list');
-        if (list.children.length >= 6) {
-            alert("Maximum 6 extended family members allowed.");
-            return;
-        }
-        const div = document.createElement('div');
-        div.className = 'dynamic-row';
-        div.innerHTML = `
-            <input type="text" class="ext-name" placeholder="Full Name" style="flex:2">
-            <input type="date" class="ext-dob" title="Date of Birth" onchange="validateExtendedAge(this)">
-            <button type="button" class="btn-remove" onclick="this.parentElement.remove()">×</button>`;
-        list.appendChild(div);
-    }
+    <div class="field-row">
+      <div class="field"><label>Postal Code <span class="req">*</span></label>
+        <input type="text" id="mm_postal" placeholder="e.g. 2001" maxlength="10"/></div>
+      <div class="field"><label>Area / Suburb</label>
+        <input type="text" id="mm_area" placeholder="e.g. Braamfontein"/></div>
+    </div>
+    <div class="field"><label>Street Address <span class="req">*</span></label>
+      <textarea id="mm_address" placeholder="Street number, street name, city"></textarea></div>
+  </div>
+  <div class="nav-bar"><div></div>
+    <button class="btn btn-pri" onclick="nextSlide(1)">Continue →</button></div>
+</div>
 
-    // BUG FIX: Extended family age limit from brochure (max 90)
-    function validateExtendedAge(input) {
-        if (!input.value) return;
-        const dob = new Date(input.value);
-        const age = Math.floor((new Date() - dob) / (365.25 * 24 * 60 * 60 * 1000));
-        if (age > 90) {
-            alert("Extended family members must be below 90 years of age.");
-            input.value = "";
-        }
-    }
+<!-- ══ SLIDE 2: DOCUMENT UPLOADS (MANDATORY) ══ -->
+<div class="slide" id="slide2">
+  <div class="card">
+    <div class="card-title">Required Documents</div>
+    <div class="card-sub">Both documents below are mandatory for FICA compliance and must be uploaded before your application can be submitted.</div>
 
-    // ── Plan selection ──
-    function selectPlan(card, value) {
-        document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        document.getElementById('plan_selection').value = value;
-    }
+    <div class="sec-label">1. FIC (Financial Intelligence Centre) Document</div>
+    <div class="upload-zone" id="ficZone">
+      <input type="file" id="fic_upload" accept=".pdf,.jpg,.jpeg,.png"/>
+      <div class="uz-icon">🏛️</div>
+      <div class="uz-text"><strong>Click to upload FIC document</strong> or drag and drop</div>
+      <div class="uz-text">PDF, JPG or PNG · Max 5MB</div>
+      <div class="uz-reqbadge">REQUIRED</div>
+      <div class="uz-fname" id="fic_name"></div>
+    </div>
+    <div class="field-note" style="margin-top:6px;">A South African green ID book, smart ID card, or equivalent FICA-compliant document.</div>
 
-    // ── Review render ──
-    function renderReview() {
-        const getV = (id) => document.getElementById(id)?.value?.trim() || "—";
-        const planRaw = getV('plan_selection');
-        const planParts = planRaw.split('|');
-        const planName = planParts[1] || "—";
-        const coverage = planParts[2] ? `R${parseInt(planParts[2]).toLocaleString()}` : "—";
-        const premium  = planParts[3] ? `R${parseInt(planParts[3]).toLocaleString()} p.m.` : "—";
+    <hr class="divider"/>
+    <div class="sec-label" style="margin-top:0">2. Passport or ID Copy</div>
+    <div class="upload-zone" id="passportZone">
+      <input type="file" id="passport_upload" accept=".pdf,.jpg,.jpeg,.png"/>
+      <div class="uz-icon">🪪</div>
+      <div class="uz-text"><strong>Click to upload Passport or ID copy</strong></div>
+      <div class="uz-text">PDF, JPG or PNG · Max 5MB</div>
+      <div class="uz-reqbadge">REQUIRED</div>
+      <div class="uz-fname" id="passport_name"></div>
+    </div>
+    <div class="field-note" style="margin-top:6px;">Must be a certified copy. Passport for non-SA nationals, ID for South African nationals.</div>
 
-        const children  = document.querySelectorAll('.dep-name');
-        const extended  = document.querySelectorAll('.ext-name');
-        const spouseName = getV('spouse_name');
+    <div class="field" style="margin-top:18px;">
+      <label>ID / Passport Number <span class="req">*</span></label>
+      <input type="text" id="mm_id_number" placeholder="SA ID (13 digits) or Passport number"/>
+    </div>
 
-        document.getElementById('review-area').innerHTML = `
-            <div class="review-box">
-                <h4>Main Member</h4>
-                <p>${getV('fname')} ${getV('lname')}</p>
-                <p style="font-size:13px; color:var(--text-muted);">DOB: ${getV('dob')} · ${getV('email')} · ${getV('phone')}</p>
-            </div>
-            <div class="review-box">
-                <h4>Spouse</h4>
-                <p>${spouseName !== "—" ? spouseName + " (DOB: " + getV('spouse_dob') + ")" : "No spouse added"}</p>
-            </div>
-            <div class="review-box">
-                <h4>Dependents</h4>
-                <p>Children: ${children.length} · Extended Family: ${extended.length}</p>
-            </div>
-            <div class="review-box">
-                <h4>Selected Plan</h4>
-                <p>${planName} — Cover: ${coverage} · Premium: ${premium}</p>
-            </div>
-        `;
-    }
+    <div id="docs_err" class="inline-err">⚠ Please upload both required documents before continuing.</div>
+  </div>
+  <div class="nav-bar">
+    <button class="btn btn-sec" onclick="prevSlide(2)">← Back</button>
+    <button class="btn btn-pri" onclick="nextSlide(2)">Continue →</button>
+  </div>
+</div>
 
-    // ── Submit ──
-    // BUG FIX: Was posting to /api/submit (non-existent) — now posts to /api/v1/policies
-    // BUG FIX: Was sending FormData — now sends JSON to match PolicyCreate model
-    // BUG FIX: Payload now includes all required backend fields
-    // BUG FIX: Success shows inline instead of redirect to missing success.html
-    const VALID_POLICY_TYPES = ["Premium", "Prestige", "Executive"];
+<!-- ══ SLIDE 3: FAMILY & DEPENDANTS ══ -->
+<div class="slide" id="slide3">
+  <div class="card">
+    <div class="card-title">Family &amp; Dependants</div>
+    <div class="card-sub">Add family members to be covered. Required for Family plan selection on the next step.</div>
 
-    async function submitGlobalApp() {
-        const btn = document.getElementById('submitBtn');
+    <!-- SPOUSE -->
+    <div class="sec-label">Spouse (Maximum 1)</div>
+    <div id="spouseSection">
+      <div class="dep-cnt">No spouse added.</div>
+      <button class="btn-add" onclick="addSpouse()"><span>＋</span> Add Spouse</button>
+    </div>
 
-        if (!document.getElementById('consent_check')?.checked) {
-            alert("Please accept the consent declaration to submit.");
-            return;
-        }
+    <hr class="divider"/>
+    <div class="sec-label">Children (Maximum 6)</div>
+    <div class="dep-cnt" id="child_cnt">0 of 6 children added</div>
+    <div class="dep-list" id="childList"></div>
+    <button class="btn-add" id="addChildBtn" onclick="addChild()"><span>＋</span> Add Child</button>
 
-        const getV = (id) => document.getElementById(id)?.value?.trim() || "";
-        const fname   = getV('fname');
-        const lname   = getV('lname');
-        const dob     = getV('dob');
-        const planRaw = getV('plan_selection');
+    <hr class="divider"/>
+    <div class="sec-label">Extended Family (Maximum 6)</div>
+    <div class="dep-cnt">Each extended family member selects their own cover tier. Must reside in Zimbabwe or South Africa.</div>
+    <div class="dep-cnt" id="efm_cnt">0 of 6 extended family members added</div>
+    <div class="dep-list" id="efmList"></div>
+    <button class="btn-add" id="addEfmBtn" onclick="addEfm()"><span>＋</span> Add Extended Family Member</button>
+  </div>
+  <div class="nav-bar">
+    <button class="btn btn-sec" onclick="prevSlide(3)">← Back</button>
+    <button class="btn btn-pri" onclick="nextSlide(3)">Continue →</button>
+  </div>
+</div>
 
-        if (!fname || !lname) { alert("Please enter your full name."); return; }
-        if (!dob)             { alert("Please enter your date of birth."); return; }
-        if (!planRaw)         { alert("Please select a coverage plan."); return; }
+<!-- ══ SLIDE 4: COVER & PLAN ══ -->
+<div class="slide" id="slide4">
+  <div class="card">
+    <div class="card-title">Cover &amp; Plan Selection</div>
+    <div class="card-sub">Choose your cover type then select a plan.</div>
 
-        const planParts      = planRaw.split('|');
-        const policyType     = planParts[0] || "";
-        const coverageAmount = parseFloat(planParts[2] || "0");
-        const premiumAmount  = parseFloat(planParts[3] || "0");  // BUG FIX: was planParts[2]
+    <div class="sec-label">Cover Type</div>
+    <div class="toggle-g" style="max-width:300px;margin-bottom:18px">
+      <input type="radio" name="ct" id="ct_single" value="single" checked/>
+      <label for="ct_single" onclick="setCoverType('single')">Single Cover</label>
+      <input type="radio" name="ct" id="ct_family" value="family"/>
+      <label for="ct_family" onclick="setCoverType('family')">Family Cover</label>
+    </div>
+    <div id="fam_warn" class="inline-warn" style="display:none">
+      ⚠ Family cover requires at least one dependant. Please add a spouse or child on the previous step first.
+    </div>
 
-        if (!VALID_POLICY_TYPES.includes(policyType)) {
-            alert("Invalid plan selection. Please go back and choose a plan.");
-            return;
-        }
+    <div class="sec-label" style="margin-top:4px">Select Plan</div>
+    <div class="plan-grid">
+      <div class="plan-card" id="pc_premium" onclick="selPlan('premium')">
+        <input type="radio" name="plan" value="premium"/>
+        <div class="plan-name">Premium</div>
+        <div class="plan-cover">R45,000 Cover</div>
+        <div class="plan-price" id="pp_premium">R450<span class="plan-price-sm">/mo</span></div>
+        <ul class="plan-benefits">
+          <li>R45,000 funeral cover</li><li>Accidental: immediate</li>
+          <li>Natural: 3 months</li><li>Repatriation option</li>
+        </ul>
+      </div>
+      <div class="plan-card" id="pc_prestige" onclick="selPlan('prestige')">
+        <input type="radio" name="plan" value="prestige"/>
+        <div class="plan-badge">Popular</div>
+        <div class="plan-name">Prestige</div>
+        <div class="plan-cover">R75,000 Cover</div>
+        <div class="plan-price" id="pp_prestige">R630<span class="plan-price-sm">/mo</span></div>
+        <ul class="plan-benefits">
+          <li>R75,000 funeral cover</li><li>Accidental: immediate</li>
+          <li>Natural: 3 months</li><li>Repatriation option</li>
+        </ul>
+      </div>
+      <div class="plan-card" id="pc_executive" onclick="selPlan('executive')">
+        <input type="radio" name="plan" value="executive"/>
+        <div class="plan-name">Executive</div>
+        <div class="plan-cover">R90,000 Cover</div>
+        <div class="plan-price" id="pp_executive">R990<span class="plan-price-sm">/mo</span></div>
+        <ul class="plan-benefits">
+          <li>R90,000 funeral cover</li><li>Accidental: immediate</li>
+          <li>Natural: 3 months</li><li>Premium benefits</li>
+        </ul>
+      </div>
+    </div>
+    <div id="plan_total_wrap" style="display:none;margin-top:16px">
+      <div class="prem-box">
+        <div>
+          <div class="prem-label">Estimated Monthly Premium</div>
+          <div class="prem-detail" id="plan_detail"></div>
+        </div>
+        <div class="prem-amount" id="plan_total">R0</div>
+      </div>
+    </div>
 
-        const token = localStorage.getItem("access_token");
-        if (!token) {
-            alert("You are not logged in. Please log in and try again.");
-            return;
-        }
+    <!-- BENEFICIARY (embedded in slide 4 for flow) -->
+    <hr class="divider"/>
+    <div class="sec-label">Beneficiary Details</div>
+    <div class="card-sub" style="margin-bottom:14px">The person who will receive the payout in the event of a claim.</div>
+    <div class="field-row">
+      <div class="field"><label>First Name <span class="req">*</span></label>
+        <input type="text" id="ben_first" placeholder="First name"/></div>
+      <div class="field"><label>Last Name <span class="req">*</span></label>
+        <input type="text" id="ben_last" placeholder="Last name"/></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Contact Number <span class="req">*</span></label>
+        <input type="tel" id="ben_phone" placeholder="+27 8X XXX XXXX"/></div>
+      <div class="field"><label>Relationship <span class="req">*</span></label>
+        <select id="ben_rel">
+          <option value="">Select</option>
+          <option>Spouse</option><option>Parent</option><option>Child</option>
+          <option>Sibling</option><option>Other family member</option>
+        </select></div>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <button class="btn btn-sec" onclick="prevSlide(4)">← Back</button>
+    <button class="btn btn-pri" onclick="nextSlide(4)">Continue →</button>
+  </div>
+</div>
 
-        try {
-            btn.innerHTML = "⌛ Submitting...";
-            btn.disabled  = true;
+<!-- ══ SLIDE 5: PAYMENT ══ -->
+<div class="slide" id="slide5">
+  <div class="card">
+    <div class="card-title">Payment Details</div>
+    <div class="card-sub">Choose how you will pay your monthly premium.</div>
 
-            const payload = {
-                tenant_id:         "11111111-1111-1111-1111-111111111111", // TODO: from JWT in production
-                policy_number:     "AUTO-" + Date.now(),
-                policy_type:       policyType,
-                policyholder_name: `${fname} ${lname}`,
-                policyholder_dob:  dob,
-                coverage_amount:   coverageAmount,
-                premium_amount:    premiumAmount,
-                start_date:        new Date().toISOString().split("T")[0],
-                has_spouse:        !!getV('spouse_name'),
-                source:            "manual"
-            };
+    <div class="toggle-g" style="max-width:340px;margin-bottom:18px">
+      <input type="radio" name="pm" id="pm_debit" value="debit_order" checked/>
+      <label for="pm_debit" onclick="switchPay('debit_order')">Debit Order</label>
+      <input type="radio" name="pm" id="pm_online" value="online_payment"/>
+      <label for="pm_online" onclick="switchPay('online_payment')">Online Payment</label>
+    </div>
 
-            const response = await fetch("/api/v1/policies", {
-                method: "POST",
-                headers: {
-                    "Content-Type":  "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify(payload)
-            });
+    <div class="pay-panel active" id="panel_debit">
+      <div class="field-row">
+        <div class="field"><label>Account Holder Name <span class="req">*</span></label>
+          <input type="text" id="dob_holder" placeholder="Full name on account"/></div>
+        <div class="field"><label>Account Holder Contact <span class="req">*</span></label>
+          <input type="tel" id="dob_contact" placeholder="Phone number"/></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Bank <span class="req">*</span></label>
+          <select id="dob_bank">
+            <option value="">Select bank</option>
+            <option>ABSA Bank</option><option>Capitec Bank</option>
+            <option>First National Bank (FNB)</option><option>Nedbank</option>
+            <option>Standard Bank</option><option>African Bank</option>
+            <option>Discovery Bank</option><option>TymeBank</option>
+            <option>Investec</option><option>Other</option>
+          </select></div>
+        <div class="field"><label>Branch Code <span class="req">*</span></label>
+          <input type="text" id="dob_branch" placeholder="6-digit code" maxlength="6"/></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Account Number <span class="req">*</span></label>
+          <input type="text" id="dob_accnum" placeholder="Account number"/></div>
+        <div class="field"><label>Account Type <span class="req">*</span></label>
+          <select id="dob_acctype">
+            <option value="">Select type</option>
+            <option>Cheque / Current</option>
+            <option>Savings</option><option>Transmission</option>
+          </select></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Deduction Date <span class="req">*</span></label>
+          <select id="dob_deductdate">
+            <option value="">Select date</option>
+            <option value="1">1st of the month</option>
+            <option value="7">7th of the month</option>
+            <option value="15">15th of the month</option>
+            <option value="25">25th of the month</option>
+            <option value="last">Last day of the month</option>
+          </select></div>
+        <div class="field"><label>Commencement Date</label>
+          <input type="date" id="dob_commence"/></div>
+      </div>
+      <div class="inline-warn">
+        By proceeding you authorise Zororo Phumulani to debit your account as indicated above on the deduction date, commencing on the selected date and monthly thereafter. Premium amounts may be adjusted with notice.
+      </div>
+    </div>
 
-            const res = await response.json();
-            if (!response.ok) throw new Error(res.detail || "Server error occurred.");
+    <div class="pay-panel" id="panel_online">
+      <div style="text-align:center;padding:28px 16px">
+        <div style="font-size:2.8rem;margin-bottom:14px">💳</div>
+        <p style="color:var(--muted);margin-bottom:18px;font-size:.9rem">
+          Complete your payment securely via our portal. Your policy activates once payment is confirmed.</p>
+        <a href="https://pay.zororophumulani.co.za/" target="_blank"
+           style="display:inline-block;background:var(--mid);color:#fff;padding:12px 28px;
+                  border-radius:8px;text-decoration:none;font-weight:700;font-size:.9rem">
+          Proceed to Payment Portal →
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <button class="btn btn-sec" onclick="prevSlide(5)">← Back</button>
+    <button class="btn btn-pri" onclick="nextSlide(5)">Continue →</button>
+  </div>
+</div>
 
-            // BUG FIX: Show inline success instead of redirecting to missing success.html
-            document.getElementById('insuranceForm').style.display = 'none';
-            document.querySelector('.form-nav').style.display = 'none';
-            document.getElementById('successScreen').style.display = 'block';
-            document.getElementById('policyRefDisplay').textContent =
-                "Policy Ref: " + (res.policy_number || payload.policy_number);
+<!-- ══ SLIDE 6: DECLARATIONS ══ -->
+<div class="slide" id="slide6">
+  <div class="card">
+    <div class="card-title">Declarations &amp; Needs Analysis</div>
+    <div class="card-sub">FAIS legislation requires a needs analysis prior to policy commencement.</div>
 
-        } catch (err) {
-            alert("Submission failed: " + err.message);
-        } finally {
-            btn.innerHTML = "Confirm & Submit";
-            btn.disabled  = false;
-        }
-    }
-</script>
+    <div class="sec-label">Existing Cover</div>
+    <div class="field-row">
+      <div class="field"><label>Do you have another funeral policy? <span class="req">*</span></label>
+        <div class="toggle-g" style="max-width:220px">
+          <input type="radio" name="othpol" id="op_yes" value="yes"/>
+          <label for="op_yes">Yes</label>
+          <input type="radio" name="othpol" id="op_no" value="no" checked/>
+          <label for="op_no">No</label>
+        </div></div>
+      <div class="field" id="op_amt_wrap" style="display:none">
+        <label>Cover Amount of Existing Policy</label>
+        <input type="text" id="op_amount" placeholder="e.g. R30,000"/></div>
+    </div>
+    <div class="field"><label>Does this replace an existing policy?</label>
+      <div class="toggle-g" style="max-width:220px">
+        <input type="radio" name="repl" id="rp_yes" value="yes"/>
+        <label for="rp_yes">Yes</label>
+        <input type="radio" name="repl" id="rp_no" value="no" checked/>
+        <label for="rp_no">No</label>
+      </div></div>
 
+    <hr class="divider"/>
+    <div class="sec-label">Financial Information</div>
+    <div class="field-row">
+      <div class="field"><label>Number of Dependants</label>
+        <input type="number" id="d_numdeps" min="0" max="20" placeholder="0"/></div>
+      <div class="field"><label>Monthly Gross Income <span class="req">*</span></label>
+        <select id="d_income">
+          <option value="">Select range or prefer not to disclose</option>
+          <option value="prefer_not">Prefer not to disclose</option>
+          <option value="under_5000">Under R5,000</option>
+          <option value="5000_10000">R5,000 – R10,000</option>
+          <option value="10000_20000">R10,000 – R20,000</option>
+          <option value="20000_35000">R20,000 – R35,000</option>
+          <option value="35000_50000">R35,000 – R50,000</option>
+          <option value="over_50000">Over R50,000</option>
+        </select></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Monthly Expenses</label>
+        <input type="text" id="d_expenses" placeholder="e.g. R8,500"/></div>
+      <div class="field"><label>Available Cash / Savings</label>
+        <input type="text" id="d_cash" placeholder="e.g. R15,000"/></div>
+    </div>
+
+    <hr class="divider"/>
+    <div class="sec-label">Agent / Connector Details</div>
+    <div class="field-row">
+      <div class="field"><label>Agent / Connector Name</label>
+        <input type="text" id="ag_name" placeholder="Full name"/></div>
+      <div class="field"><label>Agent Contact</label>
+        <input type="tel" id="ag_phone" placeholder="Phone number"/></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Team Leader</label>
+        <input type="text" id="ag_leader" placeholder="Team leader name"/></div>
+      <div class="field"><label>Province</label>
+        <input type="text" id="ag_province" placeholder="Province"/></div>
+    </div>
+
+    <hr class="divider"/>
+    <div class="sec-label">Notification Preferences</div>
+    <div style="display:flex;gap:18px;flex-wrap:wrap">
+      <label style="display:flex;align-items:center;gap:7px;font-size:.83rem;font-weight:400;cursor:pointer">
+        <input type="checkbox" id="notif_sms"/> SMS</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:.83rem;font-weight:400;cursor:pointer">
+        <input type="checkbox" id="notif_email" checked/> Email</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:.83rem;font-weight:400;cursor:pointer">
+        <input type="checkbox" id="notif_whatsapp"/> WhatsApp</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:.83rem;font-weight:400;cursor:pointer">
+        <input type="checkbox" id="notif_tel"/> Telephone</label>
+    </div>
+  </div>
+
+  <!-- POPIA + T&C CONSENTS -->
+  <div class="card">
+    <div class="card-title" style="font-size:1rem;margin-bottom:12px">POPIA &amp; Legal Consents</div>
+
+    <div class="popia-notice">
+      <strong>POPIA Notice:</strong> Zororo Phumulani Investments (Pty) Ltd collects and processes
+      your personal information to provide funeral insurance services. Information is shared with
+      KGA Life (Pty) Ltd (underwriter) and Doves Zimbabwe as required. You have the right to
+      access, correct or delete your data by contacting info@zororo-phumulani.co.za.
+      Retention: minimum 5 years post termination. We will not sell your data to unauthorised parties.
+    </div>
+
+    <div class="tc-box" style="margin-top:14px">
+      <div class="tc-row" onclick="tglCheck('tc_popia')">
+        <input type="checkbox" id="tc_popia"/>
+        <div class="cbox" id="cbox_tc_popia"></div>
+        <div class="tc-txt">I consent to Zororo Phumulani Investments processing my personal information
+          as described in the POPIA notice above for the purpose of providing funeral insurance services.
+          <span class="req">*</span></div>
+      </div>
+    </div>
+
+    <div class="tc-box">
+      <div class="tc-row" onclick="tglCheck('tc_terms')">
+        <input type="checkbox" id="tc_terms"/>
+        <div class="cbox" id="cbox_tc_terms"></div>
+        <div class="tc-txt">I confirm that I have read, understood, and agree to all
+          <a href="#" onclick="openTC(event)">Terms &amp; Conditions</a>
+          of the Zororo Phumulani Worldwide Funeral Plan, including all waiting periods, exclusions,
+          claims procedures and cancellation terms. <span class="req">*</span></div>
+      </div>
+    </div>
+
+    <div class="tc-box">
+      <div class="tc-row" onclick="tglCheck('tc_fais')">
+        <input type="checkbox" id="tc_fais"/>
+        <div class="cbox" id="cbox_tc_fais"></div>
+        <div class="tc-txt">I confirm the needs analysis information provided is accurate and complete.
+          I understand and accept the advice record and recommendations in terms of FAIS legislation.
+          <span class="req">*</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-bar">
+    <button class="btn btn-sec" onclick="prevSlide(6)">← Back</button>
+    <button class="btn btn-pri" onclick="nextSlide(6)">Review &amp; Sign →</button>
+  </div>
+</div>
+
+<!-- ══ SLIDE 7: REVIEW & SIGN ══ -->
+<div class="slide" id="slide7">
+  <div class="card">
+    <div class="card-title">Review Your Application</div>
+    <div class="card-sub">Please review all details carefully. Once submitted this application is legally binding.</div>
+    <div id="reviewContent"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="font-size:1.05rem;margin-bottom:4px">Your Signature</div>
+    <div class="card-sub">Choose a signature method. One must be completed before submission.</div>
+
+    <div class="sig-options">
+      <button class="sig-btn active" id="sb_digital" onclick="setSig('digital')">
+        <span>✏️</span>Draw Signature</button>
+      <button class="sig-btn" id="sb_photo" onclick="setSig('photo')">
+        <span>📷</span>Upload Photo</button>
+      <button class="sig-btn" id="sb_typed" onclick="setSig('typed')">
+        <span>⌨️</span>Type Full Name</button>
+    </div>
+
+    <!-- Draw -->
+    <div class="sig-panel active" id="sp_digital">
+      <canvas id="sigCanvas" width="740" height="150"></canvas>
+      <div class="sig-ctrls">
+        <button class="btn-sig-clr" onclick="clrSig()">Clear</button>
+        <span style="font-size:.73rem;color:var(--muted);align-self:center">
+          Sign using your mouse or finger</span>
+      </div>
+    </div>
+
+    <!-- Photo -->
+    <div class="sig-panel" id="sp_photo">
+      <div class="upload-zone" id="sigZone">
+        <input type="file" id="sig_photo" accept=".jpg,.jpeg,.png"
+               onchange="sigPhotoUploaded(this)"/>
+        <div class="uz-icon">🖊️</div>
+        <div class="uz-text"><strong>Upload a photo of your handwritten signature</strong></div>
+        <div class="uz-text">JPG or PNG only</div>
+        <div class="uz-fname" id="sig_photo_name"></div>
+      </div>
+    </div>
+
+    <!-- Typed -->
+    <div class="sig-panel" id="sp_typed">
+      <div class="field"><label>Type your full legal name <span class="req">*</span></label>
+        <input type="text" id="typed_sig" placeholder="e.g. Mike Joshua Zuma or Mike J. Zuma"
+               oninput="updateTyped()"/></div>
+      <div class="typed-preview" id="typed_preview"></div>
+      <div class="field-note" style="margin-top:6px">
+        By typing your name you acknowledge this constitutes a legally binding electronic signature
+        under the Electronic Communications and Transactions Act (ECT Act) No. 25 of 2002.
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-bar">
+    <button class="btn btn-sec" onclick="prevSlide(7)">← Back</button>
+    <button class="btn btn-sub" id="submitBtn" onclick="submitApp()">✓ Submit Application</button>
+  </div>
+</div>
+
+</div><!-- /form-wrap -->
+
+<!-- ═══ SUCCESS SCREEN ═══ -->
+<div id="successScreen">
+  <div class="card">
+    <div class="suc-icon">✅</div>
+    <div class="suc-title">Application Submitted!</div>
+    <div class="suc-sub">
+      Your application has been received and saved. A copy of your completed
+      application has been emailed to you. Our team will be in contact within 2 business days.
+    </div>
+    <div class="pol-ref-box">
+      <div class="pol-ref-lbl">Policy Reference Number</div>
+      <div class="pol-ref-num" id="sucPolNum">ZP-XXXXXXXX</div>
+    </div>
+    <div class="popia-notice">
+      Your information is protected under POPIA. Queries:
+      <strong>info@zororo-phumulani.co.za</strong> · <strong>+27 81 419 4980</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TERMS MODAL ═══ -->
+<!-- ═══ TERMS MODAL — COMPLETE OFFICIAL WWF TERMS & CONDITIONS ═══ -->
+<div id="termsModal">
+  <div class="terms-box">
+    <button class="terms-close" onclick="closeTC()">✕</button>
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.35rem;color:var(--navy);margin-bottom:2px">
+      World Wide Funeral Plan</h2>
+    <p style="font-size:.8rem;color:var(--muted);margin-bottom:4px">
+      Terms and Conditions · Version: WWF-TC-v2025.1</p>
+    <p style="font-size:.78rem;color:var(--blue);margin-bottom:14px;font-weight:600">
+      Zororo Phumulani Investments (Pty) Ltd · FSP48558 · Underwritten by KGA Life · FSP15980</p>
+    <div class="terms-content" id="tcContent">
+
+      <!-- DEFINITIONS -->
+      <h3>Definitions</h3>
+      <ol>
+        <li><strong>"Cash in lieu"</strong> means receiving a payment of money instead of a physical item or benefit that would otherwise be provided.</li>
+        <li><strong>"Cash Option"</strong> means the amount of money that a policyholder may claim in place of receiving the actual services or benefits provided under the policy.</li>
+        <li><strong>"Child"</strong> means the Principal Insured's natural children, legally adopted children and stepchildren. A stillborn Child is included under this definition provided that there are at least 26 (twenty-six) weeks of existence in the uterus and that the foetus showed no life after complete birth. Stillborn shall exclude the intentional termination of the life of the Child.</li>
+        <li><strong>"Claim"</strong> means, unless the context indicates otherwise, a demand for benefits under a Policy by a Claimant.</li>
+        <li><strong>"Dependant"</strong> means a qualifying spouse or child.</li>
+        <li><strong>"Exclusions"</strong> means losses or risk events not covered under this Policy.</li>
+        <li><strong>"Extended family"</strong> means a person(s) in the age group 0 to 90 years who do not form part of the main family and who are nominated as an extended family member by the policy holder or main member of a policy, with a premium payable for each registered extended family member.</li>
+        <li><strong>"Main family"</strong> refers to a policyholder or main member and his dependants, excluding extended family members.</li>
+        <li><strong>"Main member"</strong> means a person for whom an application for membership has been approved by Zororo-Phumulani.</li>
+        <li><strong>"Personal Information"</strong> means personal information as defined in the Protection of Personal Information Act 4 of 2013.</li>
+        <li><strong>"Qualifying spouse"</strong> means the person with whom the main member is joined in marriage, including tribal law or custom and common-law spouses.</li>
+        <li><strong>"Waiting period"</strong> means the initial period of membership for which no sum assured is payable by Zororo-Phumulani in respect of a claim. The respective waiting periods are set out herein below.</li>
+        <li><strong>"Services"</strong> refers to the non-cash benefits provided by the insurer or funeral service provider.</li>
+      </ol>
+
+      <!-- GENERAL T&C -->
+      <h3>Terms and Conditions General</h3>
+      <ol>
+        <li>Premiums are payable monthly in advance on or before the 1st of each month.</li>
+        <li>Main members should be between 18–65 years to join the scheme.</li>
+        <li>The WWF policy is for Zimbabwean nationals who are in any part of the world.</li>
+        <li>The insured lives will be limited to those declared on the application form.</li>
+        <li>The funeral cover for Extended family members is limited to dependants residing in Zimbabwe or South Africa. Should an Extended family member pass away outside Zimbabwe or South Africa, repatriation will not be covered however you can claim the Cover Amount. The maximum cover age for extended family members is 90.</li>
+        <li>Members who are not legally married but who are living together as a family can still enjoy family benefits provided that all relevant particulars are declared on the application form.</li>
+        <li>A maximum number of six (6) unmarried children may be covered under the age of 21. Cover is extended up to but not including age 26 if the child is an unmarried full-time student. Proof of registration must be submitted when registering the policy. Cover is provided for physically or mentally disabled children, who do not receive a grant, and who are dependent on their parents.</li>
+      </ol>
+
+      <!-- WAITING PERIODS -->
+      <h3>Waiting Periods</h3>
+      <ol>
+        <li>Membership under the scheme can only commence on the 1st day of the month.</li>
+        <li>If the 1st premium for inception of the policy is received after the 1st of the month, the cover will only commence on the 1st of the following month.</li>
+        <li>Immediate cover is granted for accidental death if a member has paid the 1st premium.</li>
+        <li>A three-calendar month waiting period applies to immediate family members, and a six-calendar month waiting period applies to extended family members for natural causes of death.</li>
+        <li>Newborns enjoy immediate cover and must be added within 6 months of birth, after which waiting periods will apply.</li>
+        <li>A 12-calendar month waiting period applies for suicidal death.</li>
+        <li>Immediate cover on receipt of the first premium for existing members who have more than six (6) months continued cover under the existing international scheme. (Such proof is required should deaths occur during the first three (3) months from inception.) All members still within the waiting period imposed by the previous insurer will serve out the balance of such waiting period with Zororo-Phumulani before their cover will commence.</li>
+      </ol>
+
+      <!-- EXCLUSIONS -->
+      <h3>Exclusions</h3>
+      <p>Zororo-Phumulani will not be liable to pay any benefit or claim under a Policy if the claim for a benefit arises directly or indirectly from, or as a consequence to, or from:</p>
+      <ol>
+        <li>The use of nuclear, biological or chemical weapons, or any radioactive contamination; or</li>
+        <li>Attacks on or sabotage of facilities (including, but not limited to, nuclear power plants, reprocessing plants, final repository sites and research reactors) and storage depots, which lead to the release of radioactivity or nuclear, biological or chemical warfare agents; or</li>
+        <li>The member or member's dependants or member's nominated beneficiaries' involvement in unlawful activity or activities; or</li>
+        <li>Wilful self-injury or where the Insured is affected temporarily or otherwise, by alcohol, narcotics, insanity or drugs, unless the latter is administered by or prescribed by or taken in accordance with the instructions of a registered medical practitioner (other than himself where the Principal Insured is such a registered medical practitioner).</li>
+      </ol>
+
+      <!-- PAYMENT OF PREMIUMS -->
+      <h3>Payment of Premiums</h3>
+      <ol>
+        <li>Premiums shall be payable as indicated in the Schedule to the Insurer by the Policyholder at the Premium Rate as specified in the Schedule.</li>
+        <li>Payments shall be made from the Commencement Date to the date of termination of this Policy. Should the insured event occur before premium payment is effected, the Insurer will have no liability, unless the Insurer is satisfied that at the time, an insurable risk did exist and that the insured had been in good standing in terms of premium payments prior to the happening of the insured event.</li>
+        <li>In the event of such a situation, the Insurer's decision shall be final.</li>
+        <li>Cover on the Scheme is provided for on a month-to-month basis. No reserves are built up under the scheme, therefore premiums are payable lifelong and there are no surrender values when cover ceases.</li>
+        <li>Premiums under the scheme are not guaranteed and can be adjusted by the insurer at any stage.</li>
+        <li>Membership for new applicants will be restricted to a maximum entry age of 65 years (next birthday) at commencement.</li>
+        <li>Only claims submitted within six (6) months of the date of death will be considered for payment.</li>
+        <li>No claim will be honoured if premiums are in arrears or short paid for more than 60 days.</li>
+        <li>No claims in respect of foster children will be considered, unless proof of legal adoption has been supplied.</li>
+        <li>In the event of the death of the Policyholder, ownership of the policy may be switched to the surviving spouse; the spouse will then become the Policyholder of the policy, subject to the payment of the premium by the spouse. Please note, however, that this does not automatically happen, and it is the responsibility of the remaining spouse to notify the Insurer of the change.</li>
+      </ol>
+
+      <!-- CLAIMS OPTIONS -->
+      <h3>Claims Options</h3>
+      <ol>
+        <li>You can claim for cash or exchange your cash for discounted repatriation services from any country to Zimbabwe.</li>
+        <li>In addition to standard repatriation services, repatriations to Zimbabwe will receive additional services from Doves Zimbabwe only if the client selects a service option. All customs and airport fees remain the responsibility of the family.</li>
+      </ol>
+
+      <!-- CASH OPTION -->
+      <h3>Cash Option</h3>
+      <ol>
+        <li>Our policies and payouts are in Rand value and an approximate amount in USD equivalent is given in brackets.</li>
+        <li>If a member chooses the cash option a maximum of R90,000 will be paid depending on the plan.</li>
+        <li>Sums Insured for Eligible Children are payable in accordance with the following:
+          <ul>
+            <li>14 years and older: 100%</li>
+            <li>6 to 13 years: 50%</li>
+            <li>0 to 5 years: 25%</li>
+            <li>Stillborn is defined as the death of a baby after 28 weeks of pregnancy — payable at 25%.</li>
+          </ul>
+        </li>
+        <li>Doves Zimbabwe is the contracted funeral home that will conduct the funeral and take over the policy should the policyholder return to Zimbabwe permanently.</li>
+      </ol>
+
+      <!-- TERMINATION -->
+      <h3>Termination of the Policy</h3>
+      <ol>
+        <li>The Policyholder may terminate the policy upon one (1) month notice of cancellation being given to the Insurer, in writing.</li>
+        <li>If the Policyholder fails to fulfil the obligations in terms of the master policy and the schedule(s), the policy shall lapse.</li>
+        <li>The Insurer may terminate its association with the Policyholder upon one (1) month's notice of cancellation being given to the Policyholder in writing.</li>
+        <li>Cover for policyholders and/or dependants will cease on:
+          <ul>
+            <li>The Policyholder withdrawing from the policy for any reason whatsoever.</li>
+            <li>Non-payment of premiums by policyholder.</li>
+            <li>Policy will lapse after 3 months of non-payment.</li>
+          </ul>
+        </li>
+      </ol>
+
+      <!-- CLAIM DOCUMENTS -->
+      <h3>Claim Documents Required</h3>
+      <ol>
+        <li>Main member's ID/Passport (certified copy)</li>
+        <li>Deceased's ID/Passport (certified copy) or an affidavit confirming that the ID was taken by the Registrar General's office.</li>
+        <li>Certified copy of the death certificate or a completed and signed burial order.</li>
+        <li>Accident report form to be completed and signed by the investigating officer if the cause of death is unnatural.</li>
+        <li>Doctor's letter confirming the months of the pregnancy — in the case of stillbirth.</li>
+        <li>Notice of death — if the person passes away in South Africa.</li>
+        <li>Mother's certified ID/Passport in case of a minor or stillbirth.</li>
+      </ol>
+      <p style="margin-top:8px;font-weight:600">Claims &amp; Queries: +27 81 419 4980 &nbsp;|&nbsp; +27 11 339 1484</p>
+      <p style="margin-bottom:12px">claims2@zororo-phumulani.co.za &nbsp;|&nbsp; customer-care@zororo-phumulani.co.za</p>
+
+      <!-- PROVIDER DISCLOSURE -->
+      <h3>Financial Service and Product Provider Disclosure</h3>
+      <div style="background:#f5f7fb;border-radius:6px;padding:12px 14px;margin-bottom:10px;font-size:.8rem;line-height:1.8">
+        <strong>Product Provider (Insurer):</strong> KGA Life (Pty) Ltd &nbsp;·&nbsp; FSP15980<br/>
+        Address: 1st Floor, Unit 109, Bosman's Crossing Square, 2 Distillery Road, Stellenbosch<br/>
+        Tel: 021 944 6300 &nbsp;·&nbsp; Email: info@kga.co.za &nbsp;·&nbsp; Compliance: compliance@kga.co.za
+      </div>
+      <div style="background:#f5f7fb;border-radius:6px;padding:12px 14px;margin-bottom:10px;font-size:.8rem;line-height:1.8">
+        <strong>Financial Service Provider (Acting on Your Behalf):</strong> Zororo Phumulani Investments (Pty) Ltd &nbsp;·&nbsp; FSP48558<br/>
+        Address: 1st Floor, Nzunza House, 28 Melle Street, Johannesburg, 2001 &nbsp;·&nbsp; Tel: 011 339 1484
+      </div>
+      <div style="background:#f5f7fb;border-radius:6px;padding:12px 14px;margin-bottom:10px;font-size:.8rem;line-height:1.8">
+        <strong>Business Compliance Officer:</strong> Moonstone Compliance (Pty) Ltd — Sharen Gerald<br/>
+        Address: Valerida Centre, Piet Retief St, 1st Floor, Stellenbosch 7600<br/>
+        Tel: +27 21 833 8000 &nbsp;·&nbsp; Email: sgerald@moonstonecompliance.co.za
+      </div>
+      <div style="background:#f5f7fb;border-radius:6px;padding:12px 14px;margin-bottom:10px;font-size:.8rem;line-height:1.8">
+        <strong>FAIS Ombud:</strong> 125 Dallas Avenue, Menlyn Central, Waterkloof Glen, Pretoria<br/>
+        Tel: 0860-FAISOM (0860-324766) &nbsp;·&nbsp; +27 12 470 9080<br/>
+        Email: info@faisombud.co.za &nbsp;·&nbsp; Website: www.faisombud.co.za
+      </div>
+
+      <!-- REPRESENTATIVE DISCLOSURE -->
+      <h3>Representative Disclosure</h3>
+      <ul>
+        <li>Zororo Phumulani Investments is authorised to provide advice and intermediary services in respect of the Policy underwritten by KGA Life.</li>
+        <li>We receive more than 30% of our income from this Product Provider.</li>
+        <li>We are not an associated company of a Life Assurer or Product Provider.</li>
+        <li>As a representative of the brokerage, the representative has access to and has been accredited to market products from Zororo Phumulani Investments.</li>
+        <li>The representative has earned more than 10% of total commission from Zororo Phumulani Investments within the past 12 months.</li>
+        <li>Income is earned from commission that the product provider pays over on the products purchased by clients.</li>
+      </ul>
+
+      <!-- WAIVER OF RIGHTS -->
+      <h3>Waiver of Rights</h3>
+      <p>As an Authorised Financial Service Provider we may not request or induce in any manner a Client to waive any right or benefit conferred on the Client by or in terms of any provision of the General Code of Conduct, or recognize, accept or act on any such waiver by a Client.</p>
+
+      <!-- CONFLICT OF INTEREST -->
+      <h3>Conflict of Interest</h3>
+      <p>If we receive indirect consideration from product providers, this is recorded in the gift register. Our established Conflict of Interest policy and our gift register is kept at our business address and is available for your perusal, on request.</p>
+
+      <!-- COMPLAINTS -->
+      <h3>Complaints</h3>
+      <p>If you feel that your rights have been prejudiced, or you have been aggrieved in any way, you have the right to lodge a complaint. A copy of the complaints process is available upon request. Please contact our office should you wish to get more detailed information in this regard. If your complaint is not resolved to your satisfaction in terms of the internal complaints process, then you may direct your complaint directly to the FAIS Ombud (contact details above).</p>
+
+      <!-- NEEDS ANALYSIS -->
+      <h3>Needs Analysis</h3>
+      <p>In terms of the law a complete needs analysis must be done prior to providing advice. This may not be possible if you do not provide us with all the information or if there is insufficient time to complete it.</p>
+      <p>I acknowledge that I have / have not provided all information requested by the provider to enable him/her to conduct an analysis for purposes of advice.</p>
+      <p>In the circumstances, I confirm the following:</p>
+      <ul>
+        <li>I do not want such a financial needs analysis because I know which type of product I need; and/or</li>
+        <li>I have been advised by the provider to take particular care to consider on my own whether any advice given is appropriate considering my objectives, financial situation and particular needs; and/or</li>
+        <li>I have been alerted by the provider of the clear existence of all risk should I elect to conclude a transaction that differs from that recommended by the provider, or otherwise elect not to follow the advice furnished, or elect to receive less information or advice than the provider is able to provide, and I have been advised to take particular care to consider whether any product selected is appropriate to my needs, objectives and circumstances.</li>
+      </ul>
+
+      <!-- ADVICE RECORD -->
+      <h3>Advice Record</h3>
+      <p>The advice record is an accurate and complete record of the recommendations and advice provided to the client, based upon the information provided by the client. The representative is accredited to sell the product and has discussed and disclosed the breakdown of costs to the client.</p>
+      <p><strong>Needs and Objectives confirmed by client:</strong></p>
+      <ul>
+        <li>Need to cover myself</li>
+        <li>Need to cover immediate dependants</li>
+        <li>Need to cover extended dependants</li>
+      </ul>
+      <p>Where this policy is a replacement policy: separate comprehensive replacement disclosures will be provided tabulating the material differences between the old and new policy.</p>
+
+      <!-- POLICYHOLDER DECLARATION -->
+      <h3>Policyholder Declaration</h3>
+      <p style="background:#eef3fb;border-left:4px solid var(--mid);padding:12px 14px;border-radius:0 6px 6px 0;font-weight:600;color:var(--navy);line-height:1.7">
+        "I understand and accept all terms and conditions applicable to this policy. I the undersigned, hereby authorise Zororo Phumulani to Debit my Bank Account the amount above on the salary credit date or sure date that may otherwise be appropriate commencing on the selected date and every month thereafter. I understand that my salary credit date may change from time to time and I authorise you to administer premium requests accordingly. This includes any premium increases that may occur."
+      </p>
+      <p style="margin-top:10px;font-size:.78rem;color:var(--muted)">
+        By clicking <strong>"I Have Read &amp; Accept All Terms"</strong> below, you confirm that you have read, understood and agree to all of the above Terms &amp; Conditions in their entirety, including the Definitions, General Terms, Waiting Periods, Exclusions, Payment Terms, Cash Options, Termination, Claims Documents, Representative Disclosure, Waiver of Rights, Conflict of Interest, Complaints process, Needs Analysis acknowledgement, and Advice Record declaration.
+      </p>
+    </div>
+    <div class="terms-scroll-note">⬆ Please scroll to read all terms before accepting. ⬆</div>
+    <div style="margin-top:14px;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap">
+      <button onclick="closeTC()" class="btn btn-sec" style="padding:9px 18px">Close</button>
+      <button onclick="acceptTCFromModal()" class="btn btn-pri" style="padding:9px 18px">
+        ✓ I Have Read &amp; Accept All Terms</button>
+    </div>
+  </div>
+</div>
+
+<script src="/static/app.js"></script>
 </body>
 </html>
