@@ -1,4 +1,4 @@
-"""
+﻿"""
 Zororo Phumulani — Worldwide Funeral Plan
 main.py v3 | FastAPI | Railway | SQLite | PDF Generation | Email
 """
