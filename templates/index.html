@@ -145,13 +145,13 @@ textarea{resize:vertical;min-height:64px}
 
 /* EFM TIER GRID */
 .tier-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:6px}
-.tier-opt{border:1.5px solid var(--border);border-radius:6px;padding:7px 5px;
+.tier-opt,.tier-card{border:1.5px solid var(--border);border-radius:6px;padding:7px 5px;
   text-align:center;cursor:pointer;transition:all .2s;font-size:.73rem}
-.tier-opt:hover{border-color:var(--mid)}
-.tier-opt.sel{border-color:var(--accent);background:#fff8eb}
+.tier-opt:hover,.tier-card:hover{border-color:var(--mid)}
+.tier-opt.sel,.tier-card.sel{border-color:var(--accent);background:#fff8eb}
 .tier-opt input{display:none}
 .tier-cover{font-weight:800;color:var(--navy);font-size:.82rem}
-.tier-price{color:var(--muted);margin-top:1px}
+.tier-price,.tier-prem{color:var(--muted);margin-top:1px}
 
 /* SUMMARY BOX */
 .prem-box{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;
@@ -289,8 +289,9 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
     <div class="step-tab" data-step="3"><div class="step-num">3</div><div class="step-label">Cover &amp; Plan</div></div>
     <div class="step-tab" data-step="4"><div class="step-num">4</div><div class="step-label">Family</div></div>
     <div class="step-tab" data-step="5"><div class="step-num">5</div><div class="step-label">Payment</div></div>
-    <div class="step-tab" data-step="6"><div class="step-num">6</div><div class="step-label">Declarations</div></div>
-    <div class="step-tab" data-step="7"><div class="step-num">7</div><div class="step-label">Review &amp; Sign</div></div>
+    <div class="step-tab" data-step="6"><div class="step-num">6</div><div class="step-label">Beneficiary</div></div>
+    <div class="step-tab" data-step="7"><div class="step-num">7</div><div class="step-label">Declarations</div></div>
+    <div class="step-tab" data-step="8"><div class="step-num">8</div><div class="step-label">Review &amp; Sign</div></div>
   </div>
 </div>
 
@@ -499,26 +500,7 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
       </div>
     </div>
 
-    <!-- BENEFICIARY -->
-    <hr class="divider"/>
-    <div class="sec-label">Beneficiary Details</div>
-    <div class="card-sub" style="margin-bottom:14px">The person who will receive the payout in the event of a claim.</div>
-    <div class="field-row">
-      <div class="field"><label>First Name <span class="req">*</span></label>
-        <input type="text" id="ben_first" placeholder="First name"/></div>
-      <div class="field"><label>Last Name <span class="req">*</span></label>
-        <input type="text" id="ben_last" placeholder="Last name"/></div>
-    </div>
-    <div class="field-row">
-      <div class="field"><label>Contact Number <span class="req">*</span></label>
-        <input type="tel" id="ben_phone" placeholder="+27 8X XXX XXXX"/></div>
-      <div class="field"><label>Relationship <span class="req">*</span></label>
-        <select id="ben_rel">
-          <option value="">Select</option>
-          <option>Spouse</option><option>Parent</option><option>Child</option>
-          <option>Sibling</option><option>Other family member</option>
-        </select></div>
-    </div>
+    <!-- BENEFICIARY MOVED TO SLIDE 6 (after Payment) -->
   </div>
   <div class="nav-bar">
     <button class="btn btn-sec" onclick="prevSlide(3)">← Back</button>
@@ -638,8 +620,36 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
   </div>
 </div>
 
-<!-- ══ SLIDE 6: DECLARATIONS ══ -->
+<!-- ══ SLIDE 6: BENEFICIARY ══ -->
 <div class="slide" id="slide6">
+  <div class="card">
+    <div class="card-title">Beneficiary Details</div>
+    <div class="card-sub">The person who will receive the funeral payout in the event of a claim. Must be 18 or older.</div>
+    <div class="field-row">
+      <div class="field"><label>First Name <span class="req">*</span></label>
+        <input type="text" id="ben_first" placeholder="First name"/></div>
+      <div class="field"><label>Last Name <span class="req">*</span></label>
+        <input type="text" id="ben_last" placeholder="Last name"/></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Contact Number <span class="req">*</span></label>
+        <input type="tel" id="ben_phone" placeholder="+27 8X XXX XXXX"/></div>
+      <div class="field"><label>Relationship to Main Member <span class="req">*</span></label>
+        <select id="ben_rel">
+          <option value="">Select relationship</option>
+          <option>Spouse</option><option>Parent</option><option>Child</option>
+          <option>Sibling</option><option>Other family member</option>
+        </select></div>
+    </div>
+  </div>
+  <div class="nav-bar">
+    <button class="btn btn-sec" onclick="prevSlide(6)">← Back</button>
+    <button class="btn btn-pri" onclick="nextSlide(6)">Continue →</button>
+  </div>
+</div>
+
+<!-- ══ SLIDE 7: DECLARATIONS ══ -->
+<div class="slide" id="slide7">
   <div class="card">
     <div class="card-title">Declarations &amp; Needs Analysis</div>
     <div class="card-sub">FAIS legislation requires a needs analysis prior to policy commencement.</div>
@@ -720,9 +730,9 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
     </div>
   </div>
 
-  <!-- POPIA + T&C CONSENTS -->
+  <!-- SINGLE CONSOLIDATED CONSENT CHECKBOX -->
   <div class="card">
-    <div class="card-title" style="font-size:1rem;margin-bottom:12px">POPIA &amp; Legal Consents</div>
+    <div class="card-title" style="font-size:1rem;margin-bottom:12px">Legal Consents &amp; Declarations</div>
 
     <div class="popia-notice">
       <strong>POPIA Notice:</strong> Zororo Phumulani Investments (Pty) Ltd collects and processes
@@ -732,46 +742,33 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
       Retention: minimum 5 years post termination. We will not sell your data to unauthorised parties.
     </div>
 
-    <div class="tc-box" style="margin-top:14px">
-      <div class="tc-row" onclick="tglCheck('tc_popia')">
-        <input type="checkbox" id="tc_popia"/>
-        <div class="cbox" id="cbox_tc_popia"></div>
-        <div class="tc-txt">I consent to Zororo Phumulani Investments processing my personal information
-          as described in the POPIA notice above for the purpose of providing funeral insurance services.
-          <span class="req">*</span></div>
-      </div>
-    </div>
-
-    <div class="tc-box">
+    <div class="tc-box" style="margin-top:16px">
       <div class="tc-row" onclick="tglCheck('tc_terms')">
         <input type="checkbox" id="tc_terms"/>
         <div class="cbox" id="cbox_tc_terms"></div>
-        <div class="tc-txt">I confirm that I have read, understood, and agree to all
-          <a href="#" onclick="openTC(event)">Terms &amp; Conditions</a>
-          of the Zororo Phumulani Worldwide Funeral Plan, including all waiting periods, exclusions,
-          claims procedures and cancellation terms. <span class="req">*</span></div>
+        <div class="tc-txt">
+          I confirm that I have read, understood, and agree to the
+          <a href="#" onclick="openTC(event)" style="font-weight:600;color:var(--blue)">Terms &amp; Conditions</a>
+          of the Zororo Phumulani Worldwide Funeral Plan — including all Definitions, Waiting Periods,
+          Exclusions, Premium Obligations, POPIA consent, FAIS advice record, Needs Analysis
+          acknowledgement, and Policyholder Declaration.
+          <span class="req">*</span>
+        </div>
       </div>
     </div>
-
-    <div class="tc-box">
-      <div class="tc-row" onclick="tglCheck('tc_fais')">
-        <input type="checkbox" id="tc_fais"/>
-        <div class="cbox" id="cbox_tc_fais"></div>
-        <div class="tc-txt">I confirm the needs analysis information provided is accurate and complete.
-          I understand and accept the advice record and recommendations in terms of FAIS legislation.
-          <span class="req">*</span></div>
-      </div>
+    <div class="field-note" style="margin-top:8px;color:var(--muted)">
+      Click the <strong>Terms &amp; Conditions</strong> link above to read the full document before accepting.
     </div>
   </div>
 
   <div class="nav-bar">
-    <button class="btn btn-sec" onclick="prevSlide(6)">← Back</button>
-    <button class="btn btn-pri" onclick="nextSlide(6)">Review &amp; Sign →</button>
+    <button class="btn btn-sec" onclick="prevSlide(7)">← Back</button>
+    <button class="btn btn-pri" onclick="nextSlide(7)">Review &amp; Sign →</button>
   </div>
 </div>
 
-<!-- ══ SLIDE 7: REVIEW & SIGN ══ -->
-<div class="slide" id="slide7">
+<!-- ══ SLIDE 8: REVIEW & SIGN ══ -->
+<div class="slide" id="slide8">
   <div class="card">
     <div class="card-title">Review Your Application</div>
     <div class="card-sub">Please review all details carefully. Once submitted this application is legally binding.</div>
@@ -827,7 +824,7 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
   </div>
 
   <div class="nav-bar">
-    <button class="btn btn-sec" onclick="prevSlide(7)">← Back</button>
+    <button class="btn btn-sec" onclick="prevSlide(8)">← Back</button>
     <button class="btn btn-sub" id="submitBtn" onclick="submitApp()">✓ Submit Application</button>
   </div>
 </div>
@@ -1052,6 +1049,16 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
         <li>Need to cover extended dependants</li>
       </ul>
       <p>Where this policy is a replacement policy: separate comprehensive replacement disclosures will be provided tabulating the material differences between the old and new policy.</p>
+
+      <!-- POPIA CONSENT -->
+      <h3>POPIA — Personal Information Consent</h3>
+      <p>Zororo Phumulani Investments (Pty) Ltd collects and processes your personal information to provide funeral insurance services in compliance with the Protection of Personal Information Act 4 of 2013 (POPIA). Your information is shared only with KGA Life (Pty) Ltd (underwriter) and Doves Zimbabwe (repatriation services) as required. You have the right to access, correct or request deletion of your personal information by contacting <strong>info@zororo-phumulani.co.za</strong>. Retention period: minimum 5 years post policy termination. We will not sell your personal data to unauthorised parties.</p>
+      <p><em>By accepting these Terms &amp; Conditions, I consent to Zororo Phumulani Investments processing my personal information as described above for the purpose of providing funeral insurance services.</em></p>
+
+      <!-- FAIS ADVICE RECORD ACCEPTANCE -->
+      <h3>FAIS — Advice Record &amp; Needs Analysis Acceptance</h3>
+      <p>I confirm that the needs analysis information I have provided is accurate and complete. I understand and accept the advice record and all recommendations provided in terms of the Financial Advisory and Intermediary Services Act (FAIS). The advice record is an accurate and complete record of the recommendations and advice provided to me, based upon the information I have provided.</p>
+      <p><em>By accepting these Terms &amp; Conditions, I confirm the needs analysis information provided is accurate and that I understand and accept the FAIS advice record and recommendations.</em></p>
 
       <!-- POLICYHOLDER DECLARATION -->
       <h3>Policyholder Declaration</h3>

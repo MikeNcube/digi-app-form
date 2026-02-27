@@ -237,7 +237,7 @@ function goTo(n) {
   document.getElementById('slide'+n).classList.add('active');
   currentSlide=n;
   updateProgress(n);
-  if (n===7) buildReview();
+  if (n===8) buildReview();
   window.scrollTo(0,0);
 }
 function updateProgress(n) {
@@ -250,14 +250,15 @@ function updateProgress(n) {
 }
 
 // ── VALIDATION ─────────────────────────────────────────────────
-// Slide order: 1=Member 2=Docs 3=Plan+Ben 4=Family 5=Payment 6=Decl 7=Sign
+// Slide order: 1=Member 2=Docs 3=Plan 4=Family 5=Payment 6=Beneficiary 7=Declarations 8=Sign
 function validateSlide(n) {
   if (n===1) return v1_mainMember();
   if (n===2) return v2_documents();
-  if (n===3) return v3_plan();
-  if (n===4) return true;
+  if (n===3) return v3_plan();      // plan only — no beneficiary
+  if (n===4) return true;           // family optional
   if (n===5) return v5_payment();
-  if (n===6) return v6_declarations();
+  if (n===6) return v6_beneficiary();
+  if (n===7) return v7_declarations();
   return true;
 }
 
@@ -318,13 +319,6 @@ function v3_plan() {
   const hasDeps=spouseAdded||children.length>0;
   const warn=document.getElementById('fam_warn');
   if (warn) warn.style.display=(coverType==='family'&&!hasDeps)?'block':'none';
-  let ok=true;
-  ['ben_first','ben_last','ben_phone','ben_rel'].forEach(id=>{
-    const el=document.getElementById(id);
-    if (!el.value.trim()){el.classList.add('err');ok=false;}
-    else el.classList.remove('err');
-  });
-  if (!ok){alert('Please complete all beneficiary fields.');return false;}
   return true;
 }
 
@@ -343,14 +337,22 @@ function v5_payment() {
   return true;
 }
 
-// T&C validation — checkbox tick alone is sufficient (no link-click required)
-function v6_declarations() {
-  const unchecked = [];
-  if (!document.getElementById('tc_popia').checked)  unchecked.push('POPIA consent');
-  if (!document.getElementById('tc_terms').checked)  unchecked.push('Terms & Conditions');
-  if (!document.getElementById('tc_fais').checked)   unchecked.push('FAIS advice record');
-  if (unchecked.length>0) {
-    alert('Please accept all terms and conditions before proceeding.\n\nMissing: '+unchecked.join(', '));
+// Slide 6: Beneficiary (moved after payment)
+function v6_beneficiary() {
+  let ok=true;
+  ['ben_first','ben_last','ben_phone','ben_rel'].forEach(id=>{
+    const el=document.getElementById(id);
+    if (!el||!el.value.trim()){if(el)el.classList.add('err');ok=false;}
+    else el.classList.remove('err');
+  });
+  if (!ok){alert('Please complete all beneficiary fields before continuing.');return false;}
+  return true;
+}
+
+// Slide 7: Declarations — single T&C checkbox covers POPIA + FAIS + Terms
+function v7_declarations() {
+  if (!document.getElementById('tc_terms').checked) {
+    alert('Please read and accept the Terms & Conditions before proceeding.\n\nClick the "Terms & Conditions" link to read the full document, then tick the checkbox.');
     return false;
   }
   const income=document.getElementById('d_income');
@@ -624,10 +626,10 @@ function switchPay(method) {
   document.getElementById('panel_online').classList.toggle('active',method==='online_payment');
 }
 
-// ── CONSENT (checkbox tick = legal acceptance) ─────────────────
+// ── CONSENT (single checkbox) ──────────────────────────────────
 function tglCheck(id) {
   const el=document.getElementById(id);
-  const box=document.getElementById('box_'+id);
+  const box=document.getElementById('cbox_'+id);
   if (!el) return;
   el.checked=!el.checked;
   if (box){box.classList.toggle('chk-checked',el.checked);box.textContent=el.checked?'✓':'';}
@@ -648,7 +650,7 @@ function closeTC() {
 }
 function acceptTCFromModal() {
   const cb=document.getElementById('tc_terms');
-  const box=document.getElementById('box_tc_terms');
+  const box=document.getElementById('cbox_tc_terms');
   if (cb) cb.checked=true;
   if (box){box.classList.add('chk-checked');box.textContent='✓';}
   if (!tcAcceptedAt) tcAcceptedAt=new Date().toISOString();
@@ -877,8 +879,11 @@ function collectData() {
       monthly_expenses:get('d_expenses'),available_cash:get('d_cash'),notifications:notifs},
     agent:{name:get('ag_name'),phone:get('ag_phone'),
       team_leader:get('ag_leader'),province:get('ag_province')},
-    signature:sigData,popia_consent:chk('tc_popia'),terms_accepted:chk('tc_terms'),
-    terms_accepted_at:tcAcceptedAt||new Date().toISOString(),fais_accepted:chk('tc_fais'),
+    signature:sigData,
+    popia_consent:chk('tc_terms'),      // single checkbox covers all consents
+    terms_accepted:chk('tc_terms'),
+    terms_accepted_at:tcAcceptedAt||new Date().toISOString(),
+    fais_accepted:chk('tc_terms'),       // single checkbox covers FAIS too
     fic_uploaded:false,
     passport_uploaded:document.getElementById('passportZone').classList.contains('uploaded'),
     submission_timestamp:new Date().toISOString(),
