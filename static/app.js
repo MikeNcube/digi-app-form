@@ -158,11 +158,17 @@ function wireUpload(zoneId, inputId, nameId, isSig) {
   const zone=document.getElementById(zoneId);
   const input=document.getElementById(inputId);
   if (!zone||!input) return;
-  zone.addEventListener('click',()=>input.click());
+  // Only add zone click→input.click() when input is hidden (passport zone).
+  // Sig photo input is an overlay (opacity:0, covers zone) — user clicks it directly.
+  const inputStyle=window.getComputedStyle(input);
+  if (inputStyle.display==='none' || input.style.display==='none') {
+    zone.addEventListener('click',()=>input.click());
+  }
   input.addEventListener('change',function(){
     if (!this.files||!this.files[0]) return;
     const f=this.files[0];
-    document.getElementById(nameId).textContent='✓ '+f.name;
+    const nameEl=document.getElementById(nameId);
+    if(nameEl) nameEl.textContent='✓ '+f.name;
     zone.classList.remove('upload-err');
     zone.classList.add('uploaded');
     if (isSig) {
@@ -182,7 +188,8 @@ function wireUpload(zoneId, inputId, nameId, isSig) {
         input.files=dt.files;
         input.dispatchEvent(new Event('change'));
       } catch(_) {
-        document.getElementById(nameId).textContent='✓ '+e.dataTransfer.files[0].name;
+        const nameEl=document.getElementById(nameId);
+        if(nameEl) nameEl.textContent='✓ '+e.dataTransfer.files[0].name;
         zone.classList.add('uploaded');
       }
     }
@@ -237,7 +244,7 @@ function goTo(n) {
   document.getElementById('slide'+n).classList.add('active');
   currentSlide=n;
   updateProgress(n);
-  if (n===8) buildReview();
+  if (n===7) buildReview();
   window.scrollTo(0,0);
 }
 function updateProgress(n) {
@@ -250,15 +257,14 @@ function updateProgress(n) {
 }
 
 // ── VALIDATION ─────────────────────────────────────────────────
-// Slide order: 1=Member 2=Docs 3=Plan 4=Family 5=Payment 6=Beneficiary 7=Declarations 8=Sign
+// 7-slide flow: 1=Member 2=Docs 3=Plan 4=Family 5=Payment+Beneficiary 6=Declarations 7=Sign
 function validateSlide(n) {
   if (n===1) return v1_mainMember();
   if (n===2) return v2_documents();
-  if (n===3) return v3_plan();      // plan only — no beneficiary
-  if (n===4) return true;           // family optional
-  if (n===5) return v5_payment();
-  if (n===6) return v6_beneficiary();
-  if (n===7) return v7_declarations();
+  if (n===3) return v3_plan();
+  if (n===4) return true;             // family is optional
+  if (n===5) return v5_payment();     // validates payment + beneficiary
+  if (n===6) return v7_declarations(); // declarations + single T&C checkbox
   return true;
 }
 
@@ -334,19 +340,20 @@ function v5_payment() {
     });
     if (!ok){alert('Please complete all debit order fields.');return false;}
   }
+  // Beneficiary is on the same slide — validate it here
+  let benOk=true;
+  ['ben_first','ben_last','ben_phone','ben_rel'].forEach(id=>{
+    const el=document.getElementById(id);
+    if (!el||!el.value.trim()){if(el)el.classList.add('err');benOk=false;}
+    else el.classList.remove('err');
+  });
+  if (!benOk){alert('Please complete all beneficiary fields before continuing.');return false;}
   return true;
 }
 
-// Slide 6: Beneficiary (moved after payment)
+// v6_beneficiary kept for reference but not called (merged into v5_payment above)
 function v6_beneficiary() {
-  let ok=true;
-  ['ben_first','ben_last','ben_phone','ben_rel'].forEach(id=>{
-    const el=document.getElementById(id);
-    if (!el||!el.value.trim()){if(el)el.classList.add('err');ok=false;}
-    else el.classList.remove('err');
-  });
-  if (!ok){alert('Please complete all beneficiary fields before continuing.');return false;}
-  return true;
+  return true; // no-op — merged into v5_payment for 7-slide flow
 }
 
 // Slide 7: Declarations — single T&C checkbox covers POPIA + FAIS + Terms
@@ -684,28 +691,34 @@ function clrSig(){
 }
 function setSig(mode) {
   sigMode=mode;
-  ['panel_sig_digital','panel_sig_photo','panel_sig_typed'].forEach(id=>{
-    const el=document.getElementById(id);if(el)el.style.display='none';
+  // Hide all panels — use correct HTML IDs: sp_digital, sp_photo, sp_typed
+  ['sp_digital','sp_photo','sp_typed'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.classList.remove('active');
   });
-  const map={digital:'panel_sig_digital',photo:'panel_sig_photo',typed:'panel_sig_typed'};
-  const panel=document.getElementById(map[mode]);
-  if (panel) panel.style.display='block';
-  document.querySelectorAll('.sig-opt-btn').forEach(b=>b.classList.remove('active'));
-  const ab=document.getElementById('sigbtn_'+mode);
-  if (ab) ab.classList.add('active');
+  // Show the selected panel
+  const panelMap={digital:'sp_digital',photo:'sp_photo',typed:'sp_typed'};
+  const panel=document.getElementById(panelMap[mode]);
+  if(panel) panel.classList.add('active');
+  // Update button active state — correct class is .sig-btn, IDs are sb_*
+  document.querySelectorAll('.sig-btn').forEach(b=>b.classList.remove('active'));
+  const btn=document.getElementById('sb_'+mode);
+  if(btn) btn.classList.add('active');
+  // When switching to typed, refresh preview
+  if(mode==='typed') updateTyped();
 }
 function updateTyped(){
-  const val=document.getElementById('typed_sig')?.value||'';
+  const val=(document.getElementById('typed_sig')?.value||'').trim();
   const prev=document.getElementById('typed_preview');
-  if (prev) prev.textContent=val||'Your name will appear here';
-}
-function sigPhotoUploaded(input){
-  if (input.files&&input.files[0]){
-    const reader=new FileReader();
-    reader.onload=e=>{sigPhotoB64=e.target.result;};
-    reader.readAsDataURL(input.files[0]);
+  if(!prev)return;
+  if(val){
+    prev.innerHTML='';           // clear placeholder
+    prev.textContent=val;        // set name as text (italic from CSS)
+  } else {
+    prev.innerHTML='<span class="typed-preview-placeholder">Your signature will appear here as you type…</span>';
   }
 }
+// sigPhotoUploaded — handled by wireUpload('sigZone',...,true) in DOMContentLoaded
 
 // ── REVIEW BUILDER ─────────────────────────────────────────────
 function buildReview() {
