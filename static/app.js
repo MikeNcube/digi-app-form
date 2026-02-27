@@ -890,7 +890,7 @@ function collectData() {
     declarations:{has_other_policy:chk('op_yes'),other_policy_amount:get('op_amount'),
       is_replacement:chk('rp_yes'),income_range:get('d_income'),num_dependants:get('d_numdeps'),
       monthly_expenses:get('d_expenses'),available_cash:get('d_cash'),notifications:notifs},
-    agent:{name:get('ag_name'),phone:get('ag_phone'),
+    agent:{name:get('ag_name'),phone:get('ag_phone'),email:get('ag_email'),
       team_leader:get('ag_leader'),province:get('ag_province')},
     signature:sigData,
     popia_consent:chk('tc_terms'),      // single checkbox covers all consents
