@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Admin Dashboard — Zororo Phumulani</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#070e1c;--surface:#0d1628;--surface2:#111e33;--surface3:#162340;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);
+  --navy:#0a1628;--blue:#1a3a6e;--mid:#2456a4;--gold:#e8a020;
+  --text:#e8edf5;--muted:rgba(232,237,245,.45);--dim:rgba(232,237,245,.22);
+  --green:#22c55e;--amber:#f59e0b;--red:#ef4444;--cyan:#06b6d4;
+  --r:12px;--r2:8px;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:10px}
+
+/* ── LAYOUT ── */
+.shell{display:flex;height:100vh;overflow:hidden}
+.sidebar{
+  width:220px;min-width:220px;background:var(--surface);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;padding:0;
+}
+.sidebar-logo{
+  padding:22px 20px 18px;border-bottom:1px solid var(--border);
+}
+.sidebar-logo .co{font-size:.72rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:2px}
+.sidebar-logo .name{font-size:1rem;font-weight:700;color:var(--text)}
+.sidebar-logo .tag{font-size:.7rem;color:var(--muted);margin-top:1px}
+nav{flex:1;padding:12px 0;overflow-y:auto}
+.nav-group{padding:16px 16px 6px;font-size:.66rem;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 16px;cursor:pointer;color:var(--muted);
+  font-size:.83rem;font-weight:500;transition:all .15s;
+  border-left:2px solid transparent;margin:1px 0;
+}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.nav-item.active{color:var(--text);background:rgba(36,86,164,.18);
+  border-left-color:var(--gold)}
+.nav-item .ico{font-size:1rem;width:18px;text-align:center}
+.sidebar-footer{padding:14px 16px;border-top:1px solid var(--border)}
+.logout-btn{
+  display:flex;align-items:center;gap:8px;cursor:pointer;
+  color:var(--muted);font-size:.78rem;padding:8px;border-radius:var(--r2);
+  transition:all .15s;width:100%;background:none;border:none;font-family:var(--font);
+}
+.logout-btn:hover{color:var(--red);background:rgba(239,68,68,.08)}
+
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.topbar{
+  position:sticky;top:0;z-index:100;
+  background:rgba(7,14,28,.85);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  padding:14px 28px;display:flex;align-items:center;
+  justify-content:space-between;
+}
+.topbar-title{font-size:1rem;font-weight:600;color:var(--text)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.refresh-btn{
+  background:rgba(36,86,164,.2);border:1px solid rgba(36,86,164,.35);
+  color:var(--text);padding:7px 14px;border-radius:var(--r2);
+  font-size:.78rem;font-family:var(--font);cursor:pointer;
+  display:flex;align-items:center;gap:6px;transition:all .15s;
+}
+.refresh-btn:hover{background:rgba(36,86,164,.35)}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);
+  animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.ts{font-size:.73rem;color:var(--muted);font-family:var(--mono)}
+
+.page{display:none;padding:24px 28px;flex:1}
+.page.active{display:block}
+
+/* ── STAT CARDS ── */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:22px}
+.card{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--r);padding:18px 20px;
+  transition:border-color .2s;cursor:default;
+}
+.card:hover{border-color:var(--border2)}
+.card.clickable{cursor:pointer}
+.card.clickable:hover{border-color:rgba(36,86,164,.5);background:rgba(36,86,164,.08)}
+.card-label{font-size:.71rem;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.card-val{font-size:1.9rem;font-weight:700;color:var(--text);font-family:var(--mono);line-height:1}
+.card-sub{font-size:.72rem;color:var(--muted);margin-top:6px}
+.card-icon{font-size:1.3rem;margin-bottom:8px}
+.card.green .card-val{color:var(--green)}
+.card.gold  .card-val{color:var(--gold)}
+.card.red   .card-val{color:var(--red)}
+.card.cyan  .card-val{color:var(--cyan)}
+
+/* ── CHARTS ── */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px}
+.charts-grid.triple{grid-template-columns:2fr 1fr 1fr}
+.chart-card{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--r);padding:20px;
+}
+.chart-card.full{grid-column:1/-1}
+.chart-title{font-size:.82rem;font-weight:600;color:var(--text);margin-bottom:4px}
+.chart-sub{font-size:.72rem;color:var(--muted);margin-bottom:16px}
+.chart-wrap{position:relative;height:200px}
+.chart-wrap.tall{height:260px}
+
+/* ── TABLE ── */
+.table-card{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;margin-bottom:22px;
+}
+.table-header{
+  padding:16px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.table-title{font-size:.88rem;font-weight:600}
+.table-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+input.search-in{
+  background:rgba(255,255,255,.05);border:1px solid var(--border2);
+  color:var(--text);padding:7px 12px;border-radius:var(--r2);
+  font-family:var(--font);font-size:.8rem;outline:none;
+  transition:border-color .15s;
+}
+input.search-in:focus{border-color:var(--mid)}
+input.search-in::placeholder{color:var(--dim)}
+select.filter-sel{
+  background:rgba(255,255,255,.05);border:1px solid var(--border2);
+  color:var(--text);padding:7px 10px;border-radius:var(--r2);
+  font-family:var(--font);font-size:.78rem;outline:none;cursor:pointer;
+}
+.btn-sm{
+  background:rgba(36,86,164,.2);border:1px solid rgba(36,86,164,.3);
+  color:var(--text);padding:7px 12px;border-radius:var(--r2);
+  font-size:.76rem;font-family:var(--font);cursor:pointer;
+  transition:all .15s;white-space:nowrap;
+}
+.btn-sm:hover{background:rgba(36,86,164,.35)}
+.btn-sm.green-btn{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.25)}
+.btn-sm.green-btn:hover{background:rgba(34,197,94,.2)}
+table{width:100%;border-collapse:collapse}
+thead th{
+  padding:11px 16px;text-align:left;font-size:.7rem;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+  border-bottom:1px solid var(--border);background:rgba(255,255,255,.02);
+  white-space:nowrap;
+}
+tbody tr{border-bottom:1px solid rgba(255,255,255,.04);transition:background .1s;cursor:pointer}
+tbody tr:hover{background:rgba(255,255,255,.04)}
+tbody tr:last-child{border-bottom:none}
+td{padding:11px 16px;font-size:.8rem;color:var(--text);vertical-align:middle}
+td.mono{font-family:var(--mono);font-size:.75rem;color:var(--cyan)}
+td.muted{color:var(--muted)}
+.badge{
+  display:inline-block;padding:3px 9px;border-radius:20px;
+  font-size:.68rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+}
+.badge.green{background:rgba(34,197,94,.12);color:#4ade80}
+.badge.gold{background:rgba(232,160,32,.12);color:#fbbf24}
+.badge.red{background:rgba(239,68,68,.12);color:#f87171}
+.badge.blue{background:rgba(36,86,164,.2);color:#93c5fd}
+.badge.grey{background:rgba(255,255,255,.08);color:var(--muted)}
+.pagination{
+  padding:14px 20px;border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.page-info{font-size:.77rem;color:var(--muted)}
+.page-btns{display:flex;gap:6px}
+.page-btn{
+  background:rgba(255,255,255,.05);border:1px solid var(--border2);
+  color:var(--text);padding:6px 12px;border-radius:var(--r2);
+  font-size:.76rem;cursor:pointer;transition:all .15s;
+}
+.page-btn:hover:not(:disabled){background:rgba(255,255,255,.1)}
+.page-btn:disabled{opacity:.3;cursor:default}
+.page-btn.current{background:rgba(36,86,164,.3);border-color:var(--mid)}
+
+/* ── HEALTH ── */
+.health-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:22px}
+.health-card{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--r);padding:18px 20px;
+  display:flex;align-items:flex-start;gap:14px;
+}
+.health-icon{font-size:1.6rem;line-height:1;flex-shrink:0;margin-top:2px}
+.health-body{}
+.health-name{font-size:.85rem;font-weight:600;color:var(--text);margin-bottom:3px}
+.health-detail{font-size:.76rem;color:var(--muted);line-height:1.5}
+.health-status{font-size:.68rem;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;margin-top:5px;
+}
+.health-status.healthy{color:var(--green)}
+.health-status.warning{color:var(--amber)}
+.health-status.critical{color:var(--red)}
+
+/* ── ANOMALIES ── */
+.anomaly-item{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--r2);padding:14px 18px;margin-bottom:10px;
+  display:flex;align-items:flex-start;gap:14px;
+}
+.anomaly-item.high{border-left:3px solid var(--red)}
+.anomaly-item.medium{border-left:3px solid var(--amber)}
+.anomaly-item.low{border-left:3px solid var(--green)}
+.anomaly-icon{font-size:1.2rem;flex-shrink:0;margin-top:1px}
+.anomaly-body{flex:1}
+.anomaly-type{font-size:.8rem;font-weight:600;color:var(--text);
+  text-transform:capitalize;margin-bottom:2px}
+.anomaly-detail{font-size:.76rem;color:var(--muted);margin-bottom:4px}
+.anomaly-meta{font-size:.7rem;color:var(--dim);font-family:var(--mono)}
+.resolve-btn{
+  background:rgba(255,255,255,.05);border:1px solid var(--border2);
+  color:var(--muted);padding:5px 10px;border-radius:var(--r2);
+  font-size:.72rem;cursor:pointer;flex-shrink:0;align-self:center;
+  transition:all .15s;font-family:var(--font);
+}
+.resolve-btn:hover{background:rgba(34,197,94,.1);color:var(--green);border-color:rgba(34,197,94,.3)}
+
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.75);
+  display:none;align-items:center;justify-content:center;z-index:1000;
+  backdrop-filter:blur(6px);padding:20px;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:var(--r);width:100%;max-width:680px;
+  max-height:85vh;overflow-y:auto;
+}
+.modal-head{
+  padding:20px 24px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;background:var(--surface);z-index:1;
+}
+.modal-title{font-size:1rem;font-weight:700}
+.modal-close{
+  background:none;border:none;color:var(--muted);font-size:1.2rem;
+  cursor:pointer;padding:4px 8px;border-radius:var(--r2);
+  transition:all .15s;
+}
+.modal-close:hover{background:rgba(255,255,255,.08);color:var(--text)}
+.modal-body{padding:20px 24px}
+.detail-section{margin-bottom:20px}
+.detail-section-title{
+  font-size:.7rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:10px;
+}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.detail-row{background:rgba(255,255,255,.03);border-radius:var(--r2);padding:9px 12px}
+.detail-label{font-size:.68rem;color:var(--muted);margin-bottom:2px}
+.detail-val{font-size:.82rem;color:var(--text);font-weight:500}
+
+/* ── MISC ── */
+.section-title{font-size:.72rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:14px;margin-top:24px}
+.section-title:first-child{margin-top:0}
+.empty-state{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty-state .big{font-size:2rem;margin-bottom:8px}
+.empty-state p{font-size:.82rem}
+.spinner{
+  width:24px;height:24px;border:2px solid rgba(255,255,255,.1);
+  border-top-color:var(--mid);border-radius:50%;
+  animation:spin .6s linear infinite;margin:40px auto;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-wrap{text-align:center;padding:32px;color:var(--muted);font-size:.8rem}
+
+/* ── EVENTS PAGE ── */
+.event-filter-bar{
+  display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;
+}
+.evt-type-btn{
+  padding:6px 12px;border-radius:20px;border:1px solid var(--border2);
+  background:rgba(255,255,255,.04);color:var(--muted);
+  font-size:.74rem;cursor:pointer;transition:all .15s;font-family:var(--font);
+}
+.evt-type-btn.active{background:rgba(36,86,164,.25);border-color:var(--mid);color:var(--text)}
+.evt-type-btn:hover{background:rgba(255,255,255,.08)}
+.event-log{font-family:var(--mono);font-size:.75rem}
+.event-row{
+  padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.04);
+  display:grid;grid-template-columns:140px 100px 90px 80px 1fr;gap:12px;
+  align-items:center;
+}
+.event-row:hover{background:rgba(255,255,255,.03)}
+.event-ts{color:var(--dim)}
+.event-type{padding:2px 8px;border-radius:12px;font-size:.68rem;font-weight:700;
+  text-align:center;white-space:nowrap;}
+.evt-form_started{background:rgba(34,197,94,.1);color:#4ade80}
+.evt-form_submitted{background:rgba(36,86,164,.2);color:#93c5fd}
+.evt-slide_change{background:rgba(255,255,255,.07);color:var(--muted)}
+.evt-validation_error{background:rgba(239,68,68,.12);color:#f87171}
+.evt-file_upload_ok{background:rgba(6,182,212,.1);color:var(--cyan)}
+.evt-file_upload_fail{background:rgba(239,68,68,.12);color:#f87171}
+.evt-signature_used{background:rgba(232,160,32,.1);color:#fbbf24}
+.evt-form_abandoned{background:rgba(239,68,68,.08);color:#fca5a5}
+
+@media(max-width:900px){
+  .sidebar{display:none}
+  .charts-grid{grid-template-columns:1fr}
+  .charts-grid.triple{grid-template-columns:1fr}
+  .detail-grid{grid-template-columns:1fr}
+  .event-row{grid-template-columns:1fr 1fr;grid-template-rows:auto auto}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ── SIDEBAR ── -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="co">Zororo Phumulani</div>
+    <div class="name">Admin Dashboard</div>
+    <div class="tag">FSP48558 · Analytics v1.0</div>
+  </div>
+  <nav>
+    <div class="nav-group">Monitor</div>
+    <div class="nav-item active" onclick="showPage('overview')">
+      <span class="ico">📊</span>Overview
+    </div>
+    <div class="nav-item" onclick="showPage('health')">
+      <span class="ico">🩺</span>System Health
+    </div>
+    <div class="nav-item" onclick="showPage('anomalies')">
+      <span class="ico">🔍</span>Anomalies <span id="anomalyBadge" style="display:none;background:var(--red);color:#fff;font-size:.65rem;padding:1px 7px;border-radius:20px;margin-left:auto;font-weight:700"></span>
+    </div>
+    <div class="nav-group">Applications</div>
+    <div class="nav-item" onclick="showPage('submissions')">
+      <span class="ico">📋</span>Submissions
+    </div>
+    <div class="nav-item" onclick="showPage('abandoned')">
+      <span class="ico">🚪</span>Abandoned
+    </div>
+    <div class="nav-group">Analytics</div>
+    <div class="nav-item" onclick="showPage('events')">
+      <span class="ico">⚡</span>Event Log
+    </div>
+    <div class="nav-item" onclick="exportCSV()">
+      <span class="ico">⬇️</span>Export CSV
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="logout-btn" onclick="logout()">
+      <span>🚪</span> Sign out
+    </button>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="pageTitle">Overview</div>
+    <div class="topbar-right">
+      <div style="display:flex;align-items:center;gap:6px">
+        <div class="live-dot"></div>
+        <span style="font-size:.74rem;color:var(--muted)">Live</span>
+      </div>
+      <span class="ts" id="lastUpdated"></span>
+      <button class="refresh-btn" onclick="refreshCurrent()">
+        <span>↻</span> Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- ── OVERVIEW PAGE ── -->
+  <div class="page active" id="page-overview">
+    <div class="section-title">Submission Metrics</div>
+    <div class="cards-grid" id="statsCards">
+      <div class="card"><div class="spinner"></div></div>
+    </div>
+
+    <div class="section-title">Trends & Distribution</div>
+    <div class="charts-grid" id="chartsGrid">
+      <div class="chart-card full">
+        <div class="chart-title">Daily Submissions — Last 30 Days</div>
+        <div class="chart-sub">Click a bar to see that day's applications</div>
+        <div class="chart-wrap tall"><canvas id="dailyChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Plan Distribution</div>
+        <div class="chart-sub">Applications per plan type</div>
+        <div class="chart-wrap"><canvas id="planChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Country Distribution</div>
+        <div class="chart-sub">Top 10 countries by applications</div>
+        <div class="chart-wrap"><canvas id="countryChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="section-title">Conversion & Funnel</div>
+    <div class="cards-grid" id="convCards"></div>
+  </div>
+
+  <!-- ── HEALTH PAGE ── -->
+  <div class="page" id="page-health">
+    <div class="section-title">System Status</div>
+    <div class="health-grid" id="healthGrid">
+      <div class="loading-wrap"><div class="spinner"></div></div>
+    </div>
+    <div class="section-title">Email Delivery (Last 24h)</div>
+    <div class="cards-grid" id="emailCards"></div>
+    <div class="section-title">PDF Generation</div>
+    <div class="cards-grid" id="pdfCards"></div>
+  </div>
+
+  <!-- ── ANOMALIES PAGE ── -->
+  <div class="page" id="page-anomalies">
+    <div class="section-title">Security & Anomaly Alerts</div>
+    <div id="anomalyList">
+      <div class="loading-wrap"><div class="spinner"></div></div>
+    </div>
+  </div>
+
+  <!-- ── SUBMISSIONS PAGE ── -->
+  <div class="page" id="page-submissions">
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">Completed Applications</div>
+        <div class="table-controls">
+          <input class="search-in" id="subSearch" placeholder="Search name, policy, email…" oninput="debounceSearch()"/>
+          <select class="filter-sel" id="subPlan" onchange="loadSubmissions(1)">
+            <option value="">All Plans</option>
+            <option value="premium">Premium</option>
+            <option value="prestige">Prestige</option>
+            <option value="executive">Executive</option>
+          </select>
+          <button class="btn-sm" onclick="loadSubmissions(1)">Filter</button>
+        </div>
+      </div>
+      <div id="subTableWrap">
+        <div class="loading-wrap"><div class="spinner"></div></div>
+      </div>
+      <div class="pagination" id="subPagination" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- ── ABANDONED PAGE ── -->
+  <div class="page" id="page-abandoned">
+    <div class="section-title">Users Who Started But Did Not Complete</div>
+    <div class="cards-grid" id="abandonCards"></div>
+    <div class="table-card" style="margin-top:16px">
+      <div class="table-header">
+        <div class="table-title">Abandoned Sessions (Last 24h)</div>
+      </div>
+      <div id="abandonTableWrap">
+        <div class="loading-wrap"><div class="spinner"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EVENTS PAGE ── -->
+  <div class="page" id="page-events">
+    <div class="section-title">Form Event Log</div>
+    <div class="event-filter-bar" id="eventFilters">
+      <button class="evt-type-btn active" data-type="" onclick="setEventFilter(this,'')">All Events</button>
+      <button class="evt-type-btn" data-type="form_started" onclick="setEventFilter(this,'form_started')">Form Started</button>
+      <button class="evt-type-btn" data-type="slide_change" onclick="setEventFilter(this,'slide_change')">Navigation</button>
+      <button class="evt-type-btn" data-type="validation_error" onclick="setEventFilter(this,'validation_error')">Errors</button>
+      <button class="evt-type-btn" data-type="file_upload_ok" onclick="setEventFilter(this,'file_upload_ok')">Uploads</button>
+      <button class="evt-type-btn" data-type="form_submitted" onclick="setEventFilter(this,'form_submitted')">Completed</button>
+      <button class="evt-type-btn" data-type="form_abandoned" onclick="setEventFilter(this,'form_abandoned')">Abandoned</button>
+    </div>
+    <div class="charts-grid" style="margin-bottom:18px">
+      <div class="chart-card">
+        <div class="chart-title">Hourly Event Volume</div>
+        <div class="chart-sub">Last 24 hours</div>
+        <div class="chart-wrap"><canvas id="hourlyChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Top Validation Errors</div>
+        <div class="chart-sub">Most-failed fields today</div>
+        <div class="chart-wrap"><canvas id="errorChart"></canvas></div>
+      </div>
+    </div>
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">Event Stream</div>
+        <div class="table-controls">
+          <input class="search-in" id="evtSession" placeholder="Filter by session ID…"/>
+          <select class="filter-sel" id="evtHours" onchange="loadEvents()">
+            <option value="6">Last 6h</option>
+            <option value="24" selected>Last 24h</option>
+            <option value="72">Last 3 days</option>
+            <option value="168">Last 7 days</option>
+          </select>
+          <button class="btn-sm" onclick="loadEvents()">Apply</button>
+        </div>
+      </div>
+      <div id="eventLogWrap">
+        <div class="loading-wrap"><div class="spinner"></div></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<!-- ── SUBMISSION DETAIL MODAL ── -->
+<div class="modal-overlay" id="detailModal" onclick="closeModal(event)">
+  <div class="modal" id="modalInner">
+    <div class="modal-head">
+      <div class="modal-title" id="modalTitle">Application Detail</div>
+      <button class="modal-close" onclick="closeDetailModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────
+let currentPage = 'overview';
+let subPage = 1, subTimer = null;
+let activeEventType = '';
+let charts = {};
+let overviewData = null;
+
+// ── INIT ──────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  loadOverview();
+  setInterval(refreshCurrent, 60000); // Auto-refresh every 60s
+});
+
+function ts() {
+  return new Date().toLocaleTimeString('en-ZA', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+function updateTs() {
+  document.getElementById('lastUpdated').textContent = 'Updated ' + ts();
+}
+
+// ── NAVIGATION ───────────────────────────────────────────────
+const pageTitles = {
+  overview:'Overview', health:'System Health', anomalies:'Anomaly Detection',
+  submissions:'Completed Submissions', abandoned:'Abandoned Forms',
+  events:'Event Log'
+};
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelector(`[onclick="showPage('${name}')"]`)?.classList.add('active');
+  document.getElementById('pageTitle').textContent = pageTitles[name] || name;
+  currentPage = name;
+  // Lazy-load page data
+  if (name === 'health')      loadHealth();
+  if (name === 'anomalies')   loadAnomalies();
+  if (name === 'submissions') loadSubmissions(1);
+  if (name === 'abandoned')   loadAbandoned();
+  if (name === 'events')      loadEvents();
+}
+function refreshCurrent() {
+  if (currentPage === 'overview')    loadOverview();
+  else if (currentPage === 'health') loadHealth();
+  else if (currentPage === 'anomalies') loadAnomalies();
+  else if (currentPage === 'submissions') loadSubmissions(subPage);
+  else if (currentPage === 'abandoned')   loadAbandoned();
+  else if (currentPage === 'events')      loadEvents();
+}
+
+// ── OVERVIEW ─────────────────────────────────────────────────
+async function loadOverview() {
+  try {
+    const r = await fetch('/admin/api/overview');
+    if (!r.ok) throw new Error(r.status);
+    const d = await r.json();
+    overviewData = d;
+    renderStats(d);
+    renderCharts(d);
+    renderConversionCards(d);
+    updateTs();
+    // Update anomaly badge
+    if (d.anomalies.open > 0) {
+      const b = document.getElementById('anomalyBadge');
+      b.textContent = d.anomalies.open;
+      b.style.display = 'inline';
+    }
+  } catch(e) {
+    document.getElementById('statsCards').innerHTML =
+      '<div class="empty-state"><div class="big">⚠️</div><p>Could not load metrics. Check connection.</p></div>';
+  }
+}
+
+function renderStats(d) {
+  const s = d.submissions, f = d.financials;
+  document.getElementById('statsCards').innerHTML = `
+    <div class="card gold clickable" onclick="showPage('submissions')">
+      <div class="card-icon">📄</div>
+      <div class="card-label">Total Applications</div>
+      <div class="card-val">${s.total}</div>
+      <div class="card-sub">All time</div>
+    </div>
+    <div class="card clickable" onclick="showPage('submissions')">
+      <div class="card-icon">🗓️</div>
+      <div class="card-label">Today</div>
+      <div class="card-val">${s.today}</div>
+      <div class="card-sub">${s.this_week} this week</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">📅</div>
+      <div class="card-label">This Month</div>
+      <div class="card-val">${s.this_month}</div>
+      <div class="card-sub">Last 30 days</div>
+    </div>
+    <div class="card green">
+      <div class="card-icon">💰</div>
+      <div class="card-label">Avg Premium</div>
+      <div class="card-val">R${Math.round(f.avg_premium).toLocaleString()}</div>
+      <div class="card-sub">Per application</div>
+    </div>
+    <div class="card cyan">
+      <div class="card-icon">📊</div>
+      <div class="card-label">Total Value</div>
+      <div class="card-val">R${Math.round(f.total_premium_value/1000)}k</div>
+      <div class="card-sub">Total premiums/mo</div>
+    </div>
+    <div class="card ${d.anomalies.open > 0 ? 'red' : ''}">
+      <div class="card-icon">${d.anomalies.open > 0 ? '🚨' : '🛡️'}</div>
+      <div class="card-label">Open Alerts</div>
+      <div class="card-val">${d.anomalies.open}</div>
+      <div class="card-sub">${d.anomalies.open === 0 ? 'All clear' : 'Needs review'}</div>
+    </div>
+  `;
+}
+
+function renderConversionCards(d) {
+  const s = d.sessions, e = d.emails, p = d.pdf;
+  document.getElementById('convCards').innerHTML = `
+    <div class="card">
+      <div class="card-label">Form Sessions Started</div>
+      <div class="card-val">${s.total}</div>
+      <div class="card-sub">Unique visitors who began the form</div>
+    </div>
+    <div class="card ${s.conversion_rate >= 60 ? 'green' : s.conversion_rate >= 30 ? '' : 'red'}">
+      <div class="card-label">Conversion Rate</div>
+      <div class="card-val">${s.conversion_rate}%</div>
+      <div class="card-sub">${s.completed} completed · ${s.abandoned} abandoned</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Avg Abandon Step</div>
+      <div class="card-val">${s.avg_abandon_step > 0 ? s.avg_abandon_step.toFixed(1) : '—'}</div>
+      <div class="card-sub">Slide where users drop off</div>
+    </div>
+    <div class="card ${e.success_rate >= 90 ? 'green' : 'red'}">
+      <div class="card-label">Email Success Rate</div>
+      <div class="card-val">${e.success_rate}%</div>
+      <div class="card-sub">${e.zero_sent} failures total</div>
+    </div>
+    <div class="card ${p.rate >= 95 ? 'green' : 'red'}">
+      <div class="card-label">PDF Success Rate</div>
+      <div class="card-val">${p.rate}%</div>
+      <div class="card-sub">${p.failed} failed</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Events (24h)</div>
+      <div class="card-val">${d.events.last_24h}</div>
+      <div class="card-sub">${d.events.errors_24h} validation errors</div>
+    </div>
+  `;
+}
+
+function renderCharts(d) {
+  const chartDefaults = {
+    color: 'rgba(232,237,245,0.6)',
+    borderColor: 'rgba(255,255,255,0.08)',
+  };
+  Chart.defaults.color = '#8898b0';
+  Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+
+  // Daily submissions chart
+  if (charts.daily) charts.daily.destroy();
+  const dailyCtx = document.getElementById('dailyChart').getContext('2d');
+  charts.daily = new Chart(dailyCtx, {
+    type: 'bar',
+    data: {
+      labels: d.charts.daily_submissions.map(x => {
+        const dt = new Date(x.date);
+        return dt.toLocaleDateString('en-ZA', {day:'numeric',month:'short'});
+      }),
+      datasets: [{
+        label: 'Submissions',
+        data: d.charts.daily_submissions.map(x => x.count),
+        backgroundColor: 'rgba(36,86,164,0.6)',
+        borderColor: '#2456a4',
+        borderWidth: 1,
+        borderRadius: 4,
+        hoverBackgroundColor: '#e8a020',
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false },
+                 tooltip: { callbacks: { title: i => d.charts.daily_submissions[i[0].dataIndex]?.date } } },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { maxTicksLimit: 15 } },
+        y: { grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: true, ticks: { stepSize: 1 } }
+      },
+      onClick: (_, els) => {
+        if (els[0]) {
+          const date = d.charts.daily_submissions[els[0].index]?.date;
+          if (date) {
+            showPage('submissions');
+            setTimeout(() => {
+              document.getElementById('subSearch').value = date.substring(0,7);
+              loadSubmissions(1);
+            }, 100);
+          }
+        }
+      }
+    }
+  });
+
+  // Plan distribution
+  if (charts.plan) charts.plan.destroy();
+  const planCtx = document.getElementById('planChart').getContext('2d');
+  const planColors = ['#2456a4','#e8a020','#22c55e','#06b6d4'];
+  charts.plan = new Chart(planCtx, {
+    type: 'doughnut',
+    data: {
+      labels: d.charts.plan_distribution.map(x => x.plan.charAt(0).toUpperCase() + x.plan.slice(1)),
+      datasets: [{
+        data: d.charts.plan_distribution.map(x => x.count),
+        backgroundColor: planColors,
+        borderColor: '#0d1628',
+        borderWidth: 2,
+        hoverOffset: 8,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { padding: 12, font: { size: 11 } } } },
+      onClick: (_, els) => {
+        if (els[0]) {
+          const plan = d.charts.plan_distribution[els[0].index]?.plan;
+          if (plan) {
+            showPage('submissions');
+            setTimeout(() => {
+              document.getElementById('subPlan').value = plan;
+              loadSubmissions(1);
+            }, 100);
+          }
+        }
+      }
+    }
+  });
+
+  // Country distribution
+  if (charts.country) charts.country.destroy();
+  const countryCtx = document.getElementById('countryChart').getContext('2d');
+  charts.country = new Chart(countryCtx, {
+    type: 'bar',
+    data: {
+      labels: d.charts.country_distribution.map(x => x.country),
+      datasets: [{
+        label: 'Applications',
+        data: d.charts.country_distribution.map(x => x.count),
+        backgroundColor: 'rgba(6,182,212,0.5)',
+        borderColor: '#06b6d4',
+        borderWidth: 1,
+        borderRadius: 3,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: true, ticks: { stepSize: 1 } },
+        y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+      }
+    }
+  });
+}
+
+// ── HEALTH ───────────────────────────────────────────────────
+async function loadHealth() {
+  const g = document.getElementById('healthGrid');
+  g.innerHTML = '<div class="loading-wrap"><div class="spinner"></div></div>';
+  try {
+    const r = await fetch('/admin/api/health');
+    const d = await r.json();
+    g.innerHTML = Object.entries(d.health).map(([key, v]) => `
+      <div class="health-card">
+        <div class="health-icon">${v.icon}</div>
+        <div class="health-body">
+          <div class="health-name">${key.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())}</div>
+          <div class="health-detail">${v.detail || ''}</div>
+          <div class="health-status ${v.status}">${v.status.toUpperCase()}</div>
+        </div>
+      </div>
+    `).join('');
+
+    // Email and PDF cards from overview data
+    if (overviewData) {
+      const e = overviewData.emails, p = overviewData.pdf;
+      document.getElementById('emailCards').innerHTML = `
+        <div class="card ${e.at_least_one_sent > 0 ? 'green' : 'red'}">
+          <div class="card-label">Emails Delivered</div>
+          <div class="card-val">${e.at_least_one_sent}</div>
+          <div class="card-sub">At least 1 recipient</div>
+        </div>
+        <div class="card green">
+          <div class="card-label">All 3 Recipients</div>
+          <div class="card-val">${e.all_sent}</div>
+          <div class="card-sub">Client + Admin + Agent</div>
+        </div>
+        <div class="card ${e.zero_sent > 0 ? 'red' : ''}">
+          <div class="card-label">Zero Delivered</div>
+          <div class="card-val">${e.zero_sent}</div>
+          <div class="card-sub">${e.zero_sent === 0 ? 'None' : 'Review SMTP config'}</div>
+        </div>
+        <div class="card ${e.success_rate >= 90 ? 'green' : 'red'}">
+          <div class="card-label">Success Rate</div>
+          <div class="card-val">${e.success_rate}%</div>
+        </div>
+      `;
+      document.getElementById('pdfCards').innerHTML = `
+        <div class="card green">
+          <div class="card-label">PDFs Generated</div>
+          <div class="card-val">${p.generated}</div>
+          <div class="card-sub">Successfully created</div>
+        </div>
+        <div class="card ${p.failed > 0 ? 'red' : ''}">
+          <div class="card-label">PDF Failures</div>
+          <div class="card-val">${p.failed}</div>
+        </div>
+        <div class="card ${p.rate >= 95 ? 'green' : 'red'}">
+          <div class="card-label">PDF Success Rate</div>
+          <div class="card-val">${p.rate}%</div>
+        </div>
+      `;
+    }
+    updateTs();
+  } catch(e) {
+    g.innerHTML = '<div class="empty-state"><div class="big">⚠️</div><p>Health check failed.</p></div>';
+  }
+}
+
+// ── ANOMALIES ─────────────────────────────────────────────────
+async function loadAnomalies() {
+  document.getElementById('anomalyList').innerHTML =
+    '<div class="loading-wrap"><div class="spinner"></div></div>';
+  const r = await fetch('/admin/api/anomalies');
+  const d = await r.json();
+  if (d.anomalies.length === 0) {
+    document.getElementById('anomalyList').innerHTML =
+      '<div class="empty-state"><div class="big">🛡️</div><p>No anomalies detected. System is clean.</p></div>';
+    return;
+  }
+  document.getElementById('anomalyList').innerHTML = d.anomalies.map(a => `
+    <div class="anomaly-item ${a.severity}" id="anomaly-${a.id}">
+      <div class="anomaly-icon">${a.icon}</div>
+      <div class="anomaly-body">
+        <div class="anomaly-type">${a.anomaly_type.replace(/_/g,' ')}</div>
+        <div class="anomaly-detail">${a.detail}</div>
+        <div class="anomaly-meta">${a.ts.substring(0,19)} · IP: ${a.masked_ip || '—'}</div>
+      </div>
+      ${a.resolved ? '<span style="color:var(--green);font-size:.75rem;align-self:center">✓ Resolved</span>' :
+        `<button class="resolve-btn" onclick="resolveAnomaly(${a.id})">Resolve</button>`}
+    </div>
+  `).join('');
+  updateTs();
+}
+
+async function resolveAnomaly(id) {
+  await fetch(`/admin/api/anomaly/${id}/resolve`, {method:'POST'});
+  document.getElementById('anomaly-'+id)?.remove();
+}
+
+// ── SUBMISSIONS ───────────────────────────────────────────────
+async function loadSubmissions(page) {
+  subPage = page;
+  document.getElementById('subTableWrap').innerHTML =
+    '<div class="loading-wrap"><div class="spinner"></div></div>';
+  const search = document.getElementById('subSearch').value;
+  const plan   = document.getElementById('subPlan').value;
+  const params = new URLSearchParams({page, per_page:20, search, plan});
+  const r = await fetch(`/admin/api/submissions?${params}`);
+  const d = await r.json();
+
+  if (d.rows.length === 0) {
+    document.getElementById('subTableWrap').innerHTML =
+      '<div class="empty-state"><div class="big">📭</div><p>No submissions found matching those filters.</p></div>';
+    document.getElementById('subPagination').style.display = 'none';
+    return;
+  }
+
+  const planBadge = p => {
+    const c = {premium:'blue',prestige:'gold',executive:'green'}[p] || 'grey';
+    return `<span class="badge ${c}">${p||'—'}</span>`;
+  };
+  const tick = v => v ? '<span style="color:var(--green)">✓</span>' : '<span style="color:var(--red)">✗</span>';
+
+  document.getElementById('subTableWrap').innerHTML = `
+    <table>
+      <thead><tr>
+        <th>Policy Ref</th><th>Applicant</th><th>Country</th>
+        <th>Plan</th><th>Premium</th><th>Agent</th>
+        <th>PDF</th><th>Emails</th><th>Submitted</th>
+      </tr></thead>
+      <tbody>
+        ${d.rows.map(r => `
+          <tr onclick="openDetail('${r.policy_number}')">
+            <td class="mono">${r.policy_number}</td>
+            <td>${r.main_member_name || '—'}</td>
+            <td class="muted">${r.country || '—'}</td>
+            <td>${planBadge(r.plan)}</td>
+            <td class="mono">R${Number(r.total_premium||0).toLocaleString()}</td>
+            <td class="muted" style="font-size:.75rem">${r.agent_name || '—'}</td>
+            <td style="text-align:center">${tick(r.pdf_generated)}</td>
+            <td style="text-align:center">${r.emails_sent || 0}/3</td>
+            <td class="muted" style="font-size:.73rem">${(r.submitted_at||'').substring(0,16)}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+
+  const pg = document.getElementById('subPagination');
+  pg.style.display = 'flex';
+  pg.innerHTML = `
+    <div class="page-info">Showing ${(page-1)*20+1}–${Math.min(page*20, d.total)} of ${d.total}</div>
+    <div class="page-btns">
+      <button class="page-btn" onclick="loadSubmissions(${page-1})" ${page<=1?'disabled':''}>← Prev</button>
+      <button class="page-btn current">${page} / ${d.pages}</button>
+      <button class="page-btn" onclick="loadSubmissions(${page+1})" ${page>=d.pages?'disabled':''}>Next →</button>
+    </div>
+  `;
+  updateTs();
+}
+
+function debounceSearch() {
+  clearTimeout(subTimer);
+  subTimer = setTimeout(() => loadSubmissions(1), 400);
+}
+
+// ── SUBMISSION DETAIL MODAL ───────────────────────────────────
+async function openDetail(ref) {
+  document.getElementById('modalTitle').textContent = ref;
+  document.getElementById('modalBody').innerHTML =
+    '<div class="loading-wrap"><div class="spinner"></div></div>';
+  document.getElementById('detailModal').classList.add('open');
+  const r = await fetch(`/admin/api/submission/${ref}`);
+  const d = await r.json();
+  const mm = d.data?.main_member || {};
+  const sig = d.data?.signature || {};
+  const ag = d.data?.agent || {};
+  const ben = d.data?.beneficiary || {};
+  const plan = d.data || {};
+
+  document.getElementById('modalBody').innerHTML = `
+    <div class="detail-section">
+      <div class="detail-section-title">Main Member</div>
+      <div class="detail-grid">
+        <div class="detail-row"><div class="detail-label">Full Name</div><div class="detail-val">${mm.first_name||''} ${mm.last_name||''}</div></div>
+        <div class="detail-row"><div class="detail-label">Email</div><div class="detail-val">${mm.email||'—'}</div></div>
+        <div class="detail-row"><div class="detail-label">Phone</div><div class="detail-val">${mm.phone||'—'}</div></div>
+        <div class="detail-row"><div class="detail-label">Country</div><div class="detail-val">${mm.country||'—'}</div></div>
+        <div class="detail-row"><div class="detail-label">Date of Birth</div><div class="detail-val">${mm.dob||'—'}</div></div>
+        <div class="detail-row"><div class="detail-label">Nationality</div><div class="detail-val">${mm.nationality||'—'}</div></div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Policy & Plan</div>
+      <div class="detail-grid">
+        <div class="detail-row"><div class="detail-label">Policy Number</div><div class="detail-val" style="font-family:var(--mono)">${d.policy_number}</div></div>
+        <div class="detail-row"><div class="detail-label">Plan</div><div class="detail-val">${plan.plan_name||plan.plan||'—'}</div></div>
+        <div class="detail-row"><div class="detail-label">Cover Type</div><div class="detail-val">${plan.cover_type||'—'}</div></div>
+        <div class="detail-row"><div class="detail-label">Total Premium</div><div class="detail-val" style="color:var(--gold)">R${Number(plan.total_premium||0).toLocaleString()}/mo</div></div>
+        <div class="detail-row"><div class="detail-label">Payment Method</div><div class="detail-val">${(plan.payment_method||'—').replace(/_/g,' ')}</div></div>
+        <div class="detail-row"><div class="detail-label">Submitted</div><div class="detail-val">${(d.submitted_at||'').substring(0,19)}</div></div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Beneficiary</div>
+      <div class="detail-grid">
+        <div class="detail-row"><div class="detail-label">Name</div><div class="detail-val">${ben.first_name||''} ${ben.last_name||''}</div></div>
+        <div class="detail-row"><div class="detail-label">Relationship</div><div class="detail-val">${ben.relationship||'—'}</div></div>
+        <div class="detail-row"><div class="detail-label">Contact</div><div class="detail-val">${ben.phone||'—'}</div></div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Agent & Compliance</div>
+      <div class="detail-grid">
+        <div class="detail-row"><div class="detail-label">Agent Name</div><div class="detail-val">${ag.name||'—'}</div></div>
+        <div class="detail-row"><div class="detail-label">Agent Email</div><div class="detail-val">${ag.email||'—'}</div></div>
+        <div class="detail-row"><div class="detail-label">Signature Method</div><div class="detail-val">${sig.type||d.signature_type||'—'}</div></div>
+        <div class="detail-row"><div class="detail-label">POPIA Consent</div><div class="detail-val" style="color:${d.popia_consent?'var(--green)':'var(--red)'}">${d.popia_consent?'Given':'Not given'}</div></div>
+        <div class="detail-row"><div class="detail-label">T&C Accepted</div><div class="detail-val" style="color:${d.terms_accepted?'var(--green)':'var(--red)'}">${d.terms_accepted?'Yes':'No'}</div></div>
+        <div class="detail-row"><div class="detail-label">Submission IP</div><div class="detail-val" style="font-family:var(--mono);font-size:.8rem">${d.submission_ip||'—'}</div></div>
+        <div class="detail-row"><div class="detail-label">PDF Generated</div><div class="detail-val" style="color:${d.pdf_generated?'var(--green)':'var(--red)'}">${d.pdf_generated?'Yes':'Failed'}</div></div>
+        <div class="detail-row"><div class="detail-label">Emails Sent</div><div class="detail-val">${d.emails_sent||0} / 3</div></div>
+      </div>
+    </div>
+  `;
+}
+
+function closeDetailModal() {
+  document.getElementById('detailModal').classList.remove('open');
+}
+function closeModal(e) {
+  if (e.target.id === 'detailModal') closeDetailModal();
+}
+
+// ── ABANDONED ─────────────────────────────────────────────────
+async function loadAbandoned() {
+  document.getElementById('abandonTableWrap').innerHTML =
+    '<div class="loading-wrap"><div class="spinner"></div></div>';
+  const r = await fetch('/admin/api/abandoned');
+  const d = await r.json();
+
+  // Summary by step
+  const byStep = {};
+  d.abandoned.forEach(a => {
+    byStep[a.max_step] = (byStep[a.max_step] || 0) + 1;
+  });
+  const stepNames = {1:'Main Member',2:'Documents',3:'Cover & Plan',
+                     4:'Family',5:'Payment',6:'Declarations',7:'Sign'};
+  document.getElementById('abandonCards').innerHTML =
+    Object.entries(byStep).sort((a,b)=>Number(b[1])-Number(a[1])).map(([step, cnt]) => `
+      <div class="card">
+        <div class="card-label">Dropped on Step ${step}</div>
+        <div class="card-val">${cnt}</div>
+        <div class="card-sub">${stepNames[step]||''}</div>
+      </div>
+    `).join('');
+
+  if (d.abandoned.length === 0) {
+    document.getElementById('abandonTableWrap').innerHTML =
+      '<div class="empty-state"><div class="big">🎉</div><p>No abandoned sessions in the last 24 hours.</p></div>';
+    return;
+  }
+
+  document.getElementById('abandonTableWrap').innerHTML = `
+    <table>
+      <thead><tr>
+        <th>Session ID</th><th>Country</th><th>Last Step</th>
+        <th>Time Spent</th><th>Started</th><th>Last Seen</th>
+      </tr></thead>
+      <tbody>
+        ${d.abandoned.map(a => `<tr>
+          <td class="mono" style="font-size:.72rem">${a.session_id.substring(0,16)}…</td>
+          <td class="muted">${a.country||'—'}</td>
+          <td><span class="badge blue">Step ${a.max_step}: ${a.last_step_name}</span></td>
+          <td class="muted">${a.mins_spent != null ? a.mins_spent + ' min' : '—'}</td>
+          <td class="muted" style="font-size:.73rem">${(a.started_at||'').substring(0,16)}</td>
+          <td class="muted" style="font-size:.73rem">${(a.last_seen_at||'').substring(0,16)}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  `;
+  updateTs();
+}
+
+// ── EVENTS ───────────────────────────────────────────────────
+function setEventFilter(btn, type) {
+  document.querySelectorAll('.evt-type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeEventType = type;
+  loadEvents();
+}
+
+async function loadEvents() {
+  document.getElementById('eventLogWrap').innerHTML =
+    '<div class="loading-wrap"><div class="spinner"></div></div>';
+  const hours   = document.getElementById('evtHours').value;
+  const session = document.getElementById('evtSession').value;
+  const params  = new URLSearchParams({hours, session_id: session, event_type: activeEventType, limit: 300});
+  const r = await fetch(`/admin/api/events?${params}`);
+  const d = await r.json();
+
+  // Render hourly chart
+  if (charts.hourly) charts.hourly.destroy();
+  const hCtx = document.getElementById('hourlyChart').getContext('2d');
+  charts.hourly = new Chart(hCtx, {
+    type: 'line',
+    data: {
+      labels: d.hourly.map(h => h.hour + ':00'),
+      datasets: [{
+        label: 'Events',
+        data: d.hourly.map(h => h.count),
+        borderColor: '#2456a4',
+        backgroundColor: 'rgba(36,86,164,0.12)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 3,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { maxTicksLimit: 12, font:{size:10} } },
+        y: { grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: true }
+      }
+    }
+  });
+
+  // Render error chart
+  if (charts.errChart) charts.errChart.destroy();
+  const eCtx = document.getElementById('errorChart').getContext('2d');
+  charts.errChart = new Chart(eCtx, {
+    type: 'bar',
+    data: {
+      labels: d.top_errors.map(e => e.field),
+      datasets: [{
+        label: 'Errors',
+        data: d.top_errors.map(e => e.count),
+        backgroundColor: 'rgba(239,68,68,0.5)',
+        borderColor: '#ef4444',
+        borderWidth: 1,
+        borderRadius: 3,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: true },
+        y: { grid: { display: false }, ticks: { font: { size: 10 } } }
+      }
+    }
+  });
+
+  // Event stream table
+  if (d.events.length === 0) {
+    document.getElementById('eventLogWrap').innerHTML =
+      '<div class="empty-state"><div class="big">📭</div><p>No events found for this filter.</p></div>';
+    return;
+  }
+
+  document.getElementById('eventLogWrap').innerHTML = `
+    <div class="event-log">
+      <div class="event-row" style="border-bottom:1px solid var(--border);opacity:.5;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase">
+        <span>Timestamp</span><span>Event</span><span>Country</span><span>Step</span><span>Detail</span>
+      </div>
+      ${d.events.map(e => `
+        <div class="event-row">
+          <span class="event-ts">${e.ts.substring(0,19)}</span>
+          <span class="event-type evt-${e.event_type}">${e.event_type.replace(/_/g,' ')}</span>
+          <span style="color:var(--muted);font-size:.75rem">${e.country||'—'}</span>
+          <span style="color:var(--muted)">${e.step!=null?'Step '+e.step:'—'}</span>
+          <span style="color:var(--muted);font-size:.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.detail||e.field||'—'}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  updateTs();
+}
+
+// ── EXPORT ───────────────────────────────────────────────────
+function exportCSV() {
+  window.location = '/admin/api/export/csv?days=90';
+}
+
+// ── AUTH ─────────────────────────────────────────────────────
+async function logout() {
+  await fetch('/admin/logout');
+  window.location = '/admin/login';
+}
+</script>
+</body>
+</html>

@@ -944,3 +944,142 @@ function showSuccess(polNum){
   document.getElementById('sucPolNum').textContent=polNum;
   window.scrollTo(0,0);
 }
+
+// ═══════════════════════════════════════════════════════════════
+//  ANALYTICS TRACKER — NON-INTRUSIVE MONITORING LAYER v1.0
+//  Fire-and-forget side-channel. Never touches form logic.
+//  If analytics server is unreachable, fails silently.
+// ═══════════════════════════════════════════════════════════════
+(function initAnalytics() {
+  // ── Session ID (unique per browser tab) ──────────────────────
+  const SID = (() => {
+    let s = sessionStorage.getItem('_zp_sid');
+    if (!s) {
+      s = 'S' + Date.now().toString(36).toUpperCase()
+            + Math.random().toString(36).slice(2, 7).toUpperCase();
+      sessionStorage.setItem('_zp_sid', s);
+    }
+    return s;
+  })();
+
+  function getCountry() {
+    const el = document.getElementById('mm_country');
+    return el ? el.value : '';
+  }
+
+  // ── Fire-and-forget event (never throws, never blocks) ───────
+  function track(type, opts) {
+    opts = opts || {};
+    try {
+      fetch('/api/analytics/event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          session_id: SID,
+          event_type: type,
+          step:       opts.step   || null,
+          field:      opts.field  || null,
+          detail:     opts.detail || null,
+          country:    opts.country || getCountry() || null,
+        }),
+        keepalive: true,
+      }).catch(function(){});
+    } catch(_) {}
+  }
+
+  // ── Track abandonment on tab close ───────────────────────────
+  var _submitted = false;
+  window.addEventListener('pagehide', function() {
+    if (!_submitted && typeof currentSlide !== 'undefined' && currentSlide > 1) {
+      track('form_abandoned', { step: currentSlide });
+    }
+  });
+
+  // ── Fire form_started once DOM is ready ──────────────────────
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() { track('form_started', { step: 1 }); });
+  } else {
+    track('form_started', { step: 1 });
+  }
+
+  // ── Hook: goTo — slide transition tracking ───────────────────
+  var _goTo = window.goTo;
+  window.goTo = function(n) {
+    _goTo(n);
+    track('slide_change', { step: n, detail: 'slide_' + n });
+  };
+
+  // ── Hook: validateSlide — capture blocked advances ────────────
+  var _validateSlide = window.validateSlide;
+  window.validateSlide = function(n) {
+    var result = _validateSlide(n);
+    if (!result) track('validation_error', { step: n, field: 'slide_' + n });
+    return result;
+  };
+
+  // ── Hook: submitApp — capture submit attempts ─────────────────
+  var _submitApp = window.submitApp;
+  window.submitApp = async function() {
+    track('form_submit_attempt', { step: 7 });
+    return _submitApp();
+  };
+
+  // ── Hook: showSuccess — confirmed submission ──────────────────
+  var _showSuccess = window.showSuccess;
+  window.showSuccess = function(polNum) {
+    _submitted = true;
+    track('form_submitted', { step: 7, detail: polNum, country: getCountry() });
+    _showSuccess(polNum);
+  };
+
+  // ── Hook: wireUpload — file upload tracking ───────────────────
+  var _wireUpload = window.wireUpload;
+  window.wireUpload = function(zoneId, inputId, nameId, isSig) {
+    _wireUpload(zoneId, inputId, nameId, isSig);
+    var input = document.getElementById(inputId);
+    if (!input) return;
+    input.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        track('file_upload_ok', {
+          step: isSig ? 7 : 2,
+          field: isSig ? 'signature_photo' : 'passport_id',
+          detail: this.files[0].type,
+        });
+      }
+    });
+  };
+
+  // ── Hook: setSig — signature method tracking ──────────────────
+  var _setSig = window.setSig;
+  window.setSig = function(mode) {
+    _setSig(mode);
+    track('signature_used', { step: 7, field: mode });
+  };
+
+  // ── Hook: selPlan — plan selection tracking ───────────────────
+  var _selPlan = window.selPlan;
+  window.selPlan = function(planKey) {
+    _selPlan(planKey);
+    track('plan_selected', { step: 3, field: planKey });
+  };
+
+  // ── Per-field validation error tracking (on blur) ─────────────
+  document.addEventListener('blur', function(e) {
+    var el = e.target;
+    if (!el || !el.id || el.value === undefined) return;
+    if (!el.value.toString().trim() && el.classList.contains('err')) {
+      var slide = el.closest('[id^="slide"]');
+      var stepNum = slide ? parseInt(slide.id.replace('slide', '')) : (typeof currentSlide !== 'undefined' ? currentSlide : null);
+      track('validation_error', { step: stepNum, field: el.id, detail: 'empty_field' });
+    }
+  }, true);
+
+  // ── Country change tracking ───────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function() {
+    var cEl = document.getElementById('mm_country');
+    if (cEl) cEl.addEventListener('change', function() {
+      track('country_selected', { step: 1, field: 'mm_country', detail: this.value });
+    });
+  });
+
+})();

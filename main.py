@@ -96,6 +96,11 @@ app.add_middleware(
 
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
+# ─── ADMIN ANALYTICS DASHBOARD ──────────────────────────────────
+# Non-intrusive: separate module, separate DB, separate routes.
+# Zero impact on application logic. Remove these 2 lines to disable.
+from admin_dashboard import router as admin_router
+app.include_router(admin_router)
 
 # ─── DATABASE ───────────────────────────────────────────────────
 def init_db():
