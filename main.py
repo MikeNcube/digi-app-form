@@ -593,22 +593,29 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
                    f'≈ {sym}{local_total:,.2f} {data.display_currency}</b></font>'
                    f'<font size="7" color="rgba(255,255,255,0.6)"> ({rate_src})</font>')
 
-    prem_box = Table([[
-        Paragraph(
-            f'<font size="8" color="white">TOTAL MONTHLY PREMIUM</font><br/>'
-            f'<font size="22" color="#e8a020"><b>R{int(data.total_premium):,}</b></font>'
-            f'{fx_note}<br/>'
-            f'<font size="8" color="rgba(255,255,255,0.75)">'
-            f'{data.plan_name}  ·  '
-            f'{"Family" if data.cover_type=="family" else "Single"} Cover  ·  '
-            f'R{int(data.cover_amount):,} sum insured</font>',
-            BODY)
-    ]], colWidths=[W])
+    left_cell = Paragraph(
+        f'<font size="7.5" color="rgba(255,255,255,0.65)">TOTAL MONTHLY PREMIUM</font><br/>'
+        f'<font size="24" color="#e8a020"><b>R{int(data.total_premium):,}</b></font>'
+        f'{fx_note}',
+        ParagraphStyle("pb_left", fontName="Helvetica", fontSize=8, leading=14,
+                       textColor=WHITE))
+
+    right_cell = Paragraph(
+        f'<font size="7.5" color="rgba(255,255,255,0.55)">'
+        f'{data.plan_name}  ·  '
+        f'{"Family" if data.cover_type=="family" else "Single"} Cover<br/>'
+        f'R{int(data.cover_amount):,} sum insured</font>',
+        ParagraphStyle("pb_right", fontName="Helvetica", fontSize=7.5, leading=12,
+                       textColor=WHITE, alignment=2))
+
+    prem_box = Table([[left_cell, right_cell]], colWidths=[W * 0.55, W * 0.45])
     prem_box.setStyle(TableStyle([
-        ("BACKGROUND",   (0,0),(-1,-1), NAVY),
-        ("TOPPADDING",   (0,0),(-1,-1), 10),
-        ("BOTTOMPADDING",(0,0),(-1,-1), 10),
-        ("LEFTPADDING",  (0,0),(-1,-1), 14),
+        ("BACKGROUND",    (0,0),(-1,-1), NAVY),
+        ("TOPPADDING",    (0,0),(-1,-1), 14),
+        ("BOTTOMPADDING", (0,0),(-1,-1), 14),
+        ("LEFTPADDING",   (0,0),(-1,-1), 14),
+        ("RIGHTPADDING",  (0,0),(-1,-1), 14),
+        ("VALIGN",        (0,0),(-1,-1), "MIDDLE"),
     ]))
     story.append(Spacer(1, 3*mm))
     story.append(prem_box)
