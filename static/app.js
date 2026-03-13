@@ -362,6 +362,16 @@ function setCoverType(type) {
   const hasDeps=spouseAdded||children.length>0;
   const warn=document.getElementById('fam_warn');
   if (warn) warn.style.display=(type==='family'&&!hasDeps)?'block':'none';
+  const spouseSec=document.getElementById('spouseSection');
+  const spouseLabel=spouseSec?spouseSec.previousElementSibling:null;
+  if (type==='single') {
+    if (spouseSec) spouseSec.style.display='none';
+    if (spouseLabel&&spouseLabel.classList.contains('sec-label')) spouseLabel.style.display='none';
+    if (spouseAdded) removeSpouse();
+  } else {
+    if (spouseSec) spouseSec.style.display='block';
+    if (spouseLabel&&spouseLabel.classList.contains('sec-label')) spouseLabel.style.display='block';
+  }
   updatePlanPrices();
 }
 
