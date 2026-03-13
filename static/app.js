@@ -269,12 +269,11 @@ function validateSlide(n) {
 
 function v1_mainMember() {
   let ok=true;
-  const failed=[];
   ['mm_first','mm_last','mm_dob','mm_gender','mm_nationality',
    'mm_phone','mm_email','mm_country','mm_postal','mm_address'].forEach(id=>{
     const el=document.getElementById(id);
     if (!el) return;
-    if (!el.value.trim()){el.classList.add('err');ok=false;failed.push(id);}
+    if (!el.value.trim()){el.classList.add('err');ok=false;}
     else el.classList.remove('err');
   });
   const dob=document.getElementById('mm_dob').value;
@@ -283,20 +282,20 @@ function v1_mainMember() {
     if (age<18){
       document.getElementById('mm_dob').classList.add('err');
       document.getElementById('mm_age').innerHTML='<span class="age-err">⚠ Must be at least 18</span>';
-      ok=false;failed.push('mm_dob(age<18)');
+      ok=false;
     } else if (age>65){
       document.getElementById('mm_dob').classList.add('err');
       document.getElementById('mm_age').innerHTML='<span class="age-err">⚠ Maximum entry age is 65</span>';
-      ok=false;failed.push('mm_dob(age>65)');
+      ok=false;
     }
   }
   const country=document.getElementById('mm_country').value;
   if (PROVINCES[country]) {
     const prov=document.getElementById('mm_province');
-    if (!prov.value){prov.classList.add('err');ok=false;failed.push('mm_province');}
+    if (!prov.value){prov.classList.add('err');ok=false;}
     else prov.classList.remove('err');
   }
-  if (!ok) alert('Missing fields: ' + failed.join(', '));
+  if (!ok) alert('Please complete all required fields before continuing.');
   return ok;
 }
 
@@ -339,7 +338,7 @@ function v4_beneficiary() {
   return true;
 }
 
-
+function v5_declarations() {
   const income = document.getElementById('d_income');
   if (!income || !income.value) {
     if (income) income.classList.add('err');
