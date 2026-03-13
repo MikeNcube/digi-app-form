@@ -299,7 +299,7 @@ class PolicyApplication(BaseModel):
     efm_premium:     float
     total_premium:   float
     beneficiary:     Beneficiary
-    payment_method:  str
+    payment_method:  str = "to_be_arranged"
     debit_order:     Optional[DebitOrder]  = None
     declarations:    Optional[Declarations] = None
     agent:           Optional[AgentDetails] = None
@@ -612,6 +612,34 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
     ]))
     story.append(Spacer(1, 3*mm))
     story.append(prem_box)
+    story.append(Spacer(1, 3*mm))
+
+    # Immediate / Extended Family definition box
+    fam_def = Table([[
+        Paragraph(
+            '<font size="8" color="#1a1a2e"><b>COVER DEFINITIONS</b></font><br/>'
+            '<font size="8" color="#1a1a2e"><b>Immediate Family</b></font>'
+            '<font size="8" color="#1a1a2e"> — Main Member, Spouse, and Children '
+            '(regardless of number of children). Covered at the standard family rate. '
+            '3-month waiting period for natural causes.</font><br/>'
+            '<font size="8" color="#1a1a2e"><b>Extended Family</b></font>'
+            '<font size="8" color="#1a1a2e"> — Additional relatives (parents, in-laws, siblings, '
+            'other dependants) added at a tiered premium. '
+            '6-month waiting period for natural causes of death.</font>',
+            ParagraphStyle("famdef", fontName="Helvetica", fontSize=8, leading=12,
+                           textColor=NAVY)
+        )
+    ]], colWidths=[W])
+    fam_def.setStyle(TableStyle([
+        ("BACKGROUND",    (0,0),(-1,-1), colors.HexColor("#f0f5ff")),
+        ("TOPPADDING",    (0,0),(-1,-1), 8),
+        ("BOTTOMPADDING", (0,0),(-1,-1), 8),
+        ("LEFTPADDING",   (0,0),(-1,-1), 10),
+        ("RIGHTPADDING",  (0,0),(-1,-1), 10),
+        ("LINEABOVE",     (0,0),(-1,0),  1, colors.HexColor("#2456a4")),
+        ("LINEBELOW",     (0,-1),(-1,-1),0.5, colors.HexColor("#c8d6ea")),
+    ]))
+    story.append(fam_def)
     story.append(Spacer(1, 5*mm))
 
     # ════════════════════════════════════════════════════════════
@@ -707,41 +735,9 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
     story.append(Spacer(1, 5*mm))
 
     # ════════════════════════════════════════════════════════════
-    # SECTION 7 — PAYMENT
+    # SECTION 7 — DECLARATIONS & NEEDS ANALYSIS
     # ════════════════════════════════════════════════════════════
-    story.append(sec_hdr("7.  Payment Details"))
-    story.append(Spacer(1, 2*mm))
-    do = data.debit_order
-    if data.payment_method == "debit_order" and do:
-        story.append(info_tbl([
-            row2("Payment Method",  "Debit Order",
-                 "Account Holder",  do.account_holder),
-            row2("Account Holder Contact", do.account_holder_contact,
-                 "Bank",            do.bank),
-            row2("Account Number",  do.account_number,
-                 "Account Type",    do.account_type),
-            row2("Branch Code",     do.branch_code,
-                 "Deduction Date",  do.deduction_date),
-            row2("Commencement Date", do.commencement_date),
-        ]))
-        story.append(Spacer(1, 2*mm))
-        story.append(Paragraph(
-            "I hereby authorise Zororo Phumulani Investments to debit my bank account as specified "
-            "above on the deduction date indicated, commencing on the commencement date and every "
-            "month thereafter. I understand that my salary credit date may change and authorise "
-            "administration of premium requests accordingly. This includes any future premium increases.",
-            ParagraphStyle("auth", fontName="Helvetica-Oblique", fontSize=7.5, leading=11, textColor=GREY)
-        ))
-    else:
-        story.append(info_tbl([
-            row2("Payment Method", "Online Payment via pay.zororophumulani.co.za")
-        ]))
-    story.append(Spacer(1, 5*mm))
-
-    # ════════════════════════════════════════════════════════════
-    # SECTION 8 — DECLARATIONS & NEEDS ANALYSIS
-    # ════════════════════════════════════════════════════════════
-    story.append(sec_hdr("8.  Needs Analysis & Declarations"))
+    story.append(sec_hdr("7.  Needs Analysis & Declarations"))
     story.append(Spacer(1, 2*mm))
     decl = data.declarations
     if decl:
@@ -764,7 +760,7 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
     # SECTION 9 — AGENT DETAILS
     # ════════════════════════════════════════════════════════════
     if data.agent and data.agent.name:
-        story.append(sec_hdr("9.  Agent / Connector Details"))
+        story.append(sec_hdr("8.  Agent / Connector Details"))
         story.append(Spacer(1, 2*mm))
         ag = data.agent
         story.append(info_tbl([
@@ -782,7 +778,7 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
     wp_data = [[
         Paragraph('<font size="8.5" color="white"><b>WAITING PERIODS</b></font>', SECW),
         Paragraph('<font size="8" color="white">Accidental: <b>Immediate</b></font>', BODY),
-        Paragraph('<font size="8" color="white">Natural (family): <b>3 months</b></font>', BODY),
+        Paragraph('<font size="8" color="white">Natural (imm. family): <b>3 months</b></font>', BODY),
         Paragraph('<font size="8" color="white">Ext. family: <b>6 months</b></font>', BODY),
         Paragraph('<font size="8" color="white">Suicide: <b>12 months</b></font>', BODY),
     ]]
@@ -798,9 +794,9 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
     story.append(Spacer(1, 5*mm))
 
     # ════════════════════════════════════════════════════════════
-    # SECTION 10 — COMPLIANCE & CONSENT AUDIT RECORD
+    # SECTION 9 — COMPLIANCE & CONSENT AUDIT RECORD
     # ════════════════════════════════════════════════════════════
-    story.append(sec_hdr("10.  Compliance & Consent Audit Record"))
+    story.append(sec_hdr("9.  Compliance & Consent Audit Record"))
     story.append(Spacer(1, 2*mm))
 
     tc_at   = data.terms_accepted_at or (today_str + " " + time_str)
@@ -867,9 +863,9 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
     story.append(Spacer(1, 5*mm))
 
     # ════════════════════════════════════════════════════════════
-    # SECTION 11 — SIGNATURE BLOCK
+    # SECTION 10 — SIGNATURE BLOCK
     # ════════════════════════════════════════════════════════════
-    story.append(sec_hdr("11.  Policyholder Signature"))
+    story.append(sec_hdr("10.  Policyholder Signature"))
     story.append(Spacer(1, 3*mm))
 
     sig = data.signature

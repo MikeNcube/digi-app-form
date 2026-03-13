@@ -290,8 +290,8 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
     <div class="step-tab" data-step="2"><div class="step-num">2</div><div class="step-label">Documents</div></div>
     <div class="step-tab" data-step="3"><div class="step-num">3</div><div class="step-label">Cover &amp; Plan</div></div>
     <div class="step-tab" data-step="4"><div class="step-num">4</div><div class="step-label">Family</div></div>
-    <div class="step-tab" data-step="5"><div class="step-num">5</div><div class="step-label">Payment</div></div>
-    <div class="step-tab" data-step="6"><div class="step-num">6</div><div class="step-label">Declarations</div></div>
+    <div class="step-tab" data-step="5"><div class="step-num">5</div><div class="step-label">Declarations</div></div>
+    <div class="step-tab" data-step="6"><div class="step-num">6</div><div class="step-label">Terms &amp; Conditions</div></div>
     <div class="step-tab" data-step="7"><div class="step-num">7</div><div class="step-label">Review &amp; Sign</div></div>
   </div>
 </div>
@@ -542,110 +542,8 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
 </div>
 
 <!-- ══ SLIDE 5: PAYMENT ══ -->
+<!-- ══ SLIDE 5: DECLARATIONS ══ -->
 <div class="slide" id="slide5">
-  <div class="card">
-    <div class="card-title">Payment Details</div>
-    <div class="card-sub">Choose how you will pay your monthly premium.</div>
-
-    <div class="toggle-g" style="max-width:340px;margin-bottom:18px">
-      <input type="radio" name="pm" id="pm_debit" value="debit_order" checked/>
-      <label for="pm_debit" onclick="switchPay('debit_order')">Debit Order</label>
-      <input type="radio" name="pm" id="pm_online" value="online_payment"/>
-      <label for="pm_online" onclick="switchPay('online_payment')">Online Payment</label>
-    </div>
-
-    <div class="pay-panel active" id="panel_debit">
-      <div class="field-row">
-        <div class="field"><label>Account Holder Name <span class="req">*</span></label>
-          <input type="text" id="dob_holder" placeholder="Full name on account"/></div>
-        <div class="field"><label>Account Holder Contact <span class="req">*</span></label>
-          <input type="tel" id="dob_contact" placeholder="Phone number"/></div>
-      </div>
-      <div class="field-row">
-        <div class="field"><label>Bank <span class="req">*</span></label>
-          <select id="dob_bank">
-            <option value="">Select bank</option>
-            <option>ABSA Bank</option><option>Capitec Bank</option>
-            <option>First National Bank (FNB)</option><option>Nedbank</option>
-            <option>Standard Bank</option><option>African Bank</option>
-            <option>Discovery Bank</option><option>TymeBank</option>
-            <option>Investec</option><option>Other</option>
-          </select></div>
-        <div class="field"><label>Branch Code <span class="req">*</span></label>
-          <input type="text" id="dob_branch" placeholder="6-digit code" maxlength="6"/></div>
-      </div>
-      <div class="field-row">
-        <div class="field"><label>Account Number <span class="req">*</span></label>
-          <input type="text" id="dob_accnum" placeholder="Account number"/></div>
-        <div class="field"><label>Account Type <span class="req">*</span></label>
-          <select id="dob_acctype">
-            <option value="">Select type</option>
-            <option>Cheque / Current</option>
-            <option>Savings</option><option>Transmission</option>
-          </select></div>
-      </div>
-      <div class="field-row">
-        <div class="field"><label>Deduction Date <span class="req">*</span></label>
-          <select id="dob_deductdate">
-            <option value="">Select date</option>
-            <option value="1">1st of the month</option>
-            <option value="7">7th of the month</option>
-            <option value="15">15th of the month</option>
-            <option value="25">25th of the month</option>
-            <option value="last">Last day of the month</option>
-          </select></div>
-        <div class="field"><label>Commencement Date</label>
-          <input type="date" id="dob_commence"/></div>
-      </div>
-      <div class="inline-warn">
-        By proceeding you authorise Zororo Phumulani to debit your account as indicated above on the deduction date, commencing on the selected date and monthly thereafter. Premium amounts may be adjusted with notice.
-      </div>
-    </div>
-
-    <div class="pay-panel" id="panel_online">
-      <div style="text-align:center;padding:28px 16px">
-        <div style="font-size:2.8rem;margin-bottom:14px">💳</div>
-        <p style="color:var(--muted);margin-bottom:18px;font-size:.9rem">
-          Complete your payment securely via our portal. Your policy activates once payment is confirmed.</p>
-        <a href="https://pay.zororophumulani.co.za/" target="_blank"
-           style="display:inline-block;background:var(--mid);color:#fff;padding:12px 28px;
-                  border-radius:8px;text-decoration:none;font-weight:700;font-size:.9rem">
-          Proceed to Payment Portal →
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <!-- BENEFICIARY — on same slide as Payment for 7-slide flow -->
-  <div class="card" style="margin-top:0">
-    <div class="card-title">Beneficiary Details</div>
-    <div class="card-sub">The person who will receive the funeral payout in the event of a claim.</div>
-    <div class="field-row">
-      <div class="field"><label>First Name <span class="req">*</span></label>
-        <input type="text" id="ben_first" placeholder="First name"/></div>
-      <div class="field"><label>Last Name <span class="req">*</span></label>
-        <input type="text" id="ben_last" placeholder="Last name"/></div>
-    </div>
-    <div class="field-row">
-      <div class="field"><label>Contact Number <span class="req">*</span></label>
-        <input type="tel" id="ben_phone" placeholder="+27 8X XXX XXXX"/></div>
-      <div class="field"><label>Relationship to Main Member <span class="req">*</span></label>
-        <select id="ben_rel">
-          <option value="">Select relationship</option>
-          <option>Spouse</option><option>Parent</option><option>Child</option>
-          <option>Sibling</option><option>Other family member</option>
-        </select></div>
-    </div>
-  </div>
-
-  <div class="nav-bar">
-    <button class="btn btn-sec" onclick="prevSlide(5)">← Back</button>
-    <button class="btn btn-pri" onclick="nextSlide(5)">Continue →</button>
-  </div>
-</div>
-
-<!-- ══ SLIDE 6: DECLARATIONS ══ -->
-<div class="slide" id="slide6">
   <div class="card">
     <div class="card-title">Declarations &amp; Needs Analysis</div>
     <div class="card-sub">FAIS legislation requires a needs analysis prior to policy commencement.</div>
@@ -762,16 +660,82 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
   </div>
 
   <div class="nav-bar">
+    <button class="btn btn-sec" onclick="prevSlide(5)">← Back</button>
+    <button class="btn btn-pri" onclick="nextSlide(5)">View Terms &amp; Conditions →</button>
+  </div>
+</div>
+
+<!-- ══ SLIDE 6: TERMS & CONDITIONS PDF ══ -->
+<div class="slide" id="slide6">
+  <div class="card">
+    <div class="card-title">Terms &amp; Conditions</div>
+    <div class="card-sub">Please read the full Terms &amp; Conditions document carefully before proceeding to sign.</div>
+
+    <div style="background:#f5f7fb;border:2px solid var(--mid);border-radius:10px;
+                padding:0;overflow:hidden;margin-bottom:16px">
+      <div style="background:var(--navy);padding:12px 18px;display:flex;
+                  align-items:center;justify-content:space-between">
+        <div style="color:#fff;font-size:.88rem;font-weight:700">
+          📄 Worldwide Funeral Plan — Full Terms &amp; Conditions
+        </div>
+        <a href="/static/wwf_terms.pdf" target="_blank"
+           style="background:var(--accent);color:var(--navy);padding:6px 14px;
+                  border-radius:6px;text-decoration:none;font-size:.78rem;font-weight:700">
+          Open in new tab ↗
+        </a>
+      </div>
+      <iframe
+        src="/static/wwf_terms.pdf"
+        style="width:100%;height:520px;border:none;display:block"
+        title="Terms and Conditions PDF">
+        <div style="padding:32px;text-align:center;color:var(--muted)">
+          <p style="margin-bottom:12px">Your browser cannot display the PDF inline.</p>
+          <a href="/static/wwf_terms.pdf" target="_blank"
+             style="color:var(--blue);font-weight:700">
+            Click here to open the Terms &amp; Conditions →
+          </a>
+        </div>
+      </iframe>
+    </div>
+
+    <div style="background:#fff8e6;border:1px solid #e8a020;border-radius:8px;
+                padding:14px 18px;font-size:.83rem;color:#5a4000;line-height:1.6">
+      <strong>⚠ Important:</strong> By proceeding to the next step you confirm that you have read
+      and understood the full Terms &amp; Conditions above, including all Definitions,
+      Waiting Periods, Exclusions, and your rights as a policyholder.
+    </div>
+  </div>
+
+  <div class="nav-bar">
     <button class="btn btn-sec" onclick="prevSlide(6)">← Back</button>
     <button class="btn btn-pri" onclick="nextSlide(6)">Review &amp; Sign →</button>
   </div>
 </div>
-
-<!-- ══ SLIDE 7: REVIEW & SIGN ══ -->
 <div class="slide" id="slide7">
   <div class="card">
     <div class="card-title">Review Your Application</div>
     <div class="card-sub">Please review all details carefully. Once submitted this application is legally binding.</div>
+
+    <!-- IMMEDIATE FAMILY DEFINITION BOX -->
+    <div style="background:#f0f5ff;border:1.5px solid var(--mid);border-radius:8px;
+                padding:16px 18px;margin-bottom:18px;font-size:.84rem;line-height:1.7;color:var(--navy)">
+      <div style="font-weight:700;font-size:.9rem;color:var(--blue);margin-bottom:8px">
+        📋 Cover Definitions — Please Read Before Signing
+      </div>
+      <p style="margin-bottom:8px">
+        <strong>Immediate Family</strong> means the <strong>Main Member, their Spouse, and their
+        Children</strong> — regardless of the number of children. All immediate family members
+        are covered under your selected plan at the standard family rate, subject to the
+        applicable waiting periods.
+      </p>
+      <p style="margin-bottom:0">
+        <strong>Extended Family</strong> refers to <strong>additional relatives</strong> outside
+        of the immediate family unit — such as parents, in-laws, siblings, or other dependants —
+        who may be added to the policy at an additional tiered premium. Extended family members
+        are subject to a separate 6-month waiting period for natural causes of death.
+      </p>
+    </div>
+
     <div id="reviewContent"></div>
   </div>
 

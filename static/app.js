@@ -257,14 +257,14 @@ function updateProgress(n) {
 }
 
 // ── VALIDATION ─────────────────────────────────────────────────
-// 7-slide flow: 1=Member 2=Docs 3=Plan 4=Family 5=Payment+Beneficiary 6=Declarations 7=Sign
+// 7-slide flow: 1=Member 2=Docs 3=Plan 4=Family 5=Declarations 6=T&C PDF 7=Sign
 function validateSlide(n) {
   if (n===1) return v1_mainMember();
   if (n===2) return v2_documents();
   if (n===3) return v3_plan();
-  if (n===4) return true;             // family is optional
-  if (n===5) return v5_payment();     // validates payment + beneficiary
-  if (n===6) return v7_declarations(); // declarations + single T&C checkbox
+  if (n===4) return true;              // family is optional
+  if (n===5) return v5_declarations(); // declarations + single T&C checkbox
+  if (n===6) return true;              // T&C PDF slide — pass-through, already accepted on slide 5
   return true;
 }
 
@@ -328,42 +328,13 @@ function v3_plan() {
   return true;
 }
 
-function v5_payment() {
-  const method=document.querySelector('input[name="pm"]:checked').value;
-  if (method==='debit_order'){
-    let ok=true;
-    ['dob_holder','dob_contact','dob_bank','dob_branch',
-     'dob_accnum','dob_acctype','dob_deductdate'].forEach(id=>{
-      const el=document.getElementById(id);
-      if (!el.value.trim()){el.classList.add('err');ok=false;}
-      else el.classList.remove('err');
-    });
-    if (!ok){alert('Please complete all debit order fields.');return false;}
-  }
-  // Beneficiary is on the same slide — validate it here
-  let benOk=true;
-  ['ben_first','ben_last','ben_phone','ben_rel'].forEach(id=>{
-    const el=document.getElementById(id);
-    if (!el||!el.value.trim()){if(el)el.classList.add('err');benOk=false;}
-    else el.classList.remove('err');
-  });
-  if (!benOk){alert('Please complete all beneficiary fields before continuing.');return false;}
-  return true;
-}
-
-// v6_beneficiary kept for reference but not called (merged into v5_payment above)
-function v6_beneficiary() {
-  return true; // no-op — merged into v5_payment for 7-slide flow
-}
-
-// Slide 7: Declarations — single T&C checkbox covers POPIA + FAIS + Terms
-function v7_declarations() {
+function v5_declarations() {
   if (!document.getElementById('tc_terms').checked) {
     alert('Please read and accept the Terms & Conditions before proceeding.\n\nClick the "Terms & Conditions" link to read the full document, then tick the checkbox.');
     return false;
   }
-  const income=document.getElementById('d_income');
-  if (!income.value){
+  const income = document.getElementById('d_income');
+  if (!income.value) {
     income.classList.add('err');
     alert('Please complete the gross monthly income field.');
     return false;
@@ -628,11 +599,6 @@ function selTier(efmId,tier) {
 }
 
 // ── PAYMENT TOGGLE ─────────────────────────────────────────────
-function switchPay(method) {
-  document.getElementById('panel_debit').classList.toggle('active',method==='debit_order');
-  document.getElementById('panel_online').classList.toggle('active',method==='online_payment');
-}
-
 // ── CONSENT (single checkbox) ──────────────────────────────────
 function tglCheck(id) {
   const el=document.getElementById(id);
@@ -779,27 +745,20 @@ function buildReview() {
   });
   if (!depRows.length) depRows.push(['Dependants','None added']);
   html+=revSec('Family & Dependants',depRows);
+  // Add family definition note inline in review
+  html+=`<div style="background:#f0f5ff;border-left:3px solid var(--mid);padding:10px 14px;
+    margin-bottom:2px;font-size:.78rem;color:var(--navy);line-height:1.6">
+    <strong>Immediate Family</strong> = Main Member + Spouse + Children (all children included)
+    &nbsp;·&nbsp; <strong>Extended Family</strong> = Additional relatives at tiered premium
+  </div>`;
 
   html+=revSec('Beneficiary',[
     ['Name',`${get('ben_first')} ${get('ben_last')}`],
     ['Contact',get('ben_phone')],['Relationship',get('ben_rel')],
   ]);
 
-  const pm=document.querySelector('input[name="pm"]:checked');
-  const pmv=pm?pm.value:'debit_order';
-  if (pmv==='debit_order'){
-    html+=revSec('Payment (Debit Order)',[
-      ['Account Holder',get('dob_holder')],['Bank',get('dob_bank')],
-      ['Account Number',get('dob_accnum')],['Account Type',get('dob_acctype')],
-      ['Branch Code',get('dob_branch')],['Deduction Date',get('dob_deductdate')],
-      ['Commencement',get('dob_commence')],
-    ]);
-  } else {
-    html+=revSec('Payment',[['Method','Online Payment via portal']]);
-  }
-
   html+=`<div class="waiting-box"><strong>Waiting Periods:</strong>
-    Accidental death — Immediate &nbsp;|&nbsp; Natural causes (family) — 3 months &nbsp;|&nbsp;
+    Accidental death — Immediate &nbsp;|&nbsp; Natural causes (immediate family) — 3 months &nbsp;|&nbsp;
     Extended family — 6 months &nbsp;|&nbsp; Suicide — 12 months</div>`;
 
   html+=`<div class="prem-box" style="margin-top:14px">
@@ -882,11 +841,7 @@ function collectData() {
     fx_rate_used:rate,fx_rate_live:fxFetched,
     beneficiary:{first_name:get('ben_first'),last_name:get('ben_last'),
       phone:get('ben_phone'),relationship:get('ben_rel')},
-    payment_method:(document.querySelector('input[name="pm"]:checked')||{}).value||'debit_order',
-    debit_order:{account_holder:get('dob_holder'),account_holder_contact:get('dob_contact'),
-      bank:get('dob_bank'),branch_code:get('dob_branch'),account_number:get('dob_accnum'),
-      account_type:get('dob_acctype'),deduction_date:get('dob_deductdate'),
-      commencement_date:get('dob_commence')},
+    payment_method:'to_be_arranged',
     declarations:{has_other_policy:chk('op_yes'),other_policy_amount:get('op_amount'),
       is_replacement:chk('rp_yes'),income_range:get('d_income'),num_dependants:get('d_numdeps'),
       monthly_expenses:get('d_expenses'),available_cash:get('d_cash'),notifications:notifs},
