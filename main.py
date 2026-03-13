@@ -593,22 +593,32 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
                    f'≈ {sym}{local_total:,.2f} {data.display_currency}</b></font>'
                    f'<font size="7" color="rgba(255,255,255,0.6)"> ({rate_src})</font>')
 
-    prem_box = Table([[
-        Paragraph(
-            f'<font size="8" color="white">TOTAL MONTHLY PREMIUM</font><br/>'
-            f'<font size="22" color="#e8a020"><b>R{int(data.total_premium):,}</b></font>'
-            f'{fx_note}<br/>'
-            f'<font size="8" color="rgba(255,255,255,0.75)">'
-            f'{data.plan_name}  ·  '
-            f'{"Family" if data.cover_type=="family" else "Single"} Cover  ·  '
-            f'R{int(data.cover_amount):,} sum insured</font>',
-            BODY)
-    ]], colWidths=[W])
+    left_cell = Paragraph(
+        f'<font size="8" color="rgba(255,255,255,0.7)">TOTAL MONTHLY PREMIUM</font><br/>'
+        f'<font size="7.5" color="rgba(255,255,255,0.55)">'
+        f'{data.plan_name}  ·  '
+        f'{"Family" if data.cover_type=="family" else "Single"} Cover  ·  '
+        f'R{int(data.cover_amount):,} sum insured</font>',
+        ParagraphStyle("pb_left", fontName="Helvetica", fontSize=8, leading=12,
+                       textColor=WHITE))
+
+    right_amount = (
+        f'<font size="26" color="#e8a020"><b>R{int(data.total_premium):,}</b></font>'
+        f'{fx_note}'
+    )
+    right_cell = Paragraph(
+        right_amount,
+        ParagraphStyle("pb_right", fontName="Helvetica", fontSize=8, leading=30,
+                       textColor=WHITE, alignment=2))  # alignment=2 = right
+
+    prem_box = Table([[left_cell, right_cell]], colWidths=[W * 0.55, W * 0.45])
     prem_box.setStyle(TableStyle([
-        ("BACKGROUND",   (0,0),(-1,-1), NAVY),
-        ("TOPPADDING",   (0,0),(-1,-1), 10),
-        ("BOTTOMPADDING",(0,0),(-1,-1), 10),
-        ("LEFTPADDING",  (0,0),(-1,-1), 14),
+        ("BACKGROUND",    (0,0),(-1,-1), NAVY),
+        ("TOPPADDING",    (0,0),(-1,-1), 12),
+        ("BOTTOMPADDING", (0,0),(-1,-1), 12),
+        ("LEFTPADDING",   (0,0),(-1,-1), 14),
+        ("RIGHTPADDING",  (0,0),(-1,-1), 14),
+        ("VALIGN",        (0,0),(-1,-1), "MIDDLE"),
     ]))
     story.append(Spacer(1, 3*mm))
     story.append(prem_box)
@@ -955,6 +965,140 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
         ParagraphStyle("pfooter", fontName="Helvetica", fontSize=6.5, leading=10,
                        textColor=GREY, alignment=TA_JUSTIFY)
     ))
+
+    story.append(Spacer(1, 3*mm))
+
+    # ════════════════════════════════════════════════════════════
+    # FINAL PAGE — WORLD WIDE FUNERAL PLAN TERMS & CONDITIONS
+    # (Full text from official WWF T&C document, page 2)
+    # ════════════════════════════════════════════════════════════
+    from reportlab.platypus import PageBreak
+    story.append(PageBreak())
+
+    TC_HEAD = ParagraphStyle("tc_head", fontName="Helvetica-Bold", fontSize=11,
+                              leading=15, textColor=NAVY, spaceAfter=4)
+    TC_SUB  = ParagraphStyle("tc_sub",  fontName="Helvetica-Bold", fontSize=8.5,
+                              leading=12, textColor=BLUE, spaceBefore=8, spaceAfter=3)
+    TC_BODY = ParagraphStyle("tc_body", fontName="Helvetica", fontSize=7.5,
+                              leading=12, textColor=NAVY, spaceAfter=2)
+    TC_ITEM = ParagraphStyle("tc_item", fontName="Helvetica", fontSize=7.5,
+                              leading=12, textColor=NAVY, leftIndent=12, spaceAfter=2)
+
+    story.append(Paragraph("World Wide Funeral Plan — Terms and Conditions", TC_HEAD))
+    story.append(HRFlowable(width=W, thickness=1, color=MID))
+    story.append(Spacer(1, 3*mm))
+
+    tc_sections = [
+        ("Definitions", [
+            "1. <b>\"Cash in lieu\"</b> means receiving a payment of money instead of a physical item or benefit that would otherwise be provided.",
+            "2. <b>\"Cash Option\"</b> the amount of money that a policyholder may claim in place of receiving the actual services or benefits provided under the policy.",
+            "3. <b>\"Child\"</b> means the Principal Insured's natural children, legally adopted children and stepchildren. A stillborn Child is included under this definition provided that there are at least 26 (twenty-six) weeks of existence in the uterus and that the foetus showed no life after complete birth. Stillborn shall exclude the intentional termination of the life of the Child.",
+            "4. <b>\"Claim\"</b> means, unless the context indicates otherwise, a demand for benefits under a Policy by a Claimant.",
+            "5. <b>\"Dependant\"</b> means a qualifying spouse or child.",
+            "6. <b>\"Exclusions\"</b> means losses or risk events not covered under this Policy.",
+            "7. <b>\"Extended family\"</b> means a person(s) in the age group 0 to 90 years who do not form part of the main family and who are nominated as an extended family member by the policy holder or main member of a policy, with a premium payable for each registered extended family member.",
+            "8. <b>\"Main family\"</b> means refers to a policyholder or main member and his dependants (spouse and children), excluding extended family members.",
+            "9. <b>\"Main member\"</b> means a person for whom an application for membership has been approved by Zororo-Phumulani.",
+            "10. <b>\"Personal Information\"</b> means personal information as defined in the Protection of Personal Information Act 4 of 2013.",
+            "11. <b>\"Qualifying spouse\"</b> means the person with whom the main member is joined in marriage, including tribal law or custom and common-law spouses.",
+            "12. <b>\"Waiting period\"</b> means the initial period of membership for which no sum assured is payable by Zororo-Phumulani in respect of a claim.",
+            "13. <b>\"Services\"</b> this refers to the non-cash benefits provided by the insurer or funeral service provider.",
+        ]),
+        ("Terms and Conditions General", [
+            "1. Premiums are payable monthly in advance on or before the 1st of each month.",
+            "2. Main members should be between 18–65 years to join the scheme.",
+            "3. The WWF policy is for Zimbabwean nationals who are in any part of the world.",
+            "4. The insured lives will be limited to those declared on the application form.",
+            "5. The funeral cover for Extended family members is limited to dependants residing in Zimbabwe or South Africa. Should an Extended family member pass away outside Zimbabwe or South Africa, repatriation will not be covered however you can claim the Cover Amount. The maximum cover age for extended family members is 90.",
+            "6. Members who are not legally married but who are living together as a family can still enjoy family benefits provided that all relevant particulars are declared on the application form.",
+            "7. A maximum number of six (6) unmarried children may be covered under the age of 21. Cover is extended up to but not including age 26 if the child is an unmarried full-time student. Proof of registration must be submitted when registering the policy. Cover is provided for physically or mentally disabled children, who do not receive a grant, and who are dependent on their parents.",
+        ]),
+        ("Waiting Periods", [
+            "1. Membership under the scheme can only commence on the 1st day of the month.",
+            "2. If the 1st premium for inception of the policy is received after the 1st of the month, the cover will only commence on the 1st of the following month.",
+            "3. Immediate cover is granted for accidental death if a member has paid the 1st premium.",
+            "4. A three-calendar month waiting period applies to immediate family members, and a six-calendar month waiting period applies to extended family members for natural causes of death.",
+            "5. Newborns enjoy immediate cover and must be added within 6 months of birth, after which waiting periods will apply.",
+            "6. A 12-calendar month waiting period applies for suicidal death.",
+            "7. Immediate cover on receipt of the first premium for existing members who have more than six (6) months continued cover under the existing international scheme.",
+        ]),
+        ("Exclusions", [
+            "Zororo-Phumulani will not be liable to pay any benefit or claim under a Policy if the claim for a benefit arises directly or indirectly from:",
+            "1. The use of nuclear, biological or chemical weapons, or any radioactive contamination; or",
+            "2. Attacks on or sabotage of facilities (including, but not limited to, nuclear power plants) which lead to the release of radioactivity or nuclear, biological or chemical warfare agents; or",
+            "3. The member or member's dependants or member's nominated beneficiaries' involvement in unlawful activity or activities; or",
+            "4. Wilful self-injury or where the Insured is affected temporarily or otherwise by alcohol, narcotics, insanity or drugs, unless administered by a registered medical practitioner.",
+        ]),
+        ("Payment of Premiums", [
+            "1. Premiums shall be payable as indicated in the Schedule to the Insurer by the Policyholder at the Premium Rate as specified in the Schedule.",
+            "2. Payments shall be made from the Commencement Date to the date of termination of this Policy.",
+            "3. Cover on the Scheme is provided for on a month-to-month basis. No reserves are built up under the scheme, therefore premiums are payable lifelong and there are no surrender values when cover ceases.",
+            "4. Premiums under the scheme are not guaranteed and can be adjusted by the insurer at any stage.",
+            "5. Membership for new applicants will be restricted to a maximum entry age of 65 years (next birthday) at commencement.",
+            "6. Only claims submitted within six (6) months of the date of death will be considered for payment.",
+            "7. No claim will be honoured if premiums are in arrears or short paid for more than 60 days.",
+            "8. No claims in respect of foster children will be considered, unless proof of legal adoption has been supplied.",
+        ]),
+        ("Claims Options", [
+            "1. You can claim for cash or exchange your cash for discounted repatriation services from any country to Zimbabwe.",
+            "2. In addition to standard repatriation services, repatriations to Zimbabwe will receive additional services from Doves Zimbabwe only if the client selects a service option. All customs and airport fees remain the responsibility of the family.",
+        ]),
+        ("Cash Option", [
+            "1. Our policies and payouts are in Rand value and an approximate amount in USD equivalent is given in brackets.",
+            "2. If a member chooses the cash option a maximum of R90,000 will be paid depending on the plan.",
+            "3. Sums Insured for Eligible Children are payable: 14 years and older: 100% | 6 to 13 years: 50% | 0 to 5 years: 25% | Stillborn (after 28 weeks): 25%.",
+            "4. Doves Zimbabwe is the contracted funeral home that will conduct the funeral and take over the policy should the policyholder return to Zimbabwe permanently.",
+        ]),
+        ("Termination of the Policy", [
+            "1. The Policyholder may terminate the policy upon one (1) month notice of cancellation being given to the Insurer, in writing.",
+            "2. If the Policyholder fails to fulfil the obligations in terms of the master policy and the schedule(s), the policy shall lapse.",
+            "3. The Insurer may terminate its association with the Policyholder upon one (1) month's notice of cancellation being given to the Policyholder in writing.",
+            "4. Cover for policyholders and/or dependants will cease on: (a) The Policyholder withdrawing from the policy for any reason; (b) Non-payment of premiums; (c) Policy will lapse after 3 months of non-payment.",
+        ]),
+        ("Claim Documents Required", [
+            "1. Main member's ID/Passport (certified copy).",
+            "2. Deceased's ID/Passport (certified copy) or an affidavit confirming that the ID was taken by the Registrar General's office.",
+            "3. Certified copy of the death certificate or a completed and signed burial order.",
+            "4. Accident report form to be completed and signed by the investigating officer if the cause of death is unnatural.",
+            "5. Doctor's letter confirming the months of the pregnancy — in the case of stillbirth.",
+            "6. Notice of death — if the person passes away in South Africa.",
+            "7. Mother's certified ID/Passport in case of a minor or stillbirth.",
+        ]),
+    ]
+
+    for section_title, items in tc_sections:
+        story.append(Paragraph(section_title, TC_SUB))
+        for item in items:
+            story.append(Paragraph(item, TC_ITEM))
+
+    story.append(Spacer(1, 4*mm))
+    story.append(HRFlowable(width=W, thickness=0.5, color=colors.HexColor("#c8d6ea")))
+    story.append(Spacer(1, 2*mm))
+
+    # Provider disclosure box
+    disclosure = Table([[
+        Paragraph(
+            '<b>Financial Service Provider:</b> Zororo Phumulani Investments (Pty) Ltd · FSP48558 · '
+            'Office 102, 1st Floor Nzunza House, 28 Melle St, Braamfontein, Johannesburg · '
+            '+27 81 419 4980 · info@zororo-phumulani.co.za<br/>'
+            '<b>Product Provider (Underwriter):</b> KGA Life (Pty) Ltd · FSP15980 · '
+            '1st Floor, Unit 109, Bosman\'s Crossing Square, 2 Distillery Road, Stellenbosch · '
+            '+27 21 944 6300<br/>'
+            '<b>Claims &amp; Queries:</b> +27 81 419 4980 · +27 11 339 1484 · '
+            'claims2@zororo-phumulani.co.za · customer-care@zororo-phumulani.co.za<br/>'
+            '<b>FAIS Ombud:</b> 0860-324766 · info@faisombud.co.za · www.faisombud.co.za',
+            ParagraphStyle("disc", fontName="Helvetica", fontSize=6.5, leading=10, textColor=NAVY)
+        )
+    ]], colWidths=[W])
+    disclosure.setStyle(TableStyle([
+        ("BACKGROUND",    (0,0),(-1,-1), colors.HexColor("#f0f5ff")),
+        ("TOPPADDING",    (0,0),(-1,-1), 8),
+        ("BOTTOMPADDING", (0,0),(-1,-1), 8),
+        ("LEFTPADDING",   (0,0),(-1,-1), 10),
+        ("RIGHTPADDING",  (0,0),(-1,-1), 10),
+        ("LINEABOVE",     (0,0),(-1,0),  1, BLUE),
+    ]))
+    story.append(disclosure)
 
     doc.build(story, onFirstPage=on_page, onLaterPages=on_page)
     return buf.getvalue()

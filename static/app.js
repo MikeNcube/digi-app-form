@@ -244,7 +244,7 @@ function goTo(n) {
   document.getElementById('slide'+n).classList.add('active');
   currentSlide=n;
   updateProgress(n);
-  if (n===7) buildReview();
+  if (n===6) buildReview();
   window.scrollTo(0,0);
 }
 function updateProgress(n) {
@@ -257,14 +257,13 @@ function updateProgress(n) {
 }
 
 // ── VALIDATION ─────────────────────────────────────────────────
-// 7-slide flow: 1=Member 2=Docs 3=Plan 4=Family 5=Declarations 6=T&C PDF 7=Sign
+// 6-slide flow: 1=Member 2=Docs 3=Plan 4=Family 5=Declarations 6=Review & Sign
 function validateSlide(n) {
   if (n===1) return v1_mainMember();
   if (n===2) return v2_documents();
   if (n===3) return v3_plan();
   if (n===4) return true;              // family is optional
-  if (n===5) return v5_declarations(); // declarations + income — does NOT check T&C checkbox
-  if (n===6) return v6_tc();           // T&C checkbox checked here, after user has read PDF
+  if (n===5) return v5_declarations(); // declarations + income + TC checkbox
   return true;
 }
 
@@ -329,21 +328,15 @@ function v3_plan() {
 }
 
 function v5_declarations() {
-  // Only validates income — T&C checkbox is validated on slide 6 after user reads the PDF
   const income = document.getElementById('d_income');
-  if (!income.value) {
-    income.classList.add('err');
-    alert('Please complete the gross monthly income field before continuing.');
+  if (!income || !income.value) {
+    if (income) income.classList.add('err');
+    alert('Please select your gross monthly income range before continuing.');
     return false;
   }
   income.classList.remove('err');
-  return true;
-}
-
-function v6_tc() {
-  // Validates T&C checkbox — runs after user has had the PDF in front of them on slide 6
   if (!document.getElementById('tc_terms').checked) {
-    alert('Please go back to slide 5 and tick the Terms & Conditions checkbox to confirm you have read and accepted the full Terms & Conditions.');
+    alert('Please read and accept the Terms & Conditions before proceeding.');
     return false;
   }
   return true;
@@ -362,15 +355,17 @@ function setCoverType(type) {
   const hasDeps=spouseAdded||children.length>0;
   const warn=document.getElementById('fam_warn');
   if (warn) warn.style.display=(type==='family'&&!hasDeps)?'block':'none';
+  // Hide spouse section entirely for single cover, show for family
   const spouseSec=document.getElementById('spouseSection');
   const spouseLabel=spouseSec?spouseSec.previousElementSibling:null;
   if (type==='single') {
     if (spouseSec) spouseSec.style.display='none';
-    if (spouseLabel&&spouseLabel.classList.contains('sec-label')) spouseLabel.style.display='none';
+    if (spouseLabel && spouseLabel.classList.contains('sec-label')) spouseLabel.style.display='none';
+    // Clear spouse if single selected
     if (spouseAdded) removeSpouse();
   } else {
     if (spouseSec) spouseSec.style.display='block';
-    if (spouseLabel&&spouseLabel.classList.contains('sec-label')) spouseLabel.style.display='block';
+    if (spouseLabel && spouseLabel.classList.contains('sec-label')) spouseLabel.style.display='block';
   }
   updatePlanPrices();
 }

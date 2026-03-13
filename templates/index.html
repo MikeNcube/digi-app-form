@@ -156,9 +156,9 @@ textarea{resize:vertical;min-height:64px}
 /* SUMMARY BOX */
 .prem-box{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;
   border-radius:var(--radius);padding:18px 22px;display:flex;
-  justify-content:space-between;align-items:center;margin:14px 0}
+  justify-content:space-between;align-items:center;margin:14px 0;flex-wrap:wrap;gap:8px}
 .prem-label{font-size:.85rem;opacity:.75}
-.prem-amount{font-family:'Playfair Display',serif;font-size:1.9rem}
+.prem-amount{font-family:'Playfair Display',serif;font-size:1.9rem;text-align:right;white-space:nowrap}
 .prem-detail{font-size:.72rem;opacity:.6;margin-top:2px}
 .waiting-box{background:var(--ltblue);border-left:4px solid var(--mid);
   border-radius:0 var(--radius) var(--radius) 0;padding:12px 16px;
@@ -291,8 +291,7 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
     <div class="step-tab" data-step="3"><div class="step-num">3</div><div class="step-label">Cover &amp; Plan</div></div>
     <div class="step-tab" data-step="4"><div class="step-num">4</div><div class="step-label">Family</div></div>
     <div class="step-tab" data-step="5"><div class="step-num">5</div><div class="step-label">Declarations</div></div>
-    <div class="step-tab" data-step="6"><div class="step-num">6</div><div class="step-label">Terms &amp; Conditions</div></div>
-    <div class="step-tab" data-step="7"><div class="step-num">7</div><div class="step-label">Review &amp; Sign</div></div>
+    <div class="step-tab" data-step="6"><div class="step-num">6</div><div class="step-label">Review &amp; Sign</div></div>
   </div>
 </div>
 
@@ -646,7 +645,7 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
         <div class="cbox" id="cbox_tc_terms"></div>
         <div class="tc-txt">
           I confirm that I have read, understood, and agree to the
-          <a href="#" style="font-weight:600;color:var(--blue)">Terms &amp; Conditions</a>
+          <a href="#" onclick="openTC(event)" style="font-weight:600;color:var(--blue)">Terms &amp; Conditions</a>
           of the Zororo Phumulani Worldwide Funeral Plan — including all Definitions, Waiting Periods,
           Exclusions, Premium Obligations, POPIA consent, FAIS advice record, Needs Analysis
           acknowledgement, and Policyholder Declaration.
@@ -665,53 +664,8 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
   </div>
 </div>
 
-<!-- ══ SLIDE 6: TERMS & CONDITIONS PDF ══ -->
+<!-- ══ SLIDE 6: REVIEW & SIGN ══ -->
 <div class="slide" id="slide6">
-  <div class="card">
-    <div class="card-title">Terms &amp; Conditions</div>
-    <div class="card-sub">Please read the full Terms &amp; Conditions document carefully before proceeding to sign.</div>
-
-    <div style="background:#f5f7fb;border:2px solid var(--mid);border-radius:10px;
-                padding:0;overflow:hidden;margin-bottom:16px">
-      <div style="background:var(--navy);padding:12px 18px;display:flex;
-                  align-items:center;justify-content:space-between">
-        <div style="color:#fff;font-size:.88rem;font-weight:700">
-          📄 Worldwide Funeral Plan — Full Terms &amp; Conditions
-        </div>
-        <a href="/static/wwf_terms.pdf" target="_blank"
-           style="background:var(--accent);color:var(--navy);padding:6px 14px;
-                  border-radius:6px;text-decoration:none;font-size:.78rem;font-weight:700">
-          Open in new tab ↗
-        </a>
-      </div>
-      <iframe
-        src="/static/wwf_terms.pdf"
-        style="width:100%;height:520px;border:none;display:block"
-        title="Terms and Conditions PDF">
-        <div style="padding:32px;text-align:center;color:var(--muted)">
-          <p style="margin-bottom:12px">Your browser cannot display the PDF inline.</p>
-          <a href="/static/wwf_terms.pdf" target="_blank"
-             style="color:var(--blue);font-weight:700">
-            Click here to open the Terms &amp; Conditions →
-          </a>
-        </div>
-      </iframe>
-    </div>
-
-    <div style="background:#fff8e6;border:1px solid #e8a020;border-radius:8px;
-                padding:14px 18px;font-size:.83rem;color:#5a4000;line-height:1.6">
-      <strong>⚠ Important:</strong> By proceeding to the next step you confirm that you have read
-      and understood the full Terms &amp; Conditions above, including all Definitions,
-      Waiting Periods, Exclusions, and your rights as a policyholder.
-    </div>
-  </div>
-
-  <div class="nav-bar">
-    <button class="btn btn-sec" onclick="prevSlide(6)">← Back</button>
-    <button class="btn btn-pri" onclick="nextSlide(6)">Review &amp; Sign →</button>
-  </div>
-</div>
-<div class="slide" id="slide7">
   <div class="card">
     <div class="card-title">Review Your Application</div>
     <div class="card-sub">Please review all details carefully. Once submitted this application is legally binding.</div>
@@ -762,7 +716,7 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
       </div>
     </div>
 
-    <!-- Photo upload — overlay input covers entire zone for reliable cross-browser click -->
+    <!-- Photo upload -->
     <div class="sig-panel" id="sp_photo">
       <div class="upload-zone" id="sigZone" style="position:relative;overflow:hidden">
         <input type="file" id="sig_photo" accept=".jpg,.jpeg,.png"
@@ -798,7 +752,7 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
   </div>
 
   <div class="nav-bar">
-    <button class="btn btn-sec" onclick="prevSlide(7)">← Back</button>
+    <button class="btn btn-sec" onclick="prevSlide(6)">← Back</button>
     <button class="btn btn-sub" id="submitBtn" onclick="submitApp()">✓ Submit Application</button>
   </div>
 </div>
