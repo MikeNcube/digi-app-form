@@ -594,25 +594,24 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
                    f'<font size="7" color="rgba(255,255,255,0.6)"> ({rate_src})</font>')
 
     left_cell = Paragraph(
-        f'<font size="7.5" color="rgba(255,255,255,0.65)">TOTAL MONTHLY PREMIUM</font><br/>'
-        f'<font size="24" color="#e8a020"><b>R{int(data.total_premium):,}</b></font>'
-        f'{fx_note}',
-        ParagraphStyle("pb_left", fontName="Helvetica", fontSize=8, leading=14,
+        f'<font size="7" color="rgba(255,255,255,0.6)">TOTAL MONTHLY PREMIUM</font><br/>'
+        f'<font size="20" color="#e8a020"><b>R{int(data.total_premium):,}</b></font>{fx_note}',
+        ParagraphStyle("pb_left", fontName="Helvetica", fontSize=7, leading=26,
                        textColor=WHITE))
 
     right_cell = Paragraph(
-        f'<font size="7.5" color="rgba(255,255,255,0.55)">'
-        f'{data.plan_name}  ·  '
+        f'<font size="7.5" color="rgba(255,255,255,0.6)">'
+        f'{data.plan_name}<br/>'
         f'{"Family" if data.cover_type=="family" else "Single"} Cover<br/>'
         f'R{int(data.cover_amount):,} sum insured</font>',
-        ParagraphStyle("pb_right", fontName="Helvetica", fontSize=7.5, leading=12,
+        ParagraphStyle("pb_right", fontName="Helvetica", fontSize=7.5, leading=13,
                        textColor=WHITE, alignment=2))
 
-    prem_box = Table([[left_cell, right_cell]], colWidths=[W * 0.55, W * 0.45])
+    prem_box = Table([[left_cell, right_cell]], colWidths=[W * 0.60, W * 0.40])
     prem_box.setStyle(TableStyle([
         ("BACKGROUND",    (0,0),(-1,-1), NAVY),
-        ("TOPPADDING",    (0,0),(-1,-1), 14),
-        ("BOTTOMPADDING", (0,0),(-1,-1), 14),
+        ("TOPPADDING",    (0,0),(-1,-1), 12),
+        ("BOTTOMPADDING", (0,0),(-1,-1), 12),
         ("LEFTPADDING",   (0,0),(-1,-1), 14),
         ("RIGHTPADDING",  (0,0),(-1,-1), 14),
         ("VALIGN",        (0,0),(-1,-1), "MIDDLE"),
@@ -837,36 +836,6 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
     ]))
     story.append(Spacer(1, 3*mm))
 
-    # T&C + POPIA Declaration text block
-    tc_box_data = [[Paragraph(
-        '<font size="7.5"><b>TERMS &amp; CONDITIONS, POPIA &amp; FAIS ACCEPTANCE DECLARATION</b><br/><br/></font>'
-        '<font size="7.5">"I confirm that I have read, understood, and agree to all Terms &amp; '
-        'Conditions of the Zororo Phumulani Worldwide Funeral Plan, including the waiting periods, '
-        'exclusions, claims procedures, and cancellation terms. I accept the FAIS advice record as '
-        'an accurate and complete record of the recommendations provided to me.<br/><br/>'
-        'In terms of the Protection of Personal Information Act (POPIA), Act 4 of 2013, I '
-        'acknowledge and consent that: (1) my personal information is collected for underwriting, '
-        'risk assessment, policy administration, premium collection, claims processing, regulatory '
-        'compliance, and client communication; (2) it may be shared with authorised third parties '
-        'including the underwriter, compliance officers, regulatory bodies, payment processors, and '
-        'service providers where necessary; (3) information may be transferred outside the Republic '
-        'of South Africa where required for underwriting, repatriation, or policy servicing, subject '
-        'to appropriate data protection safeguards; (4) I have the right to request access to, '
-        'correction of, or objection to the processing of my personal information; and (5) my '
-        'information will be retained for the minimum period required in terms of financial services '
-        'legislation and regulatory obligations. By signing electronically, I confirm informed consent to lawful processing of '
-        'my personal information in accordance with POPIA."</font>',
-        ParagraphStyle("tc_decl", fontName="Helvetica", fontSize=7.5, leading=12, textColor=NAVY)
-    )]]
-    tc_tbl = Table(tc_box_data, colWidths=[W])
-    tc_tbl.setStyle(TableStyle([
-        ("BOX",          (0,0),(-1,-1), 1, MID),
-        ("BACKGROUND",   (0,0),(-1,-1), colors.HexColor("#eef3fb")),
-        ("TOPPADDING",   (0,0),(-1,-1), 8),
-        ("BOTTOMPADDING",(0,0),(-1,-1), 8),
-        ("LEFTPADDING",  (0,0),(-1,-1), 10),
-    ]))
-    story.append(tc_tbl)
     story.append(Spacer(1, 5*mm))
 
     # ════════════════════════════════════════════════════════════
@@ -930,39 +899,17 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
         ("VALIGN",       (0,0),(-1,-1), "MIDDLE"),
     ]))
     story.append(sig_tbl)
-    story.append(Spacer(1, 5*mm))
+    story.append(Spacer(1, 3*mm))
 
-    # ════════════════════════════════════════════════════════════
-    # POPIA FOOTER NOTE
-    # ════════════════════════════════════════════════════════════
+    # Short sign-off line — T&C full text follows on next page
     story.append(HRFlowable(width=W, thickness=0.5, color=colors.HexColor("#c8d6ea")))
     story.append(Spacer(1, 2*mm))
     story.append(Paragraph(
-        "<b>POPIA Consent &amp; Notice (Act 4 of 2013):</b> In terms of the Protection of Personal "
-        "Information Act (POPIA), Act 4 of 2013, the Applicant acknowledges and consents that: "
-        "(1) Personal information is collected for underwriting, risk assessment, policy "
-        "administration, premium collection, claims processing, regulatory compliance, and client "
-        "communication purposes. "
-        "(2) Information may be shared with authorised third parties including the underwriter "
-        "(KGA Life FSP15980), compliance officers (Moonstone Compliance), regulatory bodies, "
-        "payment processors, and service providers where necessary for administration of this policy. "
-        "(3) Personal information may be transferred outside the Republic of South Africa where "
-        "required for underwriting, repatriation services (Doves Zimbabwe), or policy servicing, "
-        "subject to appropriate data protection safeguards. "
-        "(4) The Applicant has the right to request access to, correction of, or objection to the "
-        "processing of their personal information, subject to applicable legal limitations — contact: "
-        "info@zororo-phumulani.co.za. "
-        "(5) Personal information will be retained for the minimum period required in terms of "
-        "financial services legislation and regulatory obligations (minimum 5 years post termination). "
-        "By signing electronically, the Applicant confirms informed consent to lawful processing of "
-        "personal information in accordance with POPIA. "
-        "Responsible Party: Zororo Phumulani Investments (Pty) Ltd (FSP48558). "
-        "Compliance Officer: Moonstone Compliance — sgerald@moonstonecompliance.co.za | +27 21 833 8000. "
-        "FAIS Ombud: 0860-324766 | info@faisombud.co.za.",
-        ParagraphStyle("pfooter", fontName="Helvetica", fontSize=6.5, leading=10,
-                       textColor=GREY, alignment=TA_JUSTIFY)
+        "By signing above, the Applicant confirms acceptance of all Terms &amp; Conditions, "
+        "POPIA consent, FAIS advice record, and Needs Analysis acknowledgement as set out on the following page.",
+        ParagraphStyle("pfooter", fontName="Helvetica-Oblique", fontSize=7.5, leading=11,
+                       textColor=GREY, alignment=TA_CENTER)
     ))
-
     story.append(Spacer(1, 3*mm))
 
     # ════════════════════════════════════════════════════════════

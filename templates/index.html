@@ -534,6 +534,29 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
     <div class="dep-list" id="efmList"></div>
     <button class="btn-add" id="addEfmBtn" onclick="addEfm()"><span>＋</span> Add Extended Family Member</button>
   </div>
+
+  <!-- BENEFICIARY -->
+  <div class="card" style="margin-top:16px;border-top:3px solid var(--blue)">
+    <div class="card-title">Beneficiary Details</div>
+    <div class="card-sub">The person who will receive the funeral payout in the event of a claim.</div>
+    <div class="field-row">
+      <div class="field"><label>First Name <span class="req">*</span></label>
+        <input type="text" id="ben_first" placeholder="First name"/></div>
+      <div class="field"><label>Last Name <span class="req">*</span></label>
+        <input type="text" id="ben_last" placeholder="Last name"/></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Contact Number <span class="req">*</span></label>
+        <input type="tel" id="ben_phone" placeholder="+27 8X XXX XXXX"/></div>
+      <div class="field"><label>Relationship to Main Member <span class="req">*</span></label>
+        <select id="ben_rel">
+          <option value="">Select relationship</option>
+          <option>Spouse</option><option>Parent</option><option>Child</option>
+          <option>Sibling</option><option>Other family member</option>
+        </select></div>
+    </div>
+  </div>
+
   <div class="nav-bar">
     <button class="btn btn-sec" onclick="prevSlide(4)">← Back</button>
     <button class="btn btn-pri" onclick="nextSlide(4)">Continue →</button>

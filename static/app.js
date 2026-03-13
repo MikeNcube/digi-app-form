@@ -262,7 +262,7 @@ function validateSlide(n) {
   if (n===1) return v1_mainMember();
   if (n===2) return v2_documents();
   if (n===3) return v3_plan();
-  if (n===4) return true;              // family is optional
+  if (n===4) return v4_beneficiary();  // beneficiary required
   if (n===5) return v5_declarations(); // declarations + income + TC checkbox
   return true;
 }
@@ -327,7 +327,18 @@ function v3_plan() {
   return true;
 }
 
-function v5_declarations() {
+function v4_beneficiary() {
+  let ok=true;
+  ['ben_first','ben_last','ben_phone','ben_rel'].forEach(id=>{
+    const el=document.getElementById(id);
+    if (!el||!el.value.trim()){if(el)el.classList.add('err');ok=false;}
+    else el.classList.remove('err');
+  });
+  if (!ok){alert('Please complete all Beneficiary fields before continuing.');return false;}
+  return true;
+}
+
+
   const income = document.getElementById('d_income');
   if (!income || !income.value) {
     if (income) income.classList.add('err');
