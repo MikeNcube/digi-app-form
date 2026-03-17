@@ -67,10 +67,10 @@ log = logging.getLogger(__name__)
 TC_VERSION = "WWF-TC-v2025.1"
 
 # ─── BRAND COLOURS ──────────────────────────────────────────────
-NAVY   = colors.HexColor("#0a1628")
-BLUE   = colors.HexColor("#1a3a6e")
-MID    = colors.HexColor("#2456a4")
-ACCENT = colors.HexColor("#e8a020")
+NAVY   = colors.HexColor("#0d1d4e")
+BLUE   = colors.HexColor("#1a3a8f")
+MID    = colors.HexColor("#2a7ab8")
+ACCENT = colors.HexColor("#3d9fd3")
 LTBLUE = colors.HexColor("#d6e4f7")
 WHITE  = colors.white
 GREY   = colors.HexColor("#6b7a99")
@@ -445,11 +445,11 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
     # ── HELPER: two-column key-value row ──────────────────────────
     def row2(k1, v1, k2=None, v2=None):
         cell1 = Paragraph(
-            f'<font size="7.5" color="#2456a4"><b>{k1}</b></font><br/>'
+            f'<font size="7.5" color="#2a7ab8"><b>{k1}</b></font><br/>'
             f'<font size="9" color="#1a1a2e">{v1 or "—"}</font>', BODY)
         if k2:
             cell2 = Paragraph(
-                f'<font size="7.5" color="#2456a4"><b>{k2}</b></font><br/>'
+                f'<font size="7.5" color="#2a7ab8"><b>{k2}</b></font><br/>'
                 f'<font size="9" color="#1a1a2e">{v2 or "—"}</font>', BODY)
         else:
             cell2 = Paragraph("", BODY)
@@ -525,12 +525,12 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
 
     cover_data = [[
         Paragraph(
-            '<font size="20" color="#0a1628"><b>POLICY APPLICATION FORM</b></font><br/>'
+            '<font size="20" color="#0d1d4e"><b>POLICY APPLICATION FORM</b></font><br/>'
             '<font size="9" color="#6b7a99">Worldwide Funeral Plan – Digital Application</font>',
             BODY),
         Table([
             [Paragraph('<font size="7" color="#6b7a99">Policy Reference</font>', SMALL)],
-            [Paragraph(f'<font size="14" color="#0a1628"><b>{policy_number}</b></font>', BODY)],
+            [Paragraph(f'<font size="14" color="#0d1d4e"><b>{policy_number}</b></font>', BODY)],
             [Paragraph(f'<font size="7" color="#6b7a99">Submitted: {today_str} at {time_str}</font>', SMALL)],
             [Paragraph(f'<font size="7" color="#6b7a99">T&amp;C Version: {TC_VERSION}</font>', SMALL)],
         ], colWidths=[W * 0.42])
@@ -589,13 +589,13 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
         local_total = round(data.total_premium * data.fx_rate_used, 2)
         sym = data.display_currency_sym or data.display_currency
         rate_src = "live rate" if data.fx_rate_live else "indicative rate"
-        fx_note = (f'  ·  <font size="10" color="#e8a020"><b>'
+        fx_note = (f'  ·  <font size="10" color="#3d9fd3"><b>'
                    f'≈ {sym}{local_total:,.2f} {data.display_currency}</b></font>'
                    f'<font size="7" color="rgba(255,255,255,0.6)"> ({rate_src})</font>')
 
     left_cell = Paragraph(
         f'<font size="7" color="rgba(255,255,255,0.6)">TOTAL MONTHLY PREMIUM</font><br/>'
-        f'<font size="20" color="#e8a020"><b>R{int(data.total_premium):,}</b></font>{fx_note}',
+        f'<font size="20" color="#3d9fd3"><b>R{int(data.total_premium):,}</b></font>{fx_note}',
         ParagraphStyle("pb_left", fontName="Helvetica", fontSize=7, leading=26,
                        textColor=WHITE))
 
@@ -642,7 +642,7 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
         ("BOTTOMPADDING", (0,0),(-1,-1), 8),
         ("LEFTPADDING",   (0,0),(-1,-1), 10),
         ("RIGHTPADDING",  (0,0),(-1,-1), 10),
-        ("LINEABOVE",     (0,0),(-1,0),  1, colors.HexColor("#2456a4")),
+        ("LINEABOVE",     (0,0),(-1,0),  1, colors.HexColor("#2a7ab8")),
         ("LINEBELOW",     (0,-1),(-1,-1),0.5, colors.HexColor("#c8d6ea")),
     ]))
     story.append(fam_def)
@@ -851,7 +851,7 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
         if sig.type == "typed" and sig.name:
             sig_cell_content = Paragraph(
                 f'<font size="7" color="#6b7a99">Electronic Signature (Typed Name)</font><br/>'
-                f'<font size="16" color="#0a1628"><i>{sig.name}</i></font><br/>'
+                f'<font size="16" color="#0d1d4e"><i>{sig.name}</i></font><br/>'
                 f'<font size="7" color="#6b7a99">Accepted as binding electronic signature under '
                 f'ECT Act No. 25 of 2002</font>',
                 BODY)
@@ -881,10 +881,10 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
 
     date_cell = Paragraph(
         f'<font size="7" color="#6b7a99">Date &amp; Time Signed</font><br/>'
-        f'<font size="10" color="#0a1628"><b>{today_str}</b></font><br/>'
+        f'<font size="10" color="#0d1d4e"><b>{today_str}</b></font><br/>'
         f'<font size="8" color="#6b7a99">{time_str}</font><br/><br/>'
         f'<font size="7" color="#6b7a99">IP Address</font><br/>'
-        f'<font size="9" color="#0a1628">{client_ip}</font>',
+        f'<font size="9" color="#0d1d4e">{client_ip}</font>',
         ParagraphStyle("dc", fontName="Helvetica", fontSize=9, leading=13,
                        alignment=TA_RIGHT, textColor=NAVY))
 
@@ -1131,7 +1131,7 @@ def _email_client(policy_number, name, plan, premium, today_str) -> str:
       <li>For immediate assistance call <b>+27 81 419 4980</b></li>
     </ul>
     <p style="margin-top:24px;font-size:13px;color:#4a5568;">
-      Queries: <a href="mailto:info@zororo-phumulani.co.za" style="color:#2456a4;">
+      Queries: <a href="mailto:info@zororo-phumulani.co.za" style="color:#2a7ab8;">
       info@zororo-phumulani.co.za</a> &nbsp;|&nbsp; +27 81 419 4980</p>
   </div>
   <div style="background:#0a1628;padding:14px 32px;text-align:center;">
@@ -1151,7 +1151,7 @@ def _email_admin(policy_number, applicant_name, plan, premium,
 <html><body style="margin:0;padding:0;background:#f5f7fb;font-family:Arial,sans-serif;">
 <div style="max-width:600px;margin:32px auto;border-radius:10px;overflow:hidden;
             box-shadow:0 4px 24px rgba(0,0,0,0.10);">
-  <div style="background:linear-gradient(135deg,#0a1628,#2456a4);padding:24px 32px;">
+  <div style="background:linear-gradient(135deg,#0a1628,#2a7ab8);padding:24px 32px;">
     <h1 style="color:#fff;font-size:20px;margin:0 0 4px;">New Policy Application</h1>
     <p style="color:rgba(255,255,255,0.6);margin:0;font-size:13px;">
       Admin Notification &nbsp;·&nbsp; {today_str}</p>
