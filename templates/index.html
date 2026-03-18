@@ -401,7 +401,7 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
     <div class="sec-label">Passport or ID Copy <span class="req">*</span></div>
     <div class="upload-zone" id="passportZone">
       <input type="file" id="passport_upload" accept=".pdf,.jpg,.jpeg,.png"/>
-      <div class="uz-icon">🪪</div>
+      <div class="uz-icon"></div>
       <div class="uz-text"><strong>Click to upload your Passport or ID copy</strong> or drag and drop</div>
       <div class="uz-text">PDF, JPG or PNG · Max 5MB</div>
       <div class="uz-reqbadge">REQUIRED</div>
@@ -417,7 +417,7 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
       <input type="text" id="mm_id_number" placeholder="Passport number or SA ID (13 digits)"/>
     </div>
 
-    <div id="docs_err" class="inline-err">⚠ Please upload your Passport or ID copy before continuing.</div>
+    <div id="docs_err" class="inline-err">Please upload your Passport or ID copy before continuing.</div>
   </div>
   <div class="nav-bar">
     <button class="btn btn-sec" onclick="prevSlide(2)">← Back</button>
@@ -439,7 +439,7 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
       <label for="ct_family" onclick="setCoverType('family')">Family Cover</label>
     </div>
     <div id="fam_warn" class="inline-warn" style="display:none">
-      ⚠ Family cover requires at least one dependant. Please add a spouse or child on the next step.
+      Family cover requires at least one dependant. Please add a spouse or child on the next step.
     </div>
 
     <div class="sec-label" style="margin-top:4px">Select Plan</div>
@@ -518,21 +518,21 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
     <div class="sec-label">Spouse (Maximum 1)</div>
     <div id="spouseSection">
       <div class="dep-cnt">No spouse added.</div>
-      <button class="btn-add" onclick="addSpouse()"><span>＋</span> Add Spouse</button>
+      <button class="btn-add" onclick="addSpouse()"><span>+</span> Add Spouse</button>
     </div>
 
     <hr class="divider"/>
     <div class="sec-label">Children (Maximum 6)</div>
     <div class="dep-cnt" id="child_cnt">0 of 6 children added</div>
     <div class="dep-list" id="childList"></div>
-    <button class="btn-add" id="addChildBtn" onclick="addChild()"><span>＋</span> Add Child</button>
+    <button class="btn-add" id="addChildBtn" onclick="addChild()"><span>+</span> Add Child</button>
 
     <hr class="divider"/>
     <div class="sec-label">Extended Family (Maximum 6)</div>
     <div class="dep-cnt">Each extended family member selects their own cover tier. Must reside in Zimbabwe or South Africa.</div>
     <div class="dep-cnt" id="efm_cnt">0 of 6 extended family members added</div>
     <div class="dep-list" id="efmList"></div>
-    <button class="btn-add" id="addEfmBtn" onclick="addEfm()"><span>＋</span> Add Extended Family Member</button>
+    <button class="btn-add" id="addEfmBtn" onclick="addEfm()"><span>+</span> Add Extended Family Member</button>
   </div>
 
   <!-- BENEFICIARY -->
@@ -697,7 +697,7 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
     <div style="background:#f0f5ff;border:1.5px solid var(--mid);border-radius:8px;
                 padding:16px 18px;margin-bottom:18px;font-size:.84rem;line-height:1.7;color:var(--navy)">
       <div style="font-weight:700;font-size:.9rem;color:var(--blue);margin-bottom:8px">
-        📋 Cover Definitions — Please Read Before Signing
+        Cover Definitions — Please Read Before Signing
       </div>
       <p style="margin-bottom:8px">
         <strong>Immediate Family</strong> means the <strong>Main Member, their Spouse, and their
@@ -722,11 +722,11 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
 
     <div class="sig-options">
       <button class="sig-btn active" id="sb_digital" onclick="setSig('digital')">
-        <span>✏️</span>Draw Signature</button>
+        Draw Signature</button>
       <button class="sig-btn" id="sb_photo" onclick="setSig('photo')">
-        <span>📷</span>Upload Photo</button>
+        Upload Photo</button>
       <button class="sig-btn" id="sb_typed" onclick="setSig('typed')">
-        <span>⌨️</span>Type Full Name</button>
+        Type Full Name</button>
     </div>
 
     <!-- Draw -->
@@ -744,7 +744,7 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
       <div class="upload-zone" id="sigZone" style="position:relative;overflow:hidden">
         <input type="file" id="sig_photo" accept=".jpg,.jpeg,.png"
                style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:2"/>
-        <div class="uz-icon" style="pointer-events:none">🖊️</div>
+        <div class="uz-icon" style="pointer-events:none"></div>
         <div class="uz-text" style="pointer-events:none"><strong>Click to upload a photo of your handwritten signature</strong> or drag and drop</div>
         <div class="uz-text" style="pointer-events:none">JPG or PNG · Max 5MB</div>
         <div class="uz-fname" id="sig_photo_name" style="pointer-events:none"></div>
@@ -785,7 +785,7 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
 <!-- ═══ SUCCESS SCREEN ═══ -->
 <div id="successScreen">
   <div class="card">
-    <div class="suc-icon">✅</div>
+    <div class="suc-icon">✓</div>
     <div class="suc-title">Application Submitted!</div>
     <div class="suc-sub">
       Your application has been received and saved. A copy of your completed
