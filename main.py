@@ -1050,53 +1050,24 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
 
 # ─── EMAIL ──────────────────────────────────────────────────────
 def send_email_ssl(to_addr: str, subject: str, html_body: str,
-                   pdf_bytes: Optional[bytes], pdf_filename: str) -> bool:
-    """
-    Send ONE email to ONE recipient via SSL port 465.
-    Builds a completely fresh MIMEMultipart + SMTP session per call
-    to prevent any cross-delivery between client and admin emails.
-    """
-    smtp_host = os.environ.get("SMTP_HOST", "mail.zororo-phumulani.co.za")
-    smtp_port = int(os.environ.get("SMTP_PORT", "465"))
-    smtp_user = os.environ.get("SMTP_USER", "")
-    smtp_pass = os.environ.get("SMTP_PASS", "")
-
-    if not smtp_user or not smtp_pass:
-        log.warning(f"SMTP credentials not set — skipping email to {to_addr}")
+                   pdf_bytes, pdf_filename: str) -> bool:
+    import resend, base64, os
+    api_key  = os.environ.get('EMAIL_API_KEY', '')
+    from_addr = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@zororo-phumulani.co.za')
+    if not api_key:
+        log.warning(f'EMAIL_API_KEY not set - skipping email to {to_addr}')
         return False
-
-    # Build a fresh message object for THIS recipient only
-    msg = MIMEMultipart("mixed")
-    msg["From"]    = smtp_user
-    msg["To"]      = to_addr          # Explicit single recipient in header
-    msg["Subject"] = subject
-    msg["Message-ID"] = f"<{uuid.uuid4()}@zororo-phumulani.co.za>"
-
-    alt = MIMEMultipart("alternative")
-    alt.attach(MIMEText(html_body, "html", "utf-8"))
-    msg.attach(alt)
-
+    resend.api_key = api_key
+    params = {'from': from_addr, 'to': [to_addr], 'subject': subject, 'html': html_body}
     if pdf_bytes:
-        part = MIMEBase("application", "pdf")
-        part.set_payload(pdf_bytes)
-        encoders.encode_base64(part)
-        part.add_header("Content-Disposition",
-                        f'attachment; filename="{pdf_filename}"')
-        msg.attach(part)
-
+        params['attachments'] = [{'filename': pdf_filename, 'content': list(base64.b64encode(pdf_bytes))}]
     try:
-        ctx = ssl.create_default_context()
-        # Open a brand-new SMTP connection for each email
-        with smtplib.SMTP_SSL(smtp_host, smtp_port, context=ctx) as s:
-            s.login(smtp_user, smtp_pass)
-            # sendmail with explicit envelope-to — only this address receives it
-            s.sendmail(smtp_user, [to_addr], msg.as_string())
-        log.info(f"Email delivered → {to_addr} | Subject: {subject[:60]}")
+        result = resend.Emails.send(params)
+        log.info(f'Email delivered via Resend -> {to_addr} | id: {result.get(chr(105)+chr(100),chr(63))} | Subject: {subject[:60]}')
         return True
     except Exception as exc:
-        log.error(f"Email FAILED → {to_addr}: {exc}")
+        log.error(f'Email FAILED via Resend -> {to_addr}: {exc}')
         return False
-
 
 def _email_client(policy_number, name, plan, premium, today_str) -> str:
     return f"""<!DOCTYPE html>
