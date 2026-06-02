@@ -17,6 +17,7 @@ import os
 import json
 import uuid
 import base64
+import hmac
 import smtplib
 import logging
 import sqlite3
@@ -30,7 +31,7 @@ from email import encoders
 from typing import Optional, List
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Header
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -1433,14 +1434,17 @@ async def get_policy(ref: str):
 
 
 @app.get("/debug")
-async def debug_info(token: str = ""):
+async def debug_info(request: Request, x_debug_token: str = Header(default="")):
     """
-    Internal diagnostics. Requires DEBUG_TOKEN env var to match the token
-    query param (?token=...). Returns safe booleans only for sensitive fields.
+    Internal diagnostics. Requires the X-Debug-Token request header to match
+    the DEBUG_TOKEN env var. Token is never accepted via query string (avoids
+    leakage through access logs / Referer / browser history). Constant-time
+    comparison. Returns safe booleans only for sensitive fields.
     """
     debug_token = os.environ.get("DEBUG_TOKEN", "")
-    if not debug_token or token != debug_token:
-        return {"status": "forbidden"}
+    if not debug_token or not hmac.compare_digest(x_debug_token, debug_token):
+        log.warning(f"Forbidden /debug attempt from {get_client_ip(request)}")
+        raise HTTPException(status_code=403, detail="Forbidden")
     return {
         "base_dir":      str(BASE_DIR),
         "templates":     [f.name for f in TEMPLATES_DIR.iterdir()] if TEMPLATES_DIR.exists() else [],
