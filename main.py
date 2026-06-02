@@ -1244,10 +1244,7 @@ async def health():
         "policy_count":    count,
         "tc_version":      TC_VERSION,
         "smtp_configured": bool(smtp_user),
-        "smtp_host":       os.environ.get("SMTP_HOST", "NOT SET"),
-        "smtp_port":       os.environ.get("SMTP_PORT", "NOT SET"),
         "from_email_set":  bool(from_email),
-        "from_email":      from_email or "NOT SET",
     }
 
 
@@ -1436,17 +1433,23 @@ async def get_policy(ref: str):
 
 
 @app.get("/debug")
-async def debug_info():
+async def debug_info(token: str = ""):
+    """
+    Internal diagnostics. Requires DEBUG_TOKEN env var to match the token
+    query param (?token=...). Returns safe booleans only for sensitive fields.
+    """
+    debug_token = os.environ.get("DEBUG_TOKEN", "")
+    if not debug_token or token != debug_token:
+        return {"status": "forbidden"}
     return {
         "base_dir":      str(BASE_DIR),
         "templates":     [f.name for f in TEMPLATES_DIR.iterdir()] if TEMPLATES_DIR.exists() else [],
         "static":        [f.name for f in STATIC_DIR.iterdir()]    if STATIC_DIR.exists()    else [],
-        "uploads":       [f.name for f in UPLOAD_DIR.iterdir()]    if UPLOAD_DIR.exists()    else [],
         "db_exists":     Path(DB_PATH).exists(),
-        "smtp_host":     os.environ.get("SMTP_HOST", "NOT SET"),
+        "smtp_host_set": bool(os.environ.get("SMTP_HOST", "")),
         "smtp_port":     os.environ.get("SMTP_PORT", "NOT SET"),
-        "smtp_user":     os.environ.get("SMTP_USER", "NOT SET"),
+        "smtp_user_set": bool(os.environ.get("SMTP_USER", "")),
         "smtp_pass_set": bool(os.environ.get("SMTP_PASS", "")),
-        "from_email":    os.environ.get("DEFAULT_FROM_EMAIL", "NOT SET"),
-        "notify_email":  os.environ.get("NOTIFY_EMAIL", "NOT SET"),
+        "from_email_set": bool(os.environ.get("DEFAULT_FROM_EMAIL", "")),
+        "notify_email_set": bool(os.environ.get("NOTIFY_EMAIL", "")),
     }
