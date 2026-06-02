@@ -343,34 +343,10 @@ canvas#sigCanvas{border:1.5px solid var(--border);border-radius:8px;cursor:cross
     <hr class="divider"/>
     <div class="sec-label">Residential Address</div>
 
-    <!-- Country → Province → Postal → Area Code cascade -->
+    <!-- Country of Residence (free text) → optional Province → Postal → Area Code -->
     <div class="field"><label>Country of Residence <span class="req">*</span></label>
-      <select id="mm_country" onchange="onCountryChange()">
-        <option value="">Select country</option>
-        <optgroup label="Southern Africa (SADC)">
-          <option value="ZA">South Africa</option>
-          <option value="ZW">Zimbabwe</option>
-          <option value="ZM">Zambia</option><option value="BW">Botswana</option>
-          <option value="MZ">Mozambique</option><option value="MW">Malawi</option>
-          <option value="NA">Namibia</option><option value="LS">Lesotho</option>
-          <option value="SZ">Eswatini</option><option value="TZ">Tanzania</option>
-          <option value="MU">Mauritius</option><option value="MG">Madagascar</option>
-          <option value="CD">DR Congo</option><option value="AO">Angola</option>
-          <option value="SC">Seychelles</option>
-        </optgroup>
-        <optgroup label="Europe">
-          <option value="GB">United Kingdom</option><option value="DE">Germany</option>
-          <option value="NL">Netherlands</option><option value="BE">Belgium</option>
-          <option value="SE">Sweden</option><option value="NO">Norway</option>
-          <option value="IE">Ireland</option><option value="FR">France</option>
-        </optgroup>
-        <optgroup label="Oceania">
-          <option value="AU">Australia</option><option value="NZ">New Zealand</option>
-        </optgroup>
-        <optgroup label="Americas">
-          <option value="US">United States</option><option value="CA">Canada</option>
-        </optgroup>
-      </select></div>
+      <input type="text" id="mm_country" placeholder="e.g. South Africa"
+             autocomplete="country-name" onchange="onCountryChange()"/></div>
 
     <div id="province_wrap" style="display:none">
       <div class="field"><label>Province <span class="req">*</span></label>

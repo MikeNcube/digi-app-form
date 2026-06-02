@@ -806,9 +806,8 @@ function revSec(title,rows){
 function collectData() {
   const get=id=>{const el=document.getElementById(id);return el?el.value:'';};
   const chk=id=>{const el=document.getElementById(id);return el?el.checked:false;};
-  const countryEl=document.getElementById('mm_country');
-  const countryTxt=countryEl&&countryEl.options[countryEl.selectedIndex]
-    ?countryEl.options[countryEl.selectedIndex].text:'';
+  // Country is now a free-text input — value IS the display name
+  const countryTxt=get('mm_country').trim();
   const notifs=[];
   if(chk('notif_sms'))notifs.push('sms');
   if(chk('notif_email'))notifs.push('email');
@@ -852,7 +851,7 @@ function collectData() {
       first_name:get('mm_first'),last_name:get('mm_last'),dob:get('mm_dob'),
       gender:get('mm_gender'),nationality:get('mm_nationality'),id_number:get('mm_id_number'),
       phone:get('mm_phone'),whatsapp:get('mm_whatsapp')||get('mm_phone'),email:get('mm_email'),
-      country:countryTxt,country_code:get('mm_country'),province:get('mm_province'),
+      country:countryTxt,country_code:'',province:get('mm_province'),
       postal_code:get('mm_postal'),area_code:get('mm_area'),
       address:get('mm_address'),   // ← explicit: never lost
     },
