@@ -4,15 +4,13 @@ Zororo Phumulani — Digital Policy Application System v3.0
 FastAPI · SQLite · ReportLab PDF · SMTP SSL (port 465)
 POPIA Compliant · FSP48558 · Underwritten by KGA Life FSP15980
 
-SMTP:  mail.zororo-phumulani.co.za  port 465  SSL
-FROM:  nomthandazo.wwfp@zororo-phumulani.co.za
-
 Environment variables required in Railway:
-  SMTP_HOST     = mail.zororo-phumulani.co.za
-  SMTP_PORT     = 465
-  SMTP_USER     = nomthandazo.wwfp@zororo-phumulani.co.za
-  SMTP_PASS     = SPA7MW6AOYG4AVLQ
-  NOTIFY_EMAIL  = mike.ncube@zororophumulani.co.za
+  SMTP_HOST          = smtp-relay.brevo.com
+  SMTP_PORT          = 465
+  SMTP_USER          = <brevo login email>
+  SMTP_PASS          = <brevo SMTP key>
+  DEFAULT_FROM_EMAIL = mike.ncube@zororophumulani.co.za   (verified Brevo sender)
+  NOTIFY_EMAIL       = josephmathwasa09@gmail.com
 """
 
 import os
@@ -1052,25 +1050,35 @@ def build_pdf(data: PolicyApplication, policy_number: str, client_ip: str) -> by
 def send_email_ssl(to_addr: str, subject: str, html_body: str,
                    pdf_bytes: Optional[bytes], pdf_filename: str) -> bool:
     """
-    Send ONE email to ONE recipient via SSL port 465.
-    Builds a completely fresh MIMEMultipart + SMTP session per call
-    to prevent any cross-delivery between client and admin emails.
+    Send ONE email to ONE recipient.
+    Port 465 → SMTP_SSL (implicit TLS).
+    Port 587 (default) → SMTP + STARTTLS (Brevo recommended).
+    Builds a fresh MIME message and SMTP session per call.
     """
-    smtp_host = os.environ.get("SMTP_HOST", "mail.zororo-phumulani.co.za")
-    smtp_port = int(os.environ.get("SMTP_PORT", "465"))
-    smtp_user = os.environ.get("SMTP_USER", "")
-    smtp_pass = os.environ.get("SMTP_PASS", "")
+    smtp_host  = os.environ.get("SMTP_HOST", "smtp-relay.brevo.com")
+    smtp_port  = int(os.environ.get("SMTP_PORT", "587"))
+    smtp_user  = os.environ.get("SMTP_USER", "")
+    smtp_pass  = os.environ.get("SMTP_PASS", "")
+    # DEFAULT_FROM_EMAIL MUST be a verified Brevo sender.
+    # Never fall back to smtp_user — Brevo accepts the SMTP session but silently
+    # drops messages whose From: address is unverified, logging "sender not verified".
+    from_email = os.environ.get("DEFAULT_FROM_EMAIL", "").strip()
 
+    if not from_email:
+        log.error("DEFAULT_FROM_EMAIL not set — Brevo requires a verified sender; email skipped")
+        return False
     if not smtp_user or not smtp_pass:
         log.warning(f"SMTP credentials not set — skipping email to {to_addr}")
         return False
 
-    # Build a fresh message object for THIS recipient only
+    log.info(f"Email attempt: from={from_email} to={to_addr} via {smtp_host}:{smtp_port}")
+
     msg = MIMEMultipart("mixed")
-    msg["From"]    = smtp_user
-    msg["To"]      = to_addr          # Explicit single recipient in header
-    msg["Subject"] = subject
+    msg["From"]       = from_email
+    msg["To"]         = to_addr
+    msg["Subject"]    = subject
     msg["Message-ID"] = f"<{uuid.uuid4()}@zororo-phumulani.co.za>"
+    msg["Reply-To"]   = from_email
 
     alt = MIMEMultipart("alternative")
     alt.attach(MIMEText(html_body, "html", "utf-8"))
@@ -1086,16 +1094,28 @@ def send_email_ssl(to_addr: str, subject: str, html_body: str,
 
     try:
         ctx = ssl.create_default_context()
-        # Open a brand-new SMTP connection for each email
-        with smtplib.SMTP_SSL(smtp_host, smtp_port, context=ctx) as s:
-            s.login(smtp_user, smtp_pass)
-            # sendmail with explicit envelope-to — only this address receives it
-            s.sendmail(smtp_user, [to_addr], msg.as_string())
-        log.info(f"Email delivered → {to_addr} | Subject: {subject[:60]}")
+        if smtp_port == 465:
+            with smtplib.SMTP_SSL(smtp_host, smtp_port, context=ctx, timeout=30) as s:
+                s.login(smtp_user, smtp_pass)
+                s.sendmail(from_email, [to_addr], msg.as_string())
+        else:
+            with smtplib.SMTP(smtp_host, smtp_port, timeout=30) as s:
+                s.ehlo()
+                s.starttls(context=ctx)
+                s.ehlo()
+                s.login(smtp_user, smtp_pass)
+                s.sendmail(from_email, [to_addr], msg.as_string())
+        log.info(f"Email accepted by relay → {to_addr} | {subject[:60]}")
         return True
+    except smtplib.SMTPRecipientsRefused as exc:
+        log.error(f"Recipient refused → {to_addr}: {exc}")
+    except smtplib.SMTPAuthenticationError as exc:
+        log.error(f"SMTP auth failed — check SMTP_USER / SMTP_PASS: {exc}")
+    except smtplib.SMTPException as exc:
+        log.error(f"SMTP error → {to_addr}: {exc}")
     except Exception as exc:
         log.error(f"Email FAILED → {to_addr}: {exc}")
-        return False
+    return False
 
 
 def _email_client(policy_number, name, plan, premium, today_str) -> str:
@@ -1215,15 +1235,19 @@ async def health():
     c.execute("SELECT COUNT(*) FROM policies")
     count = c.fetchone()[0]
     conn.close()
-    smtp_user = os.environ.get("SMTP_USER", "")
+    smtp_user  = os.environ.get("SMTP_USER", "")
+    from_email = os.environ.get("DEFAULT_FROM_EMAIL", "")
     return {
-        "status":        "ok",
-        "service":       "Zororo Phumulani Application API",
-        "version":       "5.0.0",
-        "policy_count":  count,
-        "tc_version":    TC_VERSION,
+        "status":          "ok",
+        "service":         "Zororo Phumulani Application API",
+        "version":         "5.1.0",
+        "policy_count":    count,
+        "tc_version":      TC_VERSION,
         "smtp_configured": bool(smtp_user),
-        "smtp_host":     os.environ.get("SMTP_HOST", "mail.zororo-phumulani.co.za"),
+        "smtp_host":       os.environ.get("SMTP_HOST", "NOT SET"),
+        "smtp_port":       os.environ.get("SMTP_PORT", "NOT SET"),
+        "from_email_set":  bool(from_email),
+        "from_email":      from_email or "NOT SET",
     }
 
 
@@ -1414,12 +1438,15 @@ async def get_policy(ref: str):
 @app.get("/debug")
 async def debug_info():
     return {
-        "base_dir":   str(BASE_DIR),
-        "templates":  [f.name for f in TEMPLATES_DIR.iterdir()] if TEMPLATES_DIR.exists() else [],
-        "static":     [f.name for f in STATIC_DIR.iterdir()]    if STATIC_DIR.exists()    else [],
-        "uploads":    [f.name for f in UPLOAD_DIR.iterdir()]    if UPLOAD_DIR.exists()    else [],
-        "db_exists":  Path(DB_PATH).exists(),
-        "smtp_host":  os.environ.get("SMTP_HOST", "NOT SET"),
-        "smtp_user":  os.environ.get("SMTP_USER", "NOT SET"),
+        "base_dir":      str(BASE_DIR),
+        "templates":     [f.name for f in TEMPLATES_DIR.iterdir()] if TEMPLATES_DIR.exists() else [],
+        "static":        [f.name for f in STATIC_DIR.iterdir()]    if STATIC_DIR.exists()    else [],
+        "uploads":       [f.name for f in UPLOAD_DIR.iterdir()]    if UPLOAD_DIR.exists()    else [],
+        "db_exists":     Path(DB_PATH).exists(),
+        "smtp_host":     os.environ.get("SMTP_HOST", "NOT SET"),
+        "smtp_port":     os.environ.get("SMTP_PORT", "NOT SET"),
+        "smtp_user":     os.environ.get("SMTP_USER", "NOT SET"),
         "smtp_pass_set": bool(os.environ.get("SMTP_PASS", "")),
+        "from_email":    os.environ.get("DEFAULT_FROM_EMAIL", "NOT SET"),
+        "notify_email":  os.environ.get("NOTIFY_EMAIL", "NOT SET"),
     }
